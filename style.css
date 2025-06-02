@@ -148,5 +148,8 @@ footer {
 
 .hobby-card:hover {
   transform: scale(1.05);
+}
+
+.hobby-card img:hover {
   filter: brightness(30%);
 }
