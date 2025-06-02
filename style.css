@@ -125,6 +125,7 @@ footer {
   height: auto;
   display: block;
   object-fit: cover;
+  filter: brightness(60%);
 }
 
 .hobby-card .overlay {
