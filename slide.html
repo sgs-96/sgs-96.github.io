@@ -5,9 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ゼミ研修旅行用スライド</title>
   <link rel="stylesheet" href="slide_style.css" />
+  <style>
+    body {
+      margin: 0;
+      background: #222;
+      color: white;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+
+    .slide {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      padding: 4rem;
+      box-sizing: border-box;
+    }
+
+    .slide.active {
+      display: block;
+    }
+  </style>
 </head>
 <body>
-  <div class="slide">
+  <div class="slide active">
     <h1>ゼミ研修旅行 2025</h1>
     <p>〜〇〇研究室・研修旅行の概要〜</p>
   </div>
@@ -46,5 +67,32 @@
     <p>引率TA: ta_name@example.com</p>
   </div>
 
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    let current = 0;
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') {
+        current = (current + 1) % slides.length;
+        showSlide(current);
+      } else if (e.key === 'ArrowLeft') {
+        current = (current - 1 + slides.length) % slides.length;
+        showSlide(current);
+      } else if (e.altKey && e.key === 'Enter') {
+        document.documentElement.requestFullscreen();
+      } else if (e.key === 'Escape') {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        }
+      }
+    });
+  </script>
 </body>
+</html>
 </html>
