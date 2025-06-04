@@ -25,6 +25,44 @@
     .slide.active {
       display: block;
     }
+
+    .thumbnail-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 0.5rem;
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      transform: translateY(100%);
+      transition: transform 0.3s;
+      z-index: 999;
+    }
+
+    .thumbnail-bar.visible {
+      transform: translateY(0);
+    }
+
+    .thumbnail {
+      min-width: 120px;
+      height: 80px;
+      background: #444;
+      border: 2px solid #666;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.8rem;
+      text-align: center;
+      padding: 0.5rem;
+    }
+
+    .thumbnail.active {
+      border-color: yellow;
+    }
   </style>
 </head>
 <body>
@@ -67,15 +105,37 @@
     <p>引率TA: ta_name@example.com</p>
   </div>
 
+  <div class="thumbnail-bar" id="thumbnailBar"></div>
+
   <script>
     const slides = document.querySelectorAll('.slide');
+    const thumbnailBar = document.getElementById('thumbnailBar');
     let current = 0;
 
     function showSlide(index) {
       slides.forEach((slide, i) => {
         slide.classList.toggle('active', i === index);
+        const thumb = thumbnailBar.children[i];
+        if (thumb) {
+          thumb.classList.toggle('active', i === index);
+        }
       });
     }
+
+    function createThumbnails() {
+      slides.forEach((slide, i) => {
+        const thumb = document.createElement('div');
+        thumb.classList.add('thumbnail');
+        thumb.textContent = slide.querySelector('h1, h2')?.textContent || `スライド${i+1}`;
+        thumb.addEventListener('click', () => {
+          current = i;
+          showSlide(current);
+        });
+        thumbnailBar.appendChild(thumb);
+      });
+    }
+
+    createThumbnails();
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight') {
@@ -89,10 +149,13 @@
       } else if (e.key === 'Escape') {
         if (document.fullscreenElement) {
           document.exitFullscreen();
+        } else {
+          thumbnailBar.classList.remove('visible');
         }
+      } else if (e.key === 'ArrowDown') {
+        thumbnailBar.classList.toggle('visible');
       }
     });
   </script>
 </body>
-</html>
 </html>
