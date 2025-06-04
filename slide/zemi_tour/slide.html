@@ -183,14 +183,17 @@
   
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const map = L.map('map').setView([34.7055, 135.4971], 14); // 梅田周辺
+      const map = L.map('map').setView([34.7055, 135.4971], 12); // 梅田周辺
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
 
-      L.marker([34.7055, 135.4971]).addTo(map)
+      L.marker([34.706107453037426, 135.49437686564585]).addTo(map)
         .bindPopup('ナレッジキャピタル').openPopup();
+
+      L.marker([34.80615713812469, 135.5290015967708]).addTo(map)
+        .bindPopup('万博 2025').openPopup();
     });
   </script>
 
