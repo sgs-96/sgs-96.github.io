@@ -152,8 +152,10 @@
         } else {
           thumbnailBar.classList.remove('visible');
         }
+      } else if (e.key === 'ArrowUp') {
+        thumbnailBar.classList.add('visible');
       } else if (e.key === 'ArrowDown') {
-        thumbnailBar.classList.toggle('visible');
+        thumbnailBar.classList.remove('visible');
       }
     });
   </script>
