@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <title>ゼミ研修旅行用スライド</title>
+  <link rel="stylesheet" href="slide_style.css" />
+  <style>
+    body {
+      margin: 0;
+      background: #222;
+      color: white;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+
+    .slide {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      padding: 4rem;
+      box-sizing: border-box;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    .thumbnail-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 0.5rem;
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      transform: translateY(100%);
+      transition: transform 0.3s;
+      z-index: 999;
+    }
+
+    .thumbnail-bar.visible {
+      transform: translateY(0);
+    }
+
+    .thumbnail {
+      min-width: 120px;
+      height: 80px;
+      background: #444;
+      border: 2px solid #666;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.8rem;
+      text-align: center;
+      padding: 0.5rem;
+    }
+
+    .thumbnail.active {
+      border-color: yellow;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide active">
+    <h1>ゼミ研修旅行 プレゼン用スライド</h1>
+    <p>目的地</p>
+    <p>概要１</p>
+    <p>概要２</p>
+    <p>日程案</p>
+    <p>予算案</p>
+    <p>まとめ</p>
+  </div>
+
+  <div class="slide">
+    <div class='slide-content'>
+      <div class='slide_text'>
+        <h2>目的地：大阪</h2>
+      <ul>
+        <li>目的地１：大阪万博</li>
+        <li>目的地２：ナレッジキャピタル</li>
+      </ul>
+      </div>
+      <div id='map'></div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <h2>スケジュール（仮）</h2>
+    <table>
+      <tr><th>日程</th><th>内容</th></tr>
+      <tr><td>1日目</td><td>出発 → 宿舎 → 東大寺</td></tr>
+      <tr><td>2日目</td><td>清水寺 → 体験学習 → 夕食会</td></tr>
+      <tr><td>3日目</td><td>班別行動 → 解散</td></tr>
+    </table>
+  </div>
+
+  <div class="slide">
+    <h2>スケジュール（仮）</h2>
+    <table>
+      <tr><th>日程</th><th>内容</th></tr>
+      <tr><td>1日目</td><td>出発 → 宿舎 → 東大寺</td></tr>
+      <tr><td>2日目</td><td>清水寺 → 体験学習 → 夕食会</td></tr>
+      <tr><td>3日目</td><td>班別行動 → 解散</td></tr>
+    </table>
+  </div>
+
+  <div class="slide">
+    <h2>注意事項</h2>
+    <ol>
+      <li>集合時間厳守</li>
+      <li>貴重品管理は自己責任</li>
+      <li>体調不良時はすぐに連絡</li>
+    </ol>
+  </div>
+
+  <div class="slide">
+    <h2>連絡先</h2>
+    <p>〇〇教授 / 連絡先: example@univ.ac.jp</p>
+    <p>引率TA: ta_name@example.com</p>
+  </div>
+
+  <div class="thumbnail-bar" id="thumbnailBar"></div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const thumbnailBar = document.getElementById('thumbnailBar');
+    let current = 0;
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+        const thumb = thumbnailBar.children[i];
+        if (thumb) {
+          thumb.classList.toggle('active', i === index);
+        }
+      });
+    }
+
+    function createThumbnails() {
+      slides.forEach((slide, i) => {
+        const thumb = document.createElement('div');
+        thumb.classList.add('thumbnail');
+        thumb.textContent = slide.querySelector('h1, h2')?.textContent || `スライド${i+1}`;
+        thumb.addEventListener('click', () => {
+          current = i;
+          showSlide(current);
+        });
+        thumbnailBar.appendChild(thumb);
+      });
+    }
+
+    createThumbnails();
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') {
+        current = (current + 1) % slides.length;
+        showSlide(current);
+      } else if (e.key === 'ArrowLeft') {
+        current = (current - 1 + slides.length) % slides.length;
+        showSlide(current);
+      } else if (e.altKey && e.key === 'Enter') {
+        document.documentElement.requestFullscreen();
+      } else if (e.key === 'Escape') {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          thumbnailBar.classList.remove('visible');
+        }
+      } else if (e.key === 'ArrowUp') {
+        thumbnailBar.classList.add('visible');
+      } else if (e.key === 'ArrowDown') {
+        thumbnailBar.classList.remove('visible');
+      }
+    });
+  </script>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const map = L.map('map').setView([34.7055, 135.4971], 14); // 梅田周辺
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      L.marker([34.7055, 135.4971]).addTo(map)
+        .bindPopup('ナレッジキャピタル').openPopup();
+    });
+  </script>
+
+</body>
+</html>
