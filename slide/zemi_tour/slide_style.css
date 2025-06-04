@@ -1,1 +1,15 @@
 
+.slide-content {
+  display: flex;
+  height: 100%;
+}
+
+.slide-text {
+  flex: 1;
+  padding: 2rem;
+}
+
+#map {
+  flex: 2;
+  height: 100%;
+}
