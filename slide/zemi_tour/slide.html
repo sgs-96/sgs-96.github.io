@@ -6,7 +6,6 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <title>ゼミ研修旅行用スライド</title>
-  <link rel="stylesheet" href="slide_style.css" />
   <style>
     body {
       margin: 0;
@@ -26,6 +25,36 @@
 
     .slide.active {
       display: block;
+    }
+
+    .slide-content {
+      display: flex;
+      height: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .slide-text {
+      flex: 1;
+      padding: 2rem;
+      max-width: 40%;
+    }
+
+    .map-wrapper {
+      flex: 1;
+      height: 400px;
+      max-width: 60%;
+      position: relative;
+    }
+
+    #map {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
     }
 
     .thumbnail-bar {
@@ -79,28 +108,18 @@
   </div>
 
   <div class="slide">
-    <div class='slide-content'>
-      <div class='slide_text'>
+    <div class="slide-content">
+      <div class="slide-text">
         <h2>目的地：大阪</h2>
-      <ul>
-        <li>目的地１：大阪万博</li>
-        <li>目的地２：ナレッジキャピタル</li>
-      </ul>
+        <ul>
+          <li>目的地１：大阪万博</li>
+          <li>目的地２：ナレッジキャピタル</li>
+        </ul>
       </div>
-      <div class='map-wrapper'>
-        <div id='map'></div>
+      <div class="map-wrapper">
+        <div id="map"></div>
       </div>
     </div>
-  </div>
-
-  <div class="slide">
-    <h2>スケジュール（仮）</h2>
-    <table>
-      <tr><th>日程</th><th>内容</th></tr>
-      <tr><td>1日目</td><td>出発 → 宿舎 → 東大寺</td></tr>
-      <tr><td>2日目</td><td>清水寺 → 体験学習 → 夕食会</td></tr>
-      <tr><td>3日目</td><td>班別行動 → 解散</td></tr>
-    </table>
   </div>
 
   <div class="slide">
@@ -144,12 +163,10 @@
         }
       });
 
-      if (index === 1) {
+      if (index === 1 && typeof map !== 'undefined') {
         setTimeout(() => {
-          if (typeof map !== 'undefined') {
-            map.invalidataSize();
-          }
-        }, 100);
+          map.invalidateSize();
+        }, 200);
       }
     }
 
@@ -189,28 +206,19 @@
         thumbnailBar.classList.remove('visible');
       }
     });
-  </script>
-  
-  <script>
-    const slides = document.querySelectorAll('.slide');
-    const thumbnailBar = document.getElementById('thumbnailBar');
-    let current = 0;
+
     let map;
-    
+
     document.addEventListener("DOMContentLoaded", () => {
-      const map = L.map('map').setView([34.7055, 135.4971], 7); // 梅田周辺
+      map = L.map('map').setView([34.7055, 135.4971], 12);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
 
-      L.marker([34.706107453037426, 135.49437686564585]).addTo(map)
-        .bindPopup('ナレッジキャピタル');
-
-      L.marker([34.80615713812469, 135.5290015967708]).addTo(map)
-        .bindPopup('万博 2025');
+      L.marker([34.7061, 135.4943]).addTo(map).bindPopup('ナレッジキャピタル');
+      L.marker([34.8061, 135.5290]).addTo(map).bindPopup('万博 2025');
     });
   </script>
-
 </body>
 </html>
