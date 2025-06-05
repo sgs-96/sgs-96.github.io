@@ -146,7 +146,9 @@
 
       if (index === 1) {
         setTimeout(() => {
-          map.invalidataSize();
+          if (typeof map !== 'undefined') {
+            map.invalidataSize();
+          }
         }, 100);
       }
     }
