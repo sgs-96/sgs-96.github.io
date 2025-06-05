@@ -87,7 +87,9 @@
         <li>目的地２：ナレッジキャピタル</li>
       </ul>
       </div>
-      <div id='map' style="height: 300px;"></div>
+      <div class='map-wrapper'>
+        <div id='map'></div>
+      </div>
     </div>
   </div>
 
@@ -188,6 +190,11 @@
   </script>
   
   <script>
+    const slides = document.querySelectorAll('.slide');
+    const thumbnailBar = document.getElementById('thumbnailBar');
+    let current = 0;
+    let map;
+    
     document.addEventListener("DOMContentLoaded", () => {
       const map = L.map('map').setView([34.7055, 135.4971], 7); // 梅田周辺
 
@@ -196,10 +203,10 @@
       }).addTo(map);
 
       L.marker([34.706107453037426, 135.49437686564585]).addTo(map)
-        .bindPopup('ナレッジキャピタル').openPopup();
+        .bindPopup('ナレッジキャピタル');
 
       L.marker([34.80615713812469, 135.5290015967708]).addTo(map)
-        .bindPopup('万博 2025').openPopup();
+        .bindPopup('万博 2025');
     });
   </script>
 
