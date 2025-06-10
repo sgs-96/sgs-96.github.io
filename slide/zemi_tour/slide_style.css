@@ -1,9 +1,10 @@
 body {
   margin: 0;
   font-family: 'Helvetica Neue', sans-serif;
-  background: #f2f2f2;
+  background: #f4f4f4;
   color: #222;
   overflow: hidden;
+  font-size: 20px; /* ベースフォントサイズを大きく */
 }
 
 .slide {
@@ -26,7 +27,17 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-h1, h2 {
+h1 {
+  font-size: 2.6rem;
+  color: #1a1a1a;
+  margin-top: 0;
+  font-weight: 700;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 2rem;
   color: #1a1a1a;
   margin-top: 0;
   font-weight: 600;
@@ -36,12 +47,13 @@ h1, h2 {
 
 ul {
   padding-left: 1.2rem;
-  line-height: 1.6;
+  line-height: 1.8;
   margin-bottom: 1.5rem;
+  font-size: 1.2rem;
 }
 
 li {
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.6rem;
 }
 
 table {
@@ -50,10 +62,11 @@ table {
   margin-top: 1.5rem;
   background: #fff;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  font-size: 1.1rem;
 }
 
 th, td {
-  padding: 0.75rem 1.25rem;
+  padding: 1rem 1.5rem;
   border: 1px solid #ccc;
   text-align: left;
 }
@@ -64,11 +77,12 @@ th, td {
   left: 0;
   right: 0;
   background: #eee;
-  padding: 0.5rem 1rem;
+  padding: 0.7rem 1rem;
   display: none;
   overflow-x: auto;
   white-space: nowrap;
   border-top: 1px solid #ccc;
+  font-size: 1.1rem;
 }
 
 .thumbnail-bar.visible {
@@ -77,7 +91,7 @@ th, td {
 
 .thumbnail {
   background: #ddd;
-  padding: 0.6rem 1rem;
+  padding: 0.6rem 1.2rem;
   margin-right: 0.5rem;
   border-radius: 4px;
   cursor: pointer;
@@ -96,23 +110,23 @@ th, td {
 
 .summary {
   margin-top: 1.5rem;
-  padding: 1.2rem;
+  padding: 1.5rem;
   background: #eef3ff;
   border-left: 6px solid #4a7bd1;
   border-radius: 6px;
+  font-size: 1.2rem;
 }
 
 label {
   display: block;
-  margin: 0.5rem 0;
-  font-size: 1rem;
+  margin: 0.8rem 0;
+  font-size: 1.1rem;
   cursor: pointer;
 }
 
 #total {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: bold;
   color: #006400;
   margin-top: 1rem;
 }
-
