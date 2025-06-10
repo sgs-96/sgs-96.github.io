@@ -1,48 +1,43 @@
 body {
   margin: 0;
   font-family: 'Helvetica Neue', sans-serif;
-  background-color: #f4f4f4;
+  background: #f4f4f4;
+  color: #222;
+  overflow: hidden;
 }
 
 .slide {
   display: none;
-  padding: 2rem;
   height: 100vh;
+  padding: 3rem;
   box-sizing: border-box;
   background: white;
+  overflow-y: auto;
 }
 
 .slide.active {
   display: block;
 }
 
-.slide h1, .slide h2 {
-  margin-top: 0;
+h1, h2 {
   color: #2c3e50;
+  margin-top: 0;
 }
 
-.slide-content {
-  display: flex;
-  gap: 2rem;
+ul {
+  padding-left: 1.2rem;
 }
 
-.slide-text {
-  flex: 1;
-  font-size: 1.2rem;
-}
-
-.map-wrapper {
-  flex: 1;
-  min-width: 300px;
-  min-height: 400px;
-  position: relative;
-}
-
-#map {
+table {
   width: 100%;
-  height: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+th, td {
+  padding: 0.8rem 1rem;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  text-align: left;
 }
 
 .thumbnail-bar {
@@ -50,12 +45,12 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background: #eee;
-  display: none;
+  background: #ddd;
   padding: 0.5rem;
-  gap: 1rem;
+  display: none;
   overflow-x: auto;
   white-space: nowrap;
+  z-index: 1000;
 }
 
 .thumbnail-bar.visible {
@@ -63,37 +58,24 @@ body {
 }
 
 .thumbnail {
-  background: #ccc;
+  background: #bbb;
   padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
   border-radius: 4px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .thumbnail.active {
   background: #2c3e50;
   color: white;
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-  margin-top: 1rem;
-}
-
-th, td {
-  border: 1px solid #999;
-  padding: 0.5rem 1rem;
-  text-align: left;
-}
-
-label {
-  display: block;
-  margin: 0.4rem 0;
-  font-size: 1rem;
-}
-
-#total {
-  font-size: 1.5rem;
   font-weight: bold;
+}
+
+.summary {
   margin-top: 1rem;
+  padding: 1rem;
+  background: #eef;
+  border-left: 6px solid #88a;
+  border-radius: 6px;
 }
