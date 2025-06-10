@@ -3,101 +3,65 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ゼミ研修旅行用スライド</title>
-  <link rel="stylesheet" href="slide_style.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <title>卒業制作：ストリートファイター分析アプリ</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-  <!-- 表紙 -->
   <div class="slide active">
-    <h1>ゼミ研修旅行 プレゼン用スライド</h1>
+    <h1>卒業制作でやりたいこと</h1>
+    <p>ストリートファイター6 を題材にした「総合アプリ（ソフト）」の開発</p>
+  </div>
+
+  <div class="slide">
+    <h2>このゲーム知ってますか？</h2>
+    <p>「ストリートファイター6」は2023年6月2日にカプコンから発売された、人気格闘ゲームシリーズの最新作。</p>
+    <p>キャラクターごとの技やコンボが異なり、<strong>駆け引き</strong>が非常に重要。</p>
+  </div>
+
+  <div class="slide">
+    <h2>本題</h2>
+    <p><strong>ストリートファイターによる、ストリートファイターのための、総合アプリを作りたい。</strong></p>
+  </div>
+
+  <div class="slide">
+    <h2>概要１：プレイヤー向け機能</h2>
     <ul>
-      <li>概要１：大阪万博について</li>
-      <li>概要２：ナレッジキャピタルについて</li>
-      <li>日程案</li>
-      <li>予算案</li>
-      <li>まとめ</li>
+      <li>キャラごとの「コンボ」「セットプレイ」一覧</li>
+      <li>ランク帯ごとの統計的分析</li>
+      <li>簡単なキャラ対策</li>
+      <li>→初心者〜上級者まで、上達の「ヒント」を提供</li>
     </ul>
   </div>
 
-  <!-- 地図付きスライド -->
   <div class="slide">
-    <div class="slide-content">
-      <div class="slide-text">
-        <h2>目的地</h2>
-        <ul>
-          <li>大阪万博</li>
-          <li>ナレッジキャピタル</li>
-        </ul>
-      </div>
-      <div class="map-wrapper">
-        <div id="map"></div>
-      </div>
-    </div>
+    <h2>概要２：自己改善支援機能</h2>
+    <ul>
+      <li>各試合の振り返り機能（自省）</li>
+      <li>練習メニュー管理</li>
+      <li>行動の定着度チェック</li>
+      <li>→PDCAを促進し、自己学習を支援</li>
+    </ul>
   </div>
 
-  <!-- 概要１ -->
   <div class="slide">
-    <h2>大阪万博とは？</h2>
-    <p>2025年に開催予定の国際博覧会。テーマは「いのち輝く未来社会のデザイン」。様々な国のパビリオンや最先端技術の展示が行われる。</p>
+    <h2>現時点の進捗①</h2>
+    <p>Pythonを使い、スクレイピングを実施</p>
+    <p>→現在、<strong>上位750人のデータ</strong>を取得済み</p>
   </div>
 
-  <!-- 概要２ -->
   <div class="slide">
-    <h2>ナレッジキャピタルとは？</h2>
-    <p>グランフロント大阪内にある知的創造拠点。企業、大学、研究機関、個人が連携して未来を創るイノベーション施設。</p>
+    <h2>現時点の進捗②</h2>
+    <p>上位プレイヤーの<strong>行動パターンを統計的に分析</strong></p>
+    <p>→プレイヤーの「強い行動」の共通点を抽出</p>
   </div>
 
-  <!-- 日程案 -->
   <div class="slide">
-    <h2>日程案（仮）</h2>
-    <table>
-      <tr><th>日程</th><th>内容</th></tr>
-      <tr><td>1日目</td><td>出発 → 万博見学 → 宿泊</td></tr>
-      <tr><td>2日目</td><td>ナレッジキャピタル見学 → 体験学習</td></tr>
-      <tr><td>3日目</td><td>自由行動 → 帰宅</td></tr>
-    </table>
-  </div>
-
-  <!-- 予算案 -->
-  <div class="slide">
-    <h2>予算案（選択肢つき）</h2>
-
-    <h3>宿泊先</h3>
-    <label><input type="radio" name="hotel" value="5000"> ホテルA（5,000円）</label>
-    <label><input type="radio" name="hotel" value="7000"> ホテルB（7,000円）</label>
-
-    <h3>移動手段（行き）</h3>
-    <label><input type="radio" name="go" value="14000"> 新幹線（2時間30分 / 14,000円）</label>
-    <label><input type="radio" name="go" value="6000"> 夜行バス（8時間 / 6,000円）</label>
-
-    <h3>移動手段（帰り）</h3>
-    <label><input type="radio" name="return" value="14000"> 新幹線（2時間30分 / 14,000円）</label>
-    <label><input type="radio" name="return" value="6000"> 夜行バス（8時間 / 6,000円）</label>
-
-    <h3>入館料</h3>
-    <label><input type="checkbox" class="fee" value="2500"> 万博入場料（2,500円）</label>
-    <label><input type="checkbox" class="fee" value="1000"> ナレッジキャピタル（1,000円）</label>
-
-    <h3>その他交通費</h3>
-    <label><input type="checkbox" class="fee" value="3000"> 地下鉄・バス等（3,000円）</label>
-
-    <h3>合計金額</h3>
-    <p id="total">0 円</p>
-  </div>
-
-  <!-- まとめ -->
-  <div class="slide">
-    <h2>まとめ</h2>
-    <div class="summary">
-      <ul>
-        <li>実践的な見学（万博・ナレッジキャピタル）</li>
-        <li>班別行動で柔軟な対応</li>
-        <li>選べる予算で柔軟な参加プラン</li>
-      </ul>
-    </div>
+    <h2>今後の展望</h2>
+    <ul>
+      <li>上位750人に限らず、マスター帯全体、ダイヤ帯以下まで拡張</li>
+      <li>自分のデータと比較して「何が足りないか」が分かる</li>
+      <li>→あらゆる層にヒントを与えるアプリへ</li>
+    </ul>
   </div>
 
   <div class="thumbnail-bar" id="thumbnailBar"></div>
@@ -106,7 +70,6 @@
     const slides = document.querySelectorAll('.slide');
     const thumbnailBar = document.getElementById('thumbnailBar');
     let current = 0;
-    let map;
 
     function showSlide(index) {
       slides.forEach((slide, i) => {
@@ -114,10 +77,6 @@
         const thumb = thumbnailBar.children[i];
         if (thumb) thumb.classList.toggle('active', i === index);
       });
-
-      if (index === 1 && map) {
-        setTimeout(() => map.invalidateSize(), 100);
-      }
     }
 
     function createThumbnails() {
@@ -135,36 +94,9 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      map = L.map('map').setView([34.7055, 135.4971], 13);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(map);
-
-      L.marker([34.8061, 135.5290]).addTo(map).bindPopup('万博2025');
-      L.marker([34.7061, 135.4943]).addTo(map).bindPopup('ナレッジキャピタル');
-
       createThumbnails();
       showSlide(current);
-
-      document.querySelectorAll('input').forEach(el => {
-        el.addEventListener('change', updateTotal);
-      });
     });
-
-    function updateTotal() {
-      let total = 0;
-      const hotel = document.querySelector('input[name="hotel"]:checked');
-      const go = document.querySelector('input[name="go"]:checked');
-      const ret = document.querySelector('input[name="return"]:checked');
-      const fees = document.querySelectorAll('input.fee:checked');
-
-      if (hotel) total += parseInt(hotel.value);
-      if (go) total += parseInt(go.value);
-      if (ret) total += parseInt(ret.value);
-      fees.forEach(f => total += parseInt(f.value));
-
-      document.getElementById('total').textContent = `${total.toLocaleString()} 円`;
-    }
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight') {
