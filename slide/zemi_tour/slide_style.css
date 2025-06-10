@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: 'Helvetica Neue', sans-serif;
-  background: #f4f4f4;
+  background: #f2f2f2;
   color: #222;
   overflow: hidden;
 }
@@ -9,33 +9,51 @@ body {
 .slide {
   display: none;
   height: 100vh;
-  padding: 3rem;
+  padding: 4rem 6rem;
   box-sizing: border-box;
-  background: white;
+  background: #ffffff;
   overflow-y: auto;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
 .slide.active {
   display: block;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 h1, h2 {
-  color: #2c3e50;
+  color: #1a1a1a;
   margin-top: 0;
+  font-weight: 600;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
 }
 
 ul {
   padding-left: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+li {
+  margin-bottom: 0.4rem;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  background: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
 }
 
 th, td {
-  padding: 0.8rem 1rem;
+  padding: 0.75rem 1.25rem;
   border: 1px solid #ccc;
   text-align: left;
 }
@@ -45,12 +63,12 @@ th, td {
   bottom: 0;
   left: 0;
   right: 0;
-  background: #ddd;
-  padding: 0.5rem;
+  background: #eee;
+  padding: 0.5rem 1rem;
   display: none;
   overflow-x: auto;
   white-space: nowrap;
-  z-index: 1000;
+  border-top: 1px solid #ccc;
 }
 
 .thumbnail-bar.visible {
@@ -58,24 +76,43 @@ th, td {
 }
 
 .thumbnail {
-  background: #bbb;
-  padding: 0.5rem 1rem;
+  background: #ddd;
+  padding: 0.6rem 1rem;
   margin-right: 0.5rem;
   border-radius: 4px;
   cursor: pointer;
-  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.thumbnail:hover {
+  background: #bbb;
 }
 
 .thumbnail.active {
-  background: #2c3e50;
+  background: #333;
   color: white;
   font-weight: bold;
 }
 
 .summary {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: #eef;
-  border-left: 6px solid #88a;
+  margin-top: 1.5rem;
+  padding: 1.2rem;
+  background: #eef3ff;
+  border-left: 6px solid #4a7bd1;
   border-radius: 6px;
 }
+
+label {
+  display: block;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#total {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #006400;
+  margin-top: 1rem;
+}
+
