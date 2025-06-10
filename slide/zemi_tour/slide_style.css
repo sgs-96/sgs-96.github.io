@@ -130,3 +130,12 @@ label {
   color: #006400;
   margin-top: 1rem;
 }
+
+.slide_image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 2rem auto;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
