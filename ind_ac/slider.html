@@ -4,29 +4,38 @@
   <meta charset="utf-8">
   <title>カーリース×地方活性化 試算ツール（簡易版）</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="slider.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
     <h1>カーリース × 地方活性化 試算シミュレーター</h1>
-    <p>スライダーと入力欄を調整して、損益と協賛誘因を試算</p>
+    <p>リース・協賛の条件を調整して、損益と協賛誘因を即時計算</p>
   </header>
 
   <main>
+    <section class="panel formula">
+      <h2>計算式</h2>
+      <div class="formula-box">
+        <p><strong>事業収益：</strong>  
+        収益 ＝ ( 協賛単価 × 協賛団体数 ＋ リース単価 × リース利用数 ) − ( 車両調達・保有コスト ＋ 雑費 )</p>
+        <p><strong>協賛企業の誘因：</strong>  
+        誘因 ＝ 経済効果 − 協賛単価</p>
+      </div>
+    </section>
+
     <section class="panel">
       <h2>スライダーで調整</h2>
       <div class="grid">
-
         <label>
           <span>リース単価（円／月）</span>
           <input type="range" id="pL" min="5000" max="40000" step="1000" value="18000">
-          <output id="pL_out">18000</output>
+          <output id="pL_out">18,000</output>
         </label>
 
         <label>
           <span>協賛単価（円／社）</span>
           <input type="range" id="pS" min="50000" max="2000000" step="50000" value="300000">
-          <output id="pS_out">300000</output>
+          <output id="pS_out">300,000</output>
         </label>
 
         <label>
@@ -34,7 +43,6 @@
           <input type="range" id="NS" min="0" max="50" step="1" value="10">
           <output id="NS_out">10</output>
         </label>
-
       </div>
     </section>
 
@@ -66,11 +74,11 @@
     <section class="panel result">
       <h2>計算結果</h2>
       <div class="result-grid">
-        <div>
+        <div class="result-card">
           <h3>事業収益（円／月）</h3>
           <div class="value" id="profit_view">—</div>
         </div>
-        <div>
+        <div class="result-card">
           <h3>協賛企業の誘因（円／社）</h3>
           <div class="value" id="incentive_view">—</div>
         </div>
@@ -103,8 +111,8 @@
       get('profit_view').textContent=fmt(Math.round(profit));
       get('incentive_view').textContent=fmt(Math.round(incentive));
 
-      get('profit_view').style.color=profit>=0?'#4caf50':'#f44336';
-      get('incentive_view').style.color=incentive>=0?'#4caf50':'#f44336';
+      get('profit_view').style.color=profit>=0?'#2ecc71':'#e74c3c';
+      get('incentive_view').style.color=incentive>=0?'#2ecc71':'#e74c3c';
     };
 
     ['pL','pS','NS'].forEach(id=>{
@@ -124,4 +132,3 @@
   </script>
 </body>
 </html>
-
