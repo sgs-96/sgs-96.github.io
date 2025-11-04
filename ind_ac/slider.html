@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <title>カーリース×地方活性 サンドボックス</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <h1>カーリース×地方活性 サンドボックス</h1>
+  <p class="subtitle">各数値をスライダーで調整し、損益・経済効果・協賛誘因を即時計算</p>
+</header>
+
+<main class="container">
+  <section class="card">
+    <h2>前提・需要側（学生）</h2>
+    <div class="grid">
+      <label class="field">
+        <span>リース単価 p<sub>L</sub>（円/月）</span>
+        <input type="range" id="pL" min="3000" max="40000" step="500" value="18000" />
+        <output for="pL" id="pL_out">18,000</output>
+      </label>
+      <label class="field">
+        <span>リース利用者数 N<sub>U</sub>（人）</span>
+        <input type="range" id="NU" min="10" max="2000" step="10" value="200" />
+        <output for="NU" id="NU_out">200</output>
+      </label>
+      <label class="field">
+        <span>1人あたり月訪問回数 t（回/月）</span>
+        <input type="range" id="t" min="0" max="8" step="0.5" value="2" />
+        <output for="t" id="t_out">2.0</output>
+      </label>
+      <label class="field">
+        <span>1回あたり現地消費 s（円/回）</span>
+        <input type="range" id="s" min="500" max="20000" step="500" value="8000" />
+        <output for="s" id="s_out">8,000</output>
+      </label>
+      <label class="field">
+        <span>地域乗数 m</span>
+        <input type="range" id="m" min="1.0" max="2.0" step="0.05" value="1.5" />
+        <output for="m" id="m_out">1.50</output>
+      </label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>協賛・価格</h2>
+    <div class="grid">
+      <label class="field">
+        <span>協賛単価 p<sub>S</sub>（円/社・月）</span>
+        <input type="range" id="pS" min="50000" max="2000000" step="50000" value="300000" />
+        <output for="pS" id="pS_out">300,000</output>
+      </label>
+      <label class="field">
+        <span>協賛団体数 N<sub>S</sub>（社）</span>
+        <input type="range" id="NS" min="0" max="100" step="1" value="10" />
+        <output for="NS" id="NS_out">10</output>
+      </label>
+
+      <label class="field">
+        <span>協賛の捕捉率 β（民間の取り込み割合）</span>
+        <input type="range" id="beta" min="0" max="1" step="0.01" value="0.25" />
+        <output for="beta" id="beta_out">0.25</output>
+      </label>
+      <label class="field">
+        <span>割引係数 δ（将来便益の現在価値）</span>
+        <input type="range" id="delta" min="0.6" max="1" step="0.01" value="1.00" />
+        <output for="delta" id="delta_out">1.00</output>
+      </label>
+      <label class="field">
+        <span>自社寄与率 α（民間）</span>
+        <input type="range" id="alpha" min="0" max="1" step="0.05" value="1.00" />
+        <output for="alpha" id="alpha_out">1.00</output>
+      </label>
+      <label class="field">
+        <span>地方税収率 τ（自治体向け参考）</span>
+        <input type="range" id="tau" min="0" max="0.2" step="0.005" value="0.02" />
+        <output for="tau" id="tau_out">0.020</output>
+      </label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>供給・コスト</h2>
+    <div class="grid">
+      <label class="field">
+        <span>車両月次コスト c<sub>V</sub>（保険/整備/償却, 円/台・月）</span>
+        <input type="range" id="cV" min="10000" max="80000" step="1000" value="35000" />
+        <output for="cV" id="cV_out">35,000</output>
+      </label>
+
+      <label class="field">
+        <span>ユーザー月間利用時間 H<sub>u</sub>（h/人・月）</span>
+        <input type="range" id="Hu" min="2" max="60" step="1" value="20" />
+        <output for="Hu" id="Hu_out">20</output>
+      </label>
+      <label class="field">
+        <span>車両提供可能時間 H<sub>v</sub>（h/台・月）</span>
+        <input type="range" id="Hv" min="50" max="400" step="10" value="200" />
+        <output for="Hv" id="Hv_out">200</output>
+      </label>
+      <label class="field">
+        <span>稼働率 u</span>
+        <input type="range" id="u" min="0.2" max="1.0" step="0.05" value="0.6" />
+        <output for="u" id="u_out">0.60</output>
+      </label>
+
+      <label class="field">
+        <span>アプリ運用 O<sub>app</sub>（円/月）</span>
+        <input type="range" id="Oapp" min="0" max="3000000" step="50000" value="1000000" />
+        <output for="Oapp" id="Oapp_out">1,000,000</output>
+      </label>
+      <label class="field">
+        <span>運営費 O<sub>ops</sub>（CS/審査/法務, 円/月）</span>
+        <input type="range" id="Oops" min="0" max="2000000" step="50000" value="300000" />
+        <output for="Oops" id="Oops_out">300,000</output>
+      </label>
+      <label class="field">
+        <span>マーケ Mkt（円/月）</span>
+        <input type="range" id="Mkt" min="0" max="2000000" step="50000" value="300000" />
+        <output for="Mkt" id="Mkt_out">300,000</output>
+      </label>
+      <label class="field">
+        <span>期待事故損失 E[Loss]（円/月）</span>
+        <input type="range" id="Loss" min="0" max="2000000" step="50000" value="0" />
+        <output for="Loss" id="Loss_out">0</output>
+      </label>
+
+      <label class="field">
+        <span>副収益 R<sub>aux</sub>（広告/成果報酬等, 円/月）</span>
+        <input type="range" id="Raux" min="0" max="3000000" step="50000" value="0" />
+        <output for="Raux" id="Raux_out">0</output>
+      </label>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="presets">
+      <button type="button" data-preset="conservative">慎重ケース</button>
+      <button type="button" data-preset="base">中位ケース</button>
+      <button type="button" data-preset="optimistic">楽観ケース</button>
+      <button type="button" id="resetBtn">リセット</button>
+    </div>
+    <h2>計算結果</h2>
+    <div class="results-grid">
+      <div class="kpi">
+        <div class="kpi-label">必要車両台数 N<sub>V</sub></div>
+        <div class="kpi-value" id="NV_view">—</div>
+        <div class="kpi-note">= ceil( N<sub>U</sub>×H<sub>u</sub> / (H<sub>v</sub>×u) )</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">地域経済効果 E（円/月）</div>
+        <div class="kpi-value" id="E_view">—</div>
+        <div class="kpi-note">= N<sub>U</sub>×t×s×m</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">運営 収益合計（円/月）</div>
+        <div class="kpi-value" id="Rev_view">—</div>
+        <div class="kpi-note">= p<sub>S</sub>×N<sub>S</sub> + p<sub>L</sub>×N<sub>U</sub> + R<sub>aux</sub></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">運営 費用合計（円/月）</div>
+        <div class="kpi-value" id="Cost_view">—</div>
+        <div class="kpi-note">= c<sub>V</sub>×N<sub>V</sub> + O<sub>app</sub> + O<sub>ops</sub> + Mkt + E[Loss]</div>
+      </div>
+      <div class="kpi kpi-emph">
+        <div class="kpi-label">運営 利益 Π（円/月）</div>
+        <div class="kpi-value" id="Profit_view">—</div>
+        <div class="kpi-note">= 収益 − 費用</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">協賛誘因（民間 1社）I<sub>private</sub></div>
+        <div class="kpi-value" id="Ipriv_view">—</div>
+        <div class="kpi-note">= β×E×δ×α − p<sub>S</sub></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">協賛誘因（自治体）I<sub>muni</sub></div>
+        <div class="kpi-value" id="Imuni_view">—</div>
+        <div class="kpi-note">= τ×E − p<sub>S</sub></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card note">
+    <details>
+      <summary>式のメモ（実務で拡張すべき点）</summary>
+      <ul>
+        <li>価格弾力性・季節変動・大学カレンダーで N<sub>U</sub> をモデル化（需要）</li>
+        <li>保険料＝期待損失＋α（安全講習で q を下げる）</li>
+        <li>車両台数は長期休暇時のみ増車（短期サブリース）で c<sub>V</sub> 平準化</li>
+        <li>協賛は「β（捕捉率）」の根拠資料（POS/回遊導線）で説得力を担保</li>
+      </ul>
+    </details>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <small>© Sandbox for seminar discussion</small>
+</footer>
+
+<script>
+  // ユーティリティ
+  const fmt = (n) => n.toLocaleString("ja-JP");
+  const get = (id) => document.getElementById(id);
+
+  const inputs = [
+    "pL","NU","t","s","m",
+    "pS","NS","beta","delta","alpha","tau",
+    "cV","Hu","Hv","u","Oapp","Oops","Mkt","Loss","Raux"
+  ];
+
+  const defaults = {
+    pL:18000, NU:200, t:2, s:8000, m:1.5,
+    pS:300000, NS:10, beta:0.25, delta:1.0, alpha:1.0, tau:0.02,
+    cV:35000, Hu:20, Hv:200, u:0.6, Oapp:1000000, Oops:300000, Mkt:300000, Loss:0, Raux:0
+  };
+
+  const presets = {
+    conservative: {
+      pL:15000, NU:120, t:1.5, s:6000, m:1.2,
+      pS:200000, NS:6, beta:0.15, delta:0.95, alpha:0.7, tau:0.015,
+      cV:40000, Hu:18, Hv:180, u:0.55, Oapp:1200000, Oops:400000, Mkt:350000, Loss:200000, Raux:0
+    },
+    base: { ...defaults },
+    optimistic: {
+      pL:20000, NU:350, t:2.5, s:9000, m:1.6,
+      pS:400000, NS:15, beta:0.35, delta:1.0, alpha:1.0, tau:0.025,
+      cV:32000, Hu:22, Hv:220, u:0.7, Oapp:900000, Oops:280000, Mkt:250000, Loss:100000, Raux:300000
+    }
+  };
+
+  function bindOutputs() {
+    inputs.forEach(id => {
+      const el = get(id);
+      const out = get(id + "_out");
+      const sync = () => {
+        const val = (id==="u"||id==="m"||id==="beta"||id==="delta"||id==="alpha"||id==="tau"||id==="t")
+          ? Number(el.value).toFixed((id==="t")?1:(id==="tau"?3: (id==="m"?2:2)))
+          : Math.round(Number(el.value));
+        out.textContent = (id==="u"||id==="m"||id==="beta"||id==="delta"||id==="alpha"||id==="tau"||id==="t")
+          ? val
+          : fmt(Number(val));
+        calc();
+      };
+      el.addEventListener("input", sync);
+      sync();
+    });
+  }
+
+  function readVals() {
+    const v = {};
+    inputs.forEach(id => v[id] = Number(get(id).value));
+    return v;
+  }
+
+  function calc() {
+    const v = readVals();
+
+    // 必要車両台数 N_V
+    const NV = Math.max(0, Math.ceil( (v.NU * v.Hu) / (v.Hv * v.u || 1) ));
+
+    // 地域経済効果 E
+    const E = v.NU * v.t * v.s * v.m;
+
+    // 収益と費用
+    const revenue = v.pS * v.NS + v.pL * v.NU + v.Raux;
+    const cost = v.cV * NV + v.Oapp + v.Oops + v.Mkt + v.Loss;
+    const profit = revenue - cost;
+
+    // 協賛誘因
+    const I_private = v.beta * E * v.delta * v.alpha - v.pS;
+    const I_muni    = v.tau  * E - v.pS;
+
+    // 表示
+    get("NV_view").textContent     = fmt(NV);
+    get("E_view").textContent      = fmt(Math.round(E));
+    get("Rev_view").textContent    = fmt(Math.round(revenue));
+    get("Cost_view").textContent   = fmt(Math.round(cost));
+    get("Profit_view").textContent = fmt(Math.round(profit));
+    get("Ipriv_view").textContent  = fmt(Math.round(I_private));
+    get("Imuni_view").textContent  = fmt(Math.round(I_muni));
+
+    // KPI色分け
+    document.querySelectorAll(".kpi .kpi-value").forEach(n => n.parentElement.classList.remove("pos","neg"));
+    if (profit >= 0) get("Profit_view").parentElement.classList.add("pos");
+    else get("Profit_view").parentElement.classList.add("neg");
+
+    if (I_private >= 0) get("Ipriv_view").parentElement.classList.add("pos");
+    else get("Ipriv_view").parentElement.classList.add("neg");
+
+    if (I_muni >= 0) get("Imuni_view").parentElement.classList.add("pos");
+    else get("Imuni_view").parentElement.classList.add("neg");
+  }
+
+  function applyPreset(name) {
+    const v = presets[name];
+    Object.keys(v).forEach(k => {
+      get(k).value = v[k];
+      const out = get(k + "_out");
+      if (out) {
+        if (["u","m","beta","delta","alpha","tau","t"].includes(k)) {
+          out.textContent = Number(v[k]).toFixed((k==="t")?1:(k==="tau"?3:(k==="m"?2:2)));
+        } else {
+          out.textContent = fmt(v[k]);
+        }
+      }
+    });
+    calc();
+  }
+
+  function resetAll() {
+    applyPreset("base");
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    bindOutputs();
+    document.querySelectorAll("[data-preset]").forEach(btn => {
+      btn.addEventListener("click", () => applyPreset(btn.dataset.preset));
+    });
+    get("resetBtn").addEventListener("click", resetAll);
+    calc();
+  });
+</script>
+</body>
+</html>
