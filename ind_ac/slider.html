@@ -17,7 +17,7 @@
       <h2>計算式</h2>
       <div class="formula-box">
         <p><strong>事業収益：</strong>  
-        収益 ＝ ( 協賛単価 × 協賛団体数 ＋ リース単価 × リース利用数 ) − ( 車両調達・保有コスト ＋ 雑費 )</p>
+        収益 ＝ ( 協賛単価 × 協賛団体数 ＋ リース単価 × リース利用数 ) − ( 車両調達・保有コスト ×　リース利用数 ＋ 雑費 )</p>
         <p><strong>協賛企業の誘因：</strong>  
         誘因 ＝ 経済効果 / 協賛団体数 − 協賛単価</p>
       </div>
@@ -102,7 +102,7 @@
 
       // 収益 = (pS×NS + pL×NU) − (cV + Z)
       const revenue=(v.pS*v.NS)+(v.pL*v.NU);
-      const cost=v.cV+v.Z;
+      const cost=v.cV*v.NU+v.Z;
       const profit=revenue-cost;
 
       // 協賛誘因 = (v.E / v.NS) - v.pS
@@ -132,6 +132,7 @@
   </script>
 </body>
 </html>
+
 
 
 
