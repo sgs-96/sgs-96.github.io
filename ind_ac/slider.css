@@ -1,0 +1,42 @@
+:root{
+  --bg:#0f1115;
+  --card:#151821;
+  --muted:#8b93a7;
+  --text:#e6e9f2;
+  --acc:#7aa2f7;
+  --pos:#1db954;
+  --neg:#ff5d5d;
+  --border:#262a36;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif}
+.site-header{padding:24px 16px 8px;text-align:center}
+h1{margin:0 0 4px;font-size:1.6rem;letter-spacing:.02em}
+.subtitle{margin:0;color:var(--muted);font-size:.95rem}
+.container{max-width:1100px;margin:0 auto;padding:16px;display:grid;gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
+.card h2{margin:0 0 12px;font-size:1.1rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.field{display:grid;gap:6px;padding:10px;border:1px dashed var(--border);border-radius:12px;background:rgba(255,255,255,.02)}
+.field span{font-size:.92rem;color:var(--muted)}
+.field input[type="range"]{width:100%}
+.field output{justify-self:end;font-variant-numeric:tabular-nums;background:#0c0e13;border:1px solid var(--border);padding:2px 8px;border-radius:8px;color:var(--acc);min-width:80px;text-align:right}
+
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+button{background:#1a2030;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 12px;cursor:pointer}
+button:hover{border-color:#3a4154}
+
+.results-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.kpi{background:#101421;border:1px solid var(--border);border-radius:12px;padding:12px;display:grid;gap:6px}
+.kpi-label{color:var(--muted);font-size:.9rem}
+.kpi-value{font-size:1.4rem;font-variant-numeric:tabular-nums}
+.kpi-note{color:#6f7892;font-size:.8rem}
+.kpi-emph{border-width:2px}
+.kpi.pos{border-color:rgba(29,185,84,.6)}
+.kpi.neg{border-color:rgba(255,93,93,.6)}
+.kpi.pos .kpi-value{color:var(--pos)}
+.kpi.neg .kpi-value{color:var(--neg)}
+
+.note summary{cursor:pointer;color:var(--acc)}
+.site-footer{padding:16px;text-align:center;color:var(--muted)}
