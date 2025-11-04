@@ -2,31 +2,25 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <title>カーリース×地方活性化 簡易試算ツール</title>
+  <title>カーリース×地方活性化 試算ツール（簡易版）</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="slider.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
     <h1>カーリース × 地方活性化 試算シミュレーター</h1>
-    <p>スライダーを動かして、事業収益と協賛誘因の変化を確認</p>
+    <p>スライダーと入力欄を調整して、損益と協賛誘因を試算</p>
   </header>
 
   <main>
     <section class="panel">
-      <h2>主要パラメータ</h2>
+      <h2>スライダーで調整</h2>
       <div class="grid">
 
         <label>
           <span>リース単価（円／月）</span>
           <input type="range" id="pL" min="5000" max="40000" step="1000" value="18000">
           <output id="pL_out">18000</output>
-        </label>
-
-        <label>
-          <span>リース利用者数（人）</span>
-          <input type="range" id="NU" min="10" max="1000" step="10" value="200">
-          <output id="NU_out">200</output>
         </label>
 
         <label>
@@ -45,20 +39,20 @@
     </section>
 
     <section class="panel">
-      <h2>固定値（手動入力）</h2>
+      <h2>数値を直接入力</h2>
       <div class="grid small">
         <label>
-          <span>車両調達・保有コスト（円／台・月）</span>
-          <input type="number" id="cV" value="35000">
+          <span>リース利用数（人）</span>
+          <input type="number" id="NU" value="200">
         </label>
 
         <label>
-          <span>車両台数</span>
-          <input type="number" id="NV" value="30">
+          <span>車両調達・保有コスト（円／月）</span>
+          <input type="number" id="cV" value="1050000">
         </label>
 
         <label>
-          <span>雑費（アプリ運用・事務等, 円／月）</span>
+          <span>雑費（運営費・アプリ費など, 円／月）</span>
           <input type="number" id="Z" value="1000000">
         </label>
 
@@ -92,15 +86,15 @@
     const fmt = (n)=>n.toLocaleString('ja-JP');
     const get=(id)=>document.getElementById(id);
 
-    const vars=['pL','NU','pS','NS','cV','NV','Z','E'];
+    const vars=['pL','NU','pS','NS','cV','Z','E'];
 
     const calc=()=>{
       const v={};
       vars.forEach(k=>v[k]=Number(get(k).value));
 
-      // 収益 = (pS×NS + pL×NU) − (cV×NV + Z)
+      // 収益 = (pS×NS + pL×NU) − (cV + Z)
       const revenue=(v.pS*v.NS)+(v.pL*v.NU);
-      const cost=(v.cV*v.NV)+v.Z;
+      const cost=v.cV+v.Z;
       const profit=revenue-cost;
 
       // 協賛誘因 = E − pS
@@ -109,13 +103,11 @@
       get('profit_view').textContent=fmt(Math.round(profit));
       get('incentive_view').textContent=fmt(Math.round(incentive));
 
-      // 色分け
       get('profit_view').style.color=profit>=0?'#4caf50':'#f44336';
       get('incentive_view').style.color=incentive>=0?'#4caf50':'#f44336';
     };
 
-    // スライダーの動的更新
-    ['pL','NU','pS','NS'].forEach(id=>{
+    ['pL','pS','NS'].forEach(id=>{
       const el=get(id);
       const out=get(id+'_out');
       el.addEventListener('input',()=>{
@@ -124,7 +116,7 @@
       });
     });
 
-    ['cV','NV','Z','E'].forEach(id=>{
+    ['NU','cV','Z','E'].forEach(id=>{
       get(id).addEventListener('input',calc);
     });
 
