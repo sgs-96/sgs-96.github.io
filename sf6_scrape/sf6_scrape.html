@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>Street Fighter 6 マスターランクランキング データ取得の仕組み</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      margin: 2rem;
+      max-width: 980px;
+    }
+    h1, h2, h3 {
+      border-left: 4px solid #333;
+      padding-left: 0.5rem;
+    }
+    pre {
+      background: #f5f5f5;
+      padding: 0.75rem 1rem;
+      overflow-x: auto;
+      font-size: 0.9rem;
+    }
+    code {
+      font-family: Consolas, Menlo, Monaco, monospace;
+    }
+    ul {
+      padding-left: 1.5rem;
+    }
+    .note {
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .small {
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Street Fighter 6 マスターランクランキング データ取得の仕組み</h1>
+
+<p>
+  このページでは、Street Fighter 6 公式サイト BUCKLER に公開されている
+  <strong>マスターランクランキング</strong>を対象に、Python と Selenium を用いて
+  ランキングデータを収集し、分析用の CSV データにまとめる仕組みを説明します。
+</p>
+
+<p class="note">
+  ※ 個人の学習・研究目的での利用を前提としています。<br />
+  ※ 公式サイトの利用規約やサーバー負荷には十分配慮し、過度なアクセスは行わない設計としています。
+</p>
+
+<hr />
+
+<h2>1. 目的と全体像</h2>
+
+<ul>
+  <li>BUCKLER マスターランクランキングから、以下の情報を取得する：</li>
+  <ul>
+    <li>順位</li>
+    <li>プレイヤー名</li>
+    <li>使用キャラクター</li>
+    <li>MR（Master Rating）</li>
+    <li>ユーザーID（プロフィール URL から抽出）</li>
+  </ul>
+  <li>取得したデータを CSV 化し、Python / pandas を用いた分析に利用する。</li>
+  <li>MR 帯ごとの分布、キャラ使用率、特定キャラ（例：サガット）の帯別人数などを可視化する基盤を作る。</li>
+</ul>
+
+<p>実装は次の 4 ステップで構成されています。</p>
+
+<ol>
+  <li>ログインセッションから Cookie を保存</li>
+  <li>ランキング総ページ数を取得し、MR 帯ごとにページ範囲を推定</li>
+  <li>全体 or キャラ別のランキングをページ数指定でスクレイピング</li>
+  <li>特定キャラ・特定ページ範囲の詳細取得</li>
+</ol>
+
+<hr />
+
+<h2>2. ログインセッションの Cookie 保存</h2>
+
+<p>
+  BUCKLER のランキングはログイン済みセッションを前提としているため、
+  まずはブラウザで手動ログインし、そのセッション情報（Cookie）を保存します。
+</p>
+
+<pre><code>from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+import json
+import time
+
+# 1. 手動ログイン用のブラウザを起動
+options = webdriver.ChromeOptions()
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
+                          options=options)
+
+# 2. BUCKLER ランキングにアクセスして手動ログイン
+driver.get("https://www.streetfighter.com/6/buckler/ja-jp/ranking/master")
+print("🔑 ブラウザでログインしてください（30秒待機）")
+time.sleep(30)
+
+# 3. Cookie を保存
+cookies = driver.get_cookies()
+with open("cookies.json", "w", encoding="utf-8") as f:
+    json.dump(cookies, f, indent=2, ensure_ascii=False)
+
+driver.quit()
+</code></pre>
+
+<p class="small">
+  一度 <code>cookies.json</code> を作成すれば、以降のスクレイピングでは自動的に Cookie を読み込んでログイン状態を再現します。
+</p>
+
+<hr />
+
+<h2>3. ランキング総ページ数と MR 帯のページ推定</h2>
+
+<h3>3-1. 総ページ数の取得</h3>
+
+<p>
+  ランキングの総ページ数を取得し、後の処理で「どこまでスクレイプするか」を決めるベースにします。
+</p>
+
+<pre><code>from selenium.webdriver.common.by import By
+import re
+import time
+
+driver.get("https://www.streetfighter.com/6/buckler/ja-jp/ranking/master")
+time.sleep(3)
+
+try:
+    last_page_element = driver.find_element(By.CLASS_NAME,
+                                            "ranking_ranking_now__last__oqSXS")
+    last_page_text = last_page_element.text.strip()
+    match = re.search(r"\d+", last_page_text)
+    if match:
+        total_pages = int(match.group())
+        print(f"ランキングの総ページ数: {total_pages}")
+    else:
+        print("ページ番号の抽出に失敗しました")
+except Exception as e:
+    print(f"最終ページ要素の取得に失敗: {e}")
+</code></pre>
+
+<h3>3-2. MR 帯ごとのページ範囲推定</h3>
+
+<p>
+  事前に集計した <strong>MR 帯ごとの割合</strong> を使い、ランキング上でおおよそどのページがどの MR 帯に対応しているかを推定します。
+</p>
+
+<pre><code>mr_distribution = {
+    "~999": 0.1321,
+    "1000~1099": 0.1318,
+    "1100~1199": 0.1307,
+    "1200~1299": 0.1271,
+    "1300~1399": 0.1180,
+    "1400~1499": 0.1007,
+    "1501~1599": 0.0661,  # MR1500 除外済み
+    "1600~1699": 0.0328,
+    "1700~1799": 0.0171,
+    "1800~1899": 0.0085,
+    "1900~1999": 0.0040,
+    "2000~2099": 0.0020,
+    "2100~2199": 0.0008,
+    "2200~2299": 0.0004,
+    "2300~2399": 0.00008,
+    "2400~2499": 0.00002,
+}
+
+estimated_ranges = {}
+current_start = 1
+
+for mr_range, ratio in sorted(mr_distribution.items(),
+                              key=lambda x: -int(re.search(r'\d+', x[0]).group())):
+    pages = int(round(total_pages * ratio))
+    start_page = current_start
+    end_page = current_start + pages - 1
+    estimated_ranges[mr_range] = {
+        "ページ数": pages,
+        "開始ページ": start_page,
+        "終了ページ": end_page
+    }
+    current_start += pages
+
+print("MR 帯ごとのページ範囲（例）:")
+for mr, info in estimated_ranges.items():
+    print(f"MR {mr}: {info['ページ数']} ページ（{info['開始ページ']}〜{info['終了ページ']}）")
+</code></pre>
+
+<p class="small">
+  これにより、例えば「MR 2000〜2099 帯だけ欲しいので、その周辺ページを重点的に取得する」といったことが可能になります。
+</p>
+
+<hr />
+
+<h2>4. 全体 or キャラ別ランキングの取得（ページ数指定）</h2>
+
+<p>
+  ここからが本格的なスクレイピング処理です。  
+  まずは「先頭から n ページ分だけ」取得するシンプルな版です。
+</p>
+
+<h3>4-1. キャラクター指定ロジック</h3>
+
+<pre><code>character_name = None  # None の場合は全キャラ
+character_id_map = {
+    "リュウ": "ryu",
+    "ケン": "ken",
+    "ルーク": "luke",
+    "春麗": "chunli",
+    "ジェイミー": "jamie",
+    "マノン": "manon",
+    "キンバリー": "kimberly",
+    "ジュリ": "juri",
+    "JP": "jp",
+    "マリーザ": "marisa",
+    "キャミィ": "cammy",
+    "ディージェイ": "deejay",
+    "ザンギエフ": "zangief",
+    "ガイル": "guile",
+    "ブランカ": "blanka",
+    "エドモンド本田": "ehonda",
+    "ダルシム": "dhalsim",
+    "リリー": "lily",
+    "ラシード": "rashid",
+    "A.K.I.": "aki",
+    "エド": "ed",
+    "豪鬼": "akuma",
+    "ベガ": "vega",
+    "舞": "mai",
+    "テリー": "terry",
+    "エレナ": "elena",
+    "サガット": "sagat"
+}
+character_id = character_id_map.get(character_name) if character_name else None
+</code></pre>
+
+<h3>4-2. Cookie 読み込みとランキング URL 生成</h3>
+
+<pre><code>from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+import json
+import time
+
+options = webdriver.ChromeOptions()
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
+                          options=options)
+
+# 先にドメインにアクセスしてから Cookie を投入
+driver.get("https://www.streetfighter.com/")
+time.sleep(2)
+
+with open("cookies.json", "r", encoding="utf-8") as f:
+    cookies = json.load(f)
+
+for cookie in cookies:
+    if "sameSite" in cookie:
+        del cookie["sameSite"]
+    driver.add_cookie(cookie)
+
+base_url = "https://www.streetfighter.com/6/buckler/ja-jp/ranking/master"
+if character_id:
+    url = f"{base_url}?character_filter=4&character_id={character_id}&page=1&season_type=1"
+else:
+    url = f"{base_url}?page=1&season_type=1"
+
+driver.get(url)
+time.sleep(5)
+</code></pre>
+
+<h3>4-3. 1ページごとのデータ抽出</h3>
+
+<pre><code>from selenium.webdriver.common.by import By
+import re
+import pandas as pd
+
+data = []
+current_page = 0
+max_pages = 1  # 取得したいページ数（例では 1）
+
+while current_page &lt; max_pages:
+    # スクロールして遅延読み込み対策
+    for _ in range(3):
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(1)
+
+    names = driver.find_elements(By.CLASS_NAME, "ranking_name__El29_")
+    ratings = driver.find_elements(By.CLASS_NAME, "ranking_time__teMP4")
+    characters = driver.find_elements(By.CSS_SELECTOR, "div.ranking_character__WoGAX img[alt]")
+    profile_links = driver.find_elements(By.CSS_SELECTOR, 'a[href*="/profile/"]')
+
+    ids_only = [re.search(r'/profile/(\\d+)', link.get_attribute("href")).group(1)
+                for link in profile_links if re.search(r'/profile/(\\d+)', link.get_attribute("href"))]
+    ids_only = ids_only[3:]  # 先頭の不要なリンクをスキップ
+
+    idx = 0
+    for i in range(len(names)):
+        try:
+            name = names[i].text.strip()
+            if name == "EROICA_2040c":
+                continue  # 特定ユーザーを除外する例
+
+            rating_text = ratings[i].text
+            rank_match = re.search(r"(\\d+)位", rating_text)
+            mr_match = re.search(r"(\\d+)MR", rating_text)
+            character = characters[i].get_attribute("alt").strip()
+
+            user_id = ids_only[idx] if idx &lt; len(ids_only) else None
+            idx += 1
+
+            data.append({
+                "順位": int(rank_match.group(1)) if rank_match else None,
+                "名前": name,
+                "キャラクター": character,
+                "MR": int(mr_match.group(1)) if mr_match else None,
+                "ユーザーID": user_id
+            })
+        except Exception as e:
+            print(f"データ処理エラー(index={i}): {e}")
+            continue
+
+    current_page += 1
+    # ここで「次へ」ボタンを押してページ送り（省略）
+</code></pre>
+
+<p class="small">
+  最後に <code>pandas.DataFrame</code> に変換し、キャラ別などでファイル名を分けて CSV に出力します。
+</p>
+
+<hr />
+
+<h2>5. 特定キャラ・特定ページ範囲の取得（サガット例）</h2>
+
+<p>
+  より細かく、「サガットの 1〜15 ページだけ」を取るバージョンです。
+  ページ番号も一緒に記録し、後で「どのページ帯のサガットか」を分析しやすくしています。
+</p>
+
+<pre><code>character_name = 'サガット'
+character_id = character_id_map.get(character_name)
+
+start_page = 1
+end_page = 15  # 0 を指定すると最終ページまで
+
+# ...（Cookie 読み込みは同様）
+
+base_url = "https://www.streetfighter.com/6/buckler/ja-jp/ranking/master"
+url = f"{base_url}?character_filter=4&character_id={character_id}&page=1&season_type=1"
+driver.get(url)
+time.sleep(3)
+
+def click_next():
+    try:
+        next_btn = WebDriverWait(driver, 8).until(
+            EC.element_to_be_clickable((By.CLASS_NAME, "ranking_next05__bNXbW"))
+        )
+        driver.execute_script("arguments[0].scrollIntoView(true);", next_btn)
+        time.sleep(0.4)
+        next_btn.click()
+        time.sleep(2)
+        return True
+    except Exception as e:
+        print(f"次ページボタン失敗: {e}")
+        return False
+
+# start_page までスキップ
+for _ in range(start_page - 1):
+    if not click_next():
+        break
+
+data = []
+current_page = start_page
+
+def scrape_current_page(page_no: int):
+    # 名前欄が出るまで待機
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located((By.CLASS_NAME, "ranking_name__El29_"))
+    )
+
+    # 以下は 4-3 と同様だが、「ページ」情報を追加
+    ...
+
+    data.append({
+        "順位": ...,
+        "名前": ...,
+        "キャラクター": ...,
+        "MR": ...,
+        "ユーザーID": ...,
+        "ページ": page_no
+    })
+
+# ループでページ範囲を取得
+while True:
+    print(f"ページ {current_page} 取得中...")
+    if not scrape_current_page(current_page):
+        break
+    if end_page != 0 and current_page >= end_page:
+        break
+    if not click_next():
+        break
+    current_page += 1
+
+df = pd.DataFrame(data)
+filename = "sf6_ranking_scraped_sagat_p1-15.csv"
+df.to_csv(filename, index=False, encoding="utf-8-sig")
+</code></pre>
+
+<hr />
+
+<h2>6. 出力されるデータと今後の分析</h2>
+
+<p>最終的な CSV は、次のような列を持つシンプルなテーブルです。</p>
+
+<ul>
+  <li><code>順位</code></li>
+  <li><code>名前</code></li>
+  <li><code>キャラクター</code></li>
+  <li><code>MR</code></li>
+  <li><code>ユーザーID</code></li>
+  <li><code>ページ</code>（ページ範囲版のみ）</li>
+</ul>
+
+<p>
+  このデータを使うことで、例えば次のような分析が可能になります：
+</p>
+
+<ul>
+  <li>キャラ別の MR ヒストグラム・箱ひげ図</li>
+  <li>MR 帯ごとのキャラ使用率</li>
+  <li>特定キャラ（例：サガット）の中位帯・上位帯人数の比較</li>
+  <li>シーズンごとの環境変化（継続的に取得した場合）</li>
+</ul>
+
+<p class="note">
+  本ページは「データをどのように取得しているか」を示す技術資料です。<br />
+  実際のグラフや考察は、メインの「Street Fighter 6 のデータ分析」ページ側で提示します。
+</p>
+
+</body>
+</html>
