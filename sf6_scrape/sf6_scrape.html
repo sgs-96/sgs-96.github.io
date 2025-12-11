@@ -2,90 +2,420 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>Street Fighter 6 マスターランクランキング データ取得の仕組み</title>
+  <title>Street Fighter 6 マスターランクランキング データ取得と分析概要</title>
+
+  <!-- ===================== CSS ===================== -->
   <style>
+    :root {
+      --bg: #050816;
+      --bg-elevated: #0b1020;
+      --bg-deep: #050816;
+      --border-subtle: rgba(148, 163, 184, 0.25);
+      --accent: #00e5ff;
+      --accent-soft: rgba(0, 229, 255, 0.12);
+      --accent-2: #ffdd33;
+      --text: #e5e7eb;
+      --text-muted: #9ca3af;
+      --code-bg: #020617;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.7);
+      --radius-lg: 1.1rem;
+      --radius-md: 0.75rem;
+      --radius-pill: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.6;
-      margin: 2rem;
+      line-height: 1.7;
+      background: radial-gradient(circle at top, #111827 0, #020617 40%, #02040a 80%);
+      color: var(--text);
+      padding: 2.5rem 1.5rem 3rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 10% 0, rgba(56, 189, 248, 0.07), transparent 55%),
+        radial-gradient(circle at 90% 20%, rgba(250, 204, 21, 0.07), transparent 55%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* コンテナ */
+    .doc-container {
+      width: 100%;
       max-width: 980px;
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.98));
+      border-radius: 1.5rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: var(--shadow-soft);
+      padding: 2.25rem 2.4rem 2.4rem;
+      position: relative;
+      overflow: hidden;
     }
-    h1, h2, h3 {
-      border-left: 4px solid #333;
-      padding-left: 0.5rem;
+
+    .doc-container::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        conic-gradient(from 140deg,
+          transparent 0deg,
+          rgba(56, 189, 248, 0.12) 60deg,
+          transparent 120deg,
+          rgba(250, 204, 21, 0.12) 180deg,
+          transparent 240deg);
+      opacity: 0.4;
+      filter: blur(40px);
+      z-index: -1;
     }
-    pre {
-      background: #f5f5f5;
-      padding: 0.75rem 1rem;
-      overflow-x: auto;
-      font-size: 0.9rem;
+
+    /* ヘッダー */
+    h1 {
+      margin-top: 0;
+      margin-bottom: 0.9rem;
+      font-size: clamp(1.8rem, 2.4vw + 1rem, 2.4rem);
+      letter-spacing: 0.03em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
     }
-    code {
-      font-family: Consolas, Menlo, Monaco, monospace;
+
+    h1::before {
+      content: "";
+      width: 18px;
+      height: 18px;
+      border-radius: 40%;
+      background: radial-gradient(circle, var(--accent), #22c55e);
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.9);
     }
+
+    .subtitle {
+      margin-top: 0;
+      margin-bottom: 1.2rem;
+      color: var(--text-muted);
+      font-size: 0.98rem;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .tag {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.32rem 0.7rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.01), rgba(15, 23, 42, 0.8));
+      backdrop-filter: blur(12px);
+    }
+
+    .tag::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(34, 211, 238, 0.9);
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border-subtle);
+      margin: 1.8rem 0 1.9rem;
+    }
+
+    /* 見出し */
+    h2 {
+      margin-top: 2.3rem;
+      margin-bottom: 0.7rem;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      position: relative;
+    }
+
+    h2::before {
+      content: "";
+      width: 7px;
+      height: 20px;
+      border-radius: 10px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent-2));
+      box-shadow:
+        0 0 12px rgba(56, 189, 248, 0.9),
+        0 0 22px rgba(250, 204, 21, 0.5);
+    }
+
+    h3 {
+      margin-top: 1.6rem;
+      margin-bottom: 0.45rem;
+      font-size: 1.05rem;
+      color: #e2e8f0;
+    }
+
+    /* テキスト・リスト */
+    p {
+      margin: 0.45rem 0 0.6rem;
+      font-size: 0.96rem;
+    }
+
     ul {
-      padding-left: 1.5rem;
+      padding-left: 1.4rem;
+      margin: 0.2rem 0 0.5rem;
     }
+
+    li {
+      margin: 0.18rem 0;
+      font-size: 0.95rem;
+    }
+
     .note {
-      font-size: 0.9rem;
-      color: #555;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      padding: 0.7rem 0.9rem;
+      border-radius: var(--radius-md);
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px dashed rgba(148, 163, 184, 0.55);
+      margin-top: 0.6rem;
     }
+
     .small {
       font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* コードブロック */
+    pre {
+      background: linear-gradient(135deg, var(--code-bg), #020617);
+      border-radius: var(--radius-md);
+      padding: 0.8rem 1rem;
+      border: 1px solid rgba(30, 64, 175, 0.7);
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.7);
+      position: relative;
+      margin: 0.8rem 0 1.1rem;
+      font-size: 0.86rem;
+      overflow-x: auto;
+    }
+
+    pre::before {
+      content: "Python";
+      position: absolute;
+      top: 0.52rem;
+      right: 0.9rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: var(--radius-pill);
+      padding: 0.18rem 0.55rem;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    code {
+      font-family: Consolas, Menlo, Monaco, "SF Mono", monospace;
+    }
+
+    /* aタグ */
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(34, 211, 238, 0.4);
+      padding-bottom: 0.05rem;
+      transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    a:hover {
+      color: #67e8f9;
+      border-color: rgba(103, 232, 249, 0.9);
+      background: rgba(8, 47, 73, 0.4);
+    }
+
+    /* 目次用ブロック（必要なら） */
+    .toc {
+      border-radius: var(--radius-md);
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 0.8rem 1rem 0.95rem;
+      margin: 0.6rem 0 1.4rem;
+      font-size: 0.9rem;
+    }
+
+    .toc-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: #e5e7eb;
+    }
+
+    .toc-title::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-2);
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.9);
+    }
+
+    .toc ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0.1rem 0 0;
+    }
+
+    .toc li {
+      margin: 0.1rem 0;
+    }
+
+    .toc a {
+      border-bottom: none;
+      background: none;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 0.4rem;
+    }
+
+    /* 図表 */
+    .figure-wrapper {
+      margin: 0.9rem 0 1.6rem;
+      text-align: center;
+    }
+
+    .figure {
+      max-width: 100%;
+      border-radius: 0.9rem;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.9);
+      background: #020617;
+    }
+
+    .figure-caption {
+      margin-top: 0.45rem;
+      font-size: 0.86rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1.4rem 0.9rem 2.4rem;
+      }
+      .doc-container {
+        padding: 1.7rem 1.3rem 1.9rem;
+        border-radius: 1.1rem;
+      }
+      h1 {
+        font-size: 1.55rem;
+      }
+      pre {
+        font-size: 0.8rem;
+        padding: 0.7rem 0.8rem;
+      }
     }
   </style>
 </head>
+
 <body>
+  <div class="doc-container">
 
-<h1>Street Fighter 6 マスターランクランキング データ取得の仕組み</h1>
+    <h1>Street Fighter 6 マスターランクランキング<br>データ取得と分析概要</h1>
+    <p class="subtitle">
+      BUCKLER マスターランクランキングから Python と Selenium を用いてデータを取得し、
+      キャラクターごとのプレイ傾向を分析するための仕組みと、その一例として
+      <strong>リュウ vs サガット</strong>の比較結果を示します。
+    </p>
 
-<p>
-  このページでは、Street Fighter 6 公式サイト BUCKLER に公開されている
-  <strong>マスターランクランキング</strong>を対象に、Python と Selenium を用いて
-  ランキングデータを収集し、分析用の CSV データにまとめる仕組みを説明します。
-</p>
+    <div class="meta-row">
+      <span class="tag">Python × Selenium</span>
+      <span class="tag">ヒストグラム分析</span>
+      <span class="tag">SF6 BUCKLER Ranking</span>
+    </div>
 
-<p class="note">
-  ※ 個人の学習・研究目的での利用を前提としています。<br />
-  ※ 公式サイトの利用規約やサーバー負荷には十分配慮し、過度なアクセスは行わない設計としています。
-</p>
+    <div class="toc">
+      <div class="toc-title">構成</div>
+      <ul>
+        <li><a href="#sec1">1. 目的と全体像</a></li>
+        <li><a href="#sec2">2. ログインセッションの Cookie 保存</a></li>
+        <li><a href="#sec3">3. ランキング総ページ数と MR 帯推定</a></li>
+        <li><a href="#sec4">4. ランキング取得（全体・キャラ別）</a></li>
+        <li><a href="#sec5">5. サガットのページ範囲スクレイピング</a></li>
+        <li><a href="#sec6">6. 取得データの形式</a></li>
+        <li><a href="#sec7">7. 分析例：リュウ vs サガット</a></li>
+        <li><a href="#sec8">8. 今後の展望</a></li>
+      </ul>
+    </div>
 
-<hr />
+    <hr />
 
-<h2>1. 目的と全体像</h2>
+    <h2 id="sec1">1. 目的と全体像</h2>
+    <p>
+      BUCKLER マスターランクランキングから、
+    </p>
+    <ul>
+      <li>順位</li>
+      <li>プレイヤー名</li>
+      <li>使用キャラクター</li>
+      <li>MR（Master Rating）</li>
+      <li>ユーザーID（プロフィール URL から抽出）</li>
+    </ul>
+    <p>
+      を取得し、Python / pandas による分析のための CSV データを作成します。  
+      そのうえで、キャラ別の MR 分布・プレイスタイル指標の分布を比較し、
+      「どのキャラがどのような傾向を持って戦われているのか」を定量的に見ることを狙いとしています。
+    </p>
+    <p>実装のステップは次の 4 つです。</p>
+    <ol>
+      <li>ログインセッションから Cookie を保存</li>
+      <li>ランキング総ページ数を取得し、MR 帯ごとにページ範囲を推定</li>
+      <li>全体 or キャラ別ランキングをページ数指定でスクレイピング</li>
+      <li>特定キャラ・特定ページ範囲の詳細取得（サガットなど）</li>
+    </ol>
 
-<ul>
-  <li>BUCKLER マスターランクランキングから、以下の情報を取得する：</li>
-  <ul>
-    <li>順位</li>
-    <li>プレイヤー名</li>
-    <li>使用キャラクター</li>
-    <li>MR（Master Rating）</li>
-    <li>ユーザーID（プロフィール URL から抽出）</li>
-  </ul>
-  <li>取得したデータを CSV 化し、Python / pandas を用いた分析に利用する。</li>
-  <li>MR 帯ごとの分布、キャラ使用率、特定キャラ（例：サガット）の帯別人数などを可視化する基盤を作る。</li>
-</ul>
+    <p class="note">
+      ※ 個人の学習・研究目的での利用を前提としています。<br />
+      ※ 公式サイトの利用規約やサーバー負荷には十分配慮し、アクセス頻度は控えめにしています。
+    </p>
 
-<p>実装は次の 4 ステップで構成されています。</p>
+    <hr />
 
-<ol>
-  <li>ログインセッションから Cookie を保存</li>
-  <li>ランキング総ページ数を取得し、MR 帯ごとにページ範囲を推定</li>
-  <li>全体 or キャラ別のランキングをページ数指定でスクレイピング</li>
-  <li>特定キャラ・特定ページ範囲の詳細取得</li>
-</ol>
+    <h2 id="sec2">2. ログインセッションの Cookie 保存</h2>
+    <p>
+      BUCKLER はログイン前提のページ構成のため、最初にブラウザで手動ログインし、
+      そのセッション情報（Cookie）を JSON で保存します。
+    </p>
 
-<hr />
-
-<h2>2. ログインセッションの Cookie 保存</h2>
-
-<p>
-  BUCKLER のランキングはログイン済みセッションを前提としているため、
-  まずはブラウザで手動ログインし、そのセッション情報（Cookie）を保存します。
-</p>
-
-<pre><code>from selenium import webdriver
+    <pre><code>from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import json
@@ -106,24 +436,21 @@ cookies = driver.get_cookies()
 with open("cookies.json", "w", encoding="utf-8") as f:
     json.dump(cookies, f, indent=2, ensure_ascii=False)
 
-driver.quit()
-</code></pre>
+driver.quit()</code></pre>
 
-<p class="small">
-  一度 <code>cookies.json</code> を作成すれば、以降のスクレイピングでは自動的に Cookie を読み込んでログイン状態を再現します。
-</p>
+    <p class="small">
+      一度 <code>cookies.json</code> を作っておけば、以降のスクレイピングでは Cookie を読み込むだけで
+      ログイン状態を再現できます（有効期限が切れたら再取得）。
+    </p>
 
-<hr />
+    <hr />
 
-<h2>3. ランキング総ページ数と MR 帯のページ推定</h2>
+    <h2 id="sec3">3. ランキング総ページ数と MR 帯推定</h2>
 
-<h3>3-1. 総ページ数の取得</h3>
+    <h3>3-1. 総ページ数の取得</h3>
+    <p>まず、マスターランクランキング全体が何ページあるのかを取得します。</p>
 
-<p>
-  ランキングの総ページ数を取得し、後の処理で「どこまでスクレイプするか」を決めるベースにします。
-</p>
-
-<pre><code>from selenium.webdriver.common.by import By
+    <pre><code>from selenium.webdriver.common.by import By
 import re
 import time
 
@@ -141,16 +468,15 @@ try:
     else:
         print("ページ番号の抽出に失敗しました")
 except Exception as e:
-    print(f"最終ページ要素の取得に失敗: {e}")
-</code></pre>
+    print(f"最終ページ要素の取得に失敗: {e}")</code></pre>
 
-<h3>3-2. MR 帯ごとのページ範囲推定</h3>
+    <h3>3-2. MR 帯ごとのページ範囲推定</h3>
+    <p>
+      事前に集計した <strong>MR 帯ごとの割合</strong> に基づき、ランキング上で
+      どのページがどの MR 帯に対応しているかを概算します。
+    </p>
 
-<p>
-  事前に集計した <strong>MR 帯ごとの割合</strong> を使い、ランキング上でおおよそどのページがどの MR 帯に対応しているかを推定します。
-</p>
-
-<pre><code>mr_distribution = {
+    <pre><code>mr_distribution = {
     "~999": 0.1321,
     "1000~1099": 0.1318,
     "1100~1199": 0.1307,
@@ -186,25 +512,21 @@ for mr_range, ratio in sorted(mr_distribution.items(),
 
 print("MR 帯ごとのページ範囲（例）:")
 for mr, info in estimated_ranges.items():
-    print(f"MR {mr}: {info['ページ数']} ページ（{info['開始ページ']}〜{info['終了ページ']}）")
-</code></pre>
+    print(f"MR {mr}: {info['ページ数']} ページ（{info['開始ページ']}〜{info['終了ページ']}）")</code></pre>
 
-<p class="small">
-  これにより、例えば「MR 2000〜2099 帯だけ欲しいので、その周辺ページを重点的に取得する」といったことが可能になります。
-</p>
+    <p class="small">
+      これにより、例えば「MR 2000〜2099 帯がランキングのどのあたりに分布しているか」をおおまかに把握し、
+      必要なページ帯だけを重点的に取得するといったことが可能になります。
+    </p>
 
-<hr />
+    <hr />
 
-<h2>4. 全体 or キャラ別ランキングの取得（ページ数指定）</h2>
+    <h2 id="sec4">4. ランキング取得（全体・キャラ別）</h2>
 
-<p>
-  ここからが本格的なスクレイピング処理です。  
-  まずは「先頭から n ページ分だけ」取得するシンプルな版です。
-</p>
+    <h3>4-1. キャラクター指定ロジック</h3>
+    <p>キャラ名から BUCKLER の <code>character_id</code> を引くマッピングを用意しています。</p>
 
-<h3>4-1. キャラクター指定ロジック</h3>
-
-<pre><code>character_name = None  # None の場合は全キャラ
+    <pre><code>character_name = None  # None の場合は全キャラ
 character_id_map = {
     "リュウ": "ryu",
     "ケン": "ken",
@@ -234,18 +556,11 @@ character_id_map = {
     "エレナ": "elena",
     "サガット": "sagat"
 }
-character_id = character_id_map.get(character_name) if character_name else None
-</code></pre>
+character_id = character_id_map.get(character_name) if character_name else None</code></pre>
 
-<h3>4-2. Cookie 読み込みとランキング URL 生成</h3>
+    <h3>4-2. Cookie 読み込みとランキング URL 生成</h3>
 
-<pre><code>from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-import json
-import time
-
-options = webdriver.ChromeOptions()
+    <pre><code>options = webdriver.ChromeOptions()
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
                           options=options)
 
@@ -268,90 +583,68 @@ else:
     url = f"{base_url}?page=1&season_type=1"
 
 driver.get(url)
-time.sleep(5)
-</code></pre>
+time.sleep(5)</code></pre>
 
-<h3>4-3. 1ページごとのデータ抽出</h3>
+    <h3>4-3. 1ページごとのデータ抽出</h3>
 
-<pre><code>from selenium.webdriver.common.by import By
-import re
-import pandas as pd
+    <pre><code>names = driver.find_elements(By.CLASS_NAME, "ranking_name__El29_")
+ratings = driver.find_elements(By.CLASS_NAME, "ranking_time__teMP4")
+characters = driver.find_elements(By.CSS_SELECTOR, "div.ranking_character__WoGAX img[alt]")
+profile_links = driver.find_elements(By.CSS_SELECTOR, 'a[href*="/profile/"]')
+
+ids_only = [re.search(r'/profile/(\\d+)', link.get_attribute("href")).group(1)
+            for link in profile_links if re.search(r'/profile/(\\d+)', link.get_attribute("href"))]
+ids_only = ids_only[3:]  # 先頭の不要なリンクをスキップ
 
 data = []
-current_page = 0
-max_pages = 1  # 取得したいページ数（例では 1）
+idx = 0
 
-while current_page &lt; max_pages:
-    # スクロールして遅延読み込み対策
-    for _ in range(3):
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(1)
+for i in range(len(names)):
+    try:
+        name = names[i].text.strip()
+        if name == "EROICA_2040c":
+            continue  # 特定ユーザーを除外する例
 
-    names = driver.find_elements(By.CLASS_NAME, "ranking_name__El29_")
-    ratings = driver.find_elements(By.CLASS_NAME, "ranking_time__teMP4")
-    characters = driver.find_elements(By.CSS_SELECTOR, "div.ranking_character__WoGAX img[alt]")
-    profile_links = driver.find_elements(By.CSS_SELECTOR, 'a[href*="/profile/"]')
+        rating_text = ratings[i].text
+        rank_match = re.search(r"(\\d+)位", rating_text)
+        mr_match = re.search(r"(\\d+)MR", rating_text)
+        character = characters[i].get_attribute("alt").strip()
 
-    ids_only = [re.search(r'/profile/(\\d+)', link.get_attribute("href")).group(1)
-                for link in profile_links if re.search(r'/profile/(\\d+)', link.get_attribute("href"))]
-    ids_only = ids_only[3:]  # 先頭の不要なリンクをスキップ
+        user_id = ids_only[idx] if idx &lt; len(ids_only) else None
+        idx += 1
 
-    idx = 0
-    for i in range(len(names)):
-        try:
-            name = names[i].text.strip()
-            if name == "EROICA_2040c":
-                continue  # 特定ユーザーを除外する例
+        data.append({
+            "順位": int(rank_match.group(1)) if rank_match else None,
+            "名前": name,
+            "キャラクター": character,
+            "MR": int(mr_match.group(1)) if mr_match else None,
+            "ユーザーID": user_id
+        })
+    except Exception as e:
+        print(f"データ処理エラー(index={i}): {e}")
+        continue</code></pre>
 
-            rating_text = ratings[i].text
-            rank_match = re.search(r"(\\d+)位", rating_text)
-            mr_match = re.search(r"(\\d+)MR", rating_text)
-            character = characters[i].get_attribute("alt").strip()
+    <p class="small">
+      最後に <code>pandas.DataFrame</code> に変換し、キャラ別でファイル名を変えつつ CSV に保存します。
+    </p>
 
-            user_id = ids_only[idx] if idx &lt; len(ids_only) else None
-            idx += 1
+    <hr />
 
-            data.append({
-                "順位": int(rank_match.group(1)) if rank_match else None,
-                "名前": name,
-                "キャラクター": character,
-                "MR": int(mr_match.group(1)) if mr_match else None,
-                "ユーザーID": user_id
-            })
-        except Exception as e:
-            print(f"データ処理エラー(index={i}): {e}")
-            continue
+    <h2 id="sec5">5. サガットのページ範囲スクレイピング</h2>
 
-    current_page += 1
-    # ここで「次へ」ボタンを押してページ送り（省略）
-</code></pre>
+    <p>
+      より細かい分析のために、例えば「サガットの 1〜15 ページだけ」といった形で
+      キャラとページ範囲を指定して取得するスクリプトも用意しています。
+      ここではページ番号も一緒に記録し、「どの順位帯のサガットなのか」を後から追えるようにしています。
+    </p>
 
-<p class="small">
-  最後に <code>pandas.DataFrame</code> に変換し、キャラ別などでファイル名を分けて CSV に出力します。
-</p>
-
-<hr />
-
-<h2>5. 特定キャラ・特定ページ範囲の取得（サガット例）</h2>
-
-<p>
-  より細かく、「サガットの 1〜15 ページだけ」を取るバージョンです。
-  ページ番号も一緒に記録し、後で「どのページ帯のサガットか」を分析しやすくしています。
-</p>
-
-<pre><code>character_name = 'サガット'
+    <pre><code>character_name = 'サガット'
 character_id = character_id_map.get(character_name)
 
 start_page = 1
 end_page = 15  # 0 を指定すると最終ページまで
 
-# ...（Cookie 読み込みは同様）
-
-base_url = "https://www.streetfighter.com/6/buckler/ja-jp/ranking/master"
-url = f"{base_url}?character_filter=4&character_id={character_id}&page=1&season_type=1"
-driver.get(url)
-time.sleep(3)
-
+# page=1 にアクセスした後、「次へ」ボタンで start_page までスキップ
 def click_next():
     try:
         next_btn = WebDriverWait(driver, 8).until(
@@ -366,35 +659,22 @@ def click_next():
         print(f"次ページボタン失敗: {e}")
         return False
 
-# start_page までスキップ
 for _ in range(start_page - 1):
     if not click_next():
         break
 
+# ページごとにスクレイピング（ページ番号も一緒に保存）
 data = []
 current_page = start_page
 
 def scrape_current_page(page_no: int):
-    # 名前欄が出るまで待機
     WebDriverWait(driver, 10).until(
         EC.presence_of_all_elements_located((By.CLASS_NAME, "ranking_name__El29_"))
     )
+    # ここで 4-3 と同様に names / ratings / characters / ids_only を作り、
+    # それぞれの行に "ページ": page_no を付けて data.append(...)
 
-    # 以下は 4-3 と同様だが、「ページ」情報を追加
-    ...
-
-    data.append({
-        "順位": ...,
-        "名前": ...,
-        "キャラクター": ...,
-        "MR": ...,
-        "ユーザーID": ...,
-        "ページ": page_no
-    })
-
-# ループでページ範囲を取得
 while True:
-    print(f"ページ {current_page} 取得中...")
     if not scrape_current_page(current_page):
         break
     if end_page != 0 and current_page >= end_page:
@@ -405,39 +685,131 @@ while True:
 
 df = pd.DataFrame(data)
 filename = "sf6_ranking_scraped_sagat_p1-15.csv"
-df.to_csv(filename, index=False, encoding="utf-8-sig")
-</code></pre>
+df.to_csv(filename, index=False, encoding="utf-8-sig")</code></pre>
 
-<hr />
+    <hr />
 
-<h2>6. 出力されるデータと今後の分析</h2>
+    <h2 id="sec6">6. 取得データの形式</h2>
 
-<p>最終的な CSV は、次のような列を持つシンプルなテーブルです。</p>
+    <p>最終的な CSV は次のような列構成になります。</p>
+    <ul>
+      <li><code>順位</code></li>
+      <li><code>名前</code></li>
+      <li><code>キャラクター</code></li>
+      <li><code>MR</code></li>
+      <li><code>ユーザーID</code></li>
+      <li><code>ページ</code>（ページ範囲版のみ）</li>
+    </ul>
 
-<ul>
-  <li><code>順位</code></li>
-  <li><code>名前</code></li>
-  <li><code>キャラクター</code></li>
-  <li><code>MR</code></li>
-  <li><code>ユーザーID</code></li>
-  <li><code>ページ</code>（ページ範囲版のみ）</li>
-</ul>
+    <p>
+      これをもとに、キャラ別 MR 分布や、各種指標（コーナーにいる時間・パリィからのドライブラッシュ率など）を
+      pandas で結合し、ヒストグラム・箱ひげ図などで可視化していきます。
+    </p>
 
-<p>
-  このデータを使うことで、例えば次のような分析が可能になります：
-</p>
+    <hr />
 
-<ul>
-  <li>キャラ別の MR ヒストグラム・箱ひげ図</li>
-  <li>MR 帯ごとのキャラ使用率</li>
-  <li>特定キャラ（例：サガット）の中位帯・上位帯人数の比較</li>
-  <li>シーズンごとの環境変化（継続的に取得した場合）</li>
-</ul>
+    <h2 id="sec7">7. 分析例：リュウ vs サガットの比較</h2>
 
-<p class="note">
-  本ページは「データをどのように取得しているか」を示す技術資料です。<br />
-  実際のグラフや考察は、メインの「Street Fighter 6 のデータ分析」ページ側で提示します。
-</p>
+    <p>
+      ここでは、実際にスクレイピングしたデータと対戦ログを組み合わせて作成した
+      ヒストグラムの例を示します。  
+      青色の分布が <strong>リュウ</strong>、オレンジ色の分布が <strong>サガット</strong> を表しています。
+    </p>
 
+    <h3>7-1. corner_time（画面端にいる時間）</h3>
+
+    <div class="figure-wrapper">
+      <!-- 画像ファイル名は環境に合わせて変更してください -->
+      <img src="battle_corner_time.png" alt="corner_time histogram: Ryu vs Sagat"
+           class="figure">
+      <div class="figure-caption">
+        図1：<strong>corner_time</strong> のヒストグラム（青：リュウ／オレンジ：サガット）
+      </div>
+    </div>
+
+    <p>
+      サガット（オレンジ）の分布は、リュウ（青）に比べて
+      <strong>全体的に右側にシフト</strong>しています。  
+      これは、サガット側の試合では
+      「相手を画面端に押し込んでいる時間が相対的に長い」
+      傾向があることを意味します。
+    </p>
+    <p>
+      一方で、リュウは分布の裾が広く、端に詰める展開だけでなく、
+      画面中央〜中距離戦を行っている試合も多いと解釈できます。
+      「火力が高くリーチの長いサガット」と
+      「前ステ・差し返しも含めた万能型のリュウ」という
+      キャラコンセプトの違いが、そのまま統計に出ている形です。
+    </p>
+
+    <h3>7-2. gauge_rate_drive_rush_from_parry（パリィからのドライブラッシュ率）</h3>
+
+    <div class="figure-wrapper">
+      <img src="d_gauge_gauge_rate_drive_rush_from_parry.png"
+           alt="gauge_rate_drive_rush_from_parry histogram: Ryu vs Sagat"
+           class="figure">
+      <div class="figure-caption">
+        図2：<strong>gauge_rate_drive_rush_from_parry</strong> のヒストグラム（青：リュウ／オレンジ：サガット）
+      </div>
+    </div>
+
+    <p>
+      パリィ成功後にドライブラッシュで前に出ている比率を見たものがこの指標です。  
+      サガット（オレンジ）の方が、分布がやや右寄りになっており、
+      <strong>パリィから積極的にラインを上げている</strong> プレイヤーが多いことが分かります。
+    </p>
+    <p>
+      逆にリュウ（青）は、やや低めの値に山があり、
+      パリィ後にその場で様子見したり、中距離の牽制に戻ったりする
+      より「落ち着いた」選択が多いことが示唆されます。
+      いわばリュウは「オーソドックスで安定志向」、
+      サガットは「リスクを取ってでも前に出る砲台」といった
+      プレイスタイルの違いが、行動ログの分布として可視化されています。
+    </p>
+
+    <hr />
+
+    <h2 id="sec8">8. 今後の展望</h2>
+
+    <p>
+      今回はヒストグラムを用いて、単変量ごとに
+      リュウとサガットの分布の違いをざっくり比較しました。
+      今後は、次のような方向で分析の高度化を予定しています。
+    </p>
+
+    <ul>
+      <li>
+        <strong>多変量解析：</strong><br>
+        corner_time・パリィ関連指標・ジャンプ頻度・技振り回数などをまとめて扱い、
+        主成分分析（PCA）やクラスター分析で
+        「同じキャラでもプレイスタイルごとにグループ分け」する。
+      </li>
+      <li>
+        <strong>MR を説明するモデル構築：</strong><br>
+        各種行動指標を説明変数とし、MR や勝率を目的変数にした
+        回帰モデル／ロジスティック回帰を構築。
+        「どの行動が MR に一番効いているのか」を定量的に評価する。
+      </li>
+      <li>
+        <strong>シーズンごとのメタ変化の追跡：</strong><br>
+        シーズンごとに同じ指標を計測し、
+        バージョンアップや調整を挟んだタイミングで
+        分布がどのようにズレたかを時系列で可視化する。
+      </li>
+      <li>
+        <strong>キャラ間の相対比較ダッシュボード：</strong><br>
+        取得した CSV をもとに、Web 上でキャラを選ぶと
+        ヒストグラムや箱ひげ図が切り替わるインタラクティブなダッシュボード
+        （Plotly Dash / Streamlit 等）として公開することも視野に入れています。
+      </li>
+    </ul>
+
+    <p class="note">
+      このページは「データをどう集めて、どう読み解き始めているか」の技術メモにあたります。  
+      実際の対戦への示唆や「じゃあどう立ち回りを変えるか」といった話は、
+      メインの「Street Fighter 6 のデータ分析」ページで順次まとめていく予定です。
+    </p>
+
+  </div>
 </body>
 </html>
