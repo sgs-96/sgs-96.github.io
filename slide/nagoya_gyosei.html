@@ -3,726 +3,506 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>名古屋市における規格外農産物の堆肥化と食品ロス削減（斡旋型モデル）</title>
+  <title>名古屋市：規格外品の堆肥化（斡旋型）</title>
   <style>
     :root{
-      --bg:#0b1020;
-      --card:#111a33;
-      --card2:#0f1630;
-      --text:#e9eefc;
-      --muted:#b9c4e6;
-      --accent:#79c2ff;
-      --accent2:#7dffcf;
-      --warn:#ffd36b;
-      --line:rgba(233,238,252,.14);
-      --shadow: 0 18px 50px rgba(0,0,0,.45);
-      --radius:18px;
-      --pad:44px;
+      --bg:#0f1115;
+      --panel:#151a22;
+      --line:rgba(255,255,255,.12);
+      --text:#f2f4f8;
+      --muted:rgba(242,244,248,.72);
+      --accent:#7aa7ff;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
     }
-
-    /* Page base */
-    html, body { height:100%; }
+    html,body{height:100%}
     body{
       margin:0;
       font-family:var(--sans);
       color:var(--text);
-      background:
-        radial-gradient(1200px 800px at 15% 20%, rgba(121,194,255,.22), transparent 60%),
-        radial-gradient(900px 700px at 80% 10%, rgba(125,255,207,.14), transparent 55%),
-        radial-gradient(900px 700px at 70% 85%, rgba(255,211,107,.10), transparent 55%),
-        var(--bg);
+      background:var(--bg);
       overflow:hidden;
     }
 
-    /* Slide deck */
-    .deck{
-      height:100%;
-      width:100%;
-      display:flex;
-      flex-direction:column;
-    }
-    header.topbar{
+    /* top */
+    header{
+      height:44px;
       display:flex;
       align-items:center;
-      gap:14px;
-      padding:10px 18px;
+      justify-content:space-between;
+      padding:0 14px;
       border-bottom:1px solid var(--line);
-      background:rgba(10,14,28,.55);
-      backdrop-filter: blur(10px);
+      background:rgba(0,0,0,.12);
     }
-    .brand{
-      display:flex; align-items:center; gap:10px;
+    header .title{
       font-weight:700;
+      font-size:14px;
       letter-spacing:.02em;
       white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:72vw;
     }
-    .dot{
-      width:10px;height:10px;border-radius:50%;
-      background: linear-gradient(135deg,var(--accent),var(--accent2));
-      box-shadow: 0 0 0 4px rgba(121,194,255,.12);
-    }
-    .hint{
-      margin-left:auto;
-      color:var(--muted);
-      font-size:12px;
-    }
-    .hint kbd{
+    header .hint{
       font-family:var(--mono);
       font-size:12px;
-      padding:2px 6px;
-      border:1px solid var(--line);
-      border-bottom-color:rgba(233,238,252,.25);
-      border-radius:8px;
-      background:rgba(255,255,255,.04);
-      color:var(--text);
+      color:var(--muted);
+      white-space:nowrap;
     }
 
-    /* Scroll-snap slides area */
+    /* slides area */
     .slides{
-      height:calc(100% - 46px);
+      height:calc(100% - 44px);
       overflow:auto;
       scroll-snap-type:y mandatory;
       scroll-behavior:smooth;
-      padding:22px 0;
+      padding:18px 0;
     }
     section.slide{
       scroll-snap-align:start;
-      min-height: calc(100% - 44px);
+      min-height: calc(100% - 36px);
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:22px 16px;
+      padding:18px 14px;
       box-sizing:border-box;
     }
 
-    /* Slide card in 16:9 */
+    /* 16:9 frame */
     .frame{
-      width:min(1180px, 96vw);
-      aspect-ratio: 16 / 9;
-      background: linear-gradient(180deg, rgba(17,26,51,.92), rgba(15,22,48,.90));
+      width:min(1080px, 96vw);
+      aspect-ratio: 16/9;
+      background:var(--panel);
       border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow: var(--shadow);
+      border-radius:14px;
       position:relative;
       overflow:hidden;
     }
-    .frame::before{
-      content:"";
-      position:absolute; inset:-2px;
-      background:
-        radial-gradient(900px 480px at 20% 0%, rgba(121,194,255,.16), transparent 60%),
-        radial-gradient(900px 520px at 90% 20%, rgba(125,255,207,.12), transparent 55%),
-        radial-gradient(700px 500px at 70% 100%, rgba(255,211,107,.09), transparent 55%);
-      pointer-events:none;
-      filter:saturate(1.05);
-    }
-
     .content{
       position:absolute; inset:0;
-      padding:var(--pad);
+      padding:34px;
       display:flex;
       flex-direction:column;
-      gap:18px;
+      gap:14px;
     }
 
-    /* Common typography */
     .eyebrow{
+      font-size:12px;
       color:var(--muted);
-      font-weight:600;
       letter-spacing:.08em;
       text-transform:uppercase;
-      font-size:12px;
     }
-    h1,h2{ margin:0; line-height:1.15; }
-    h1{ font-size:44px; }
-    h2{ font-size:34px; }
-    p{ margin:0; color:var(--muted); font-size:18px; line-height:1.65; }
-    ul{ margin:0; padding-left:1.1em; color:var(--muted); font-size:18px; line-height:1.6; }
-    li{ margin:.28em 0; }
-    strong{ color:var(--text); font-weight:800; }
-    .small{ font-size:14px; color:rgba(233,238,252,.70); }
-    .mono{ font-family:var(--mono); }
+    h1,h2{margin:0; line-height:1.2}
+    h1{font-size:38px}
+    h2{font-size:30px}
+    p{margin:0; color:var(--muted); font-size:18px; line-height:1.6}
+    ul{margin:0; padding-left:1.1em; color:var(--muted); font-size:18px; line-height:1.6}
+    li{margin:.25em 0}
+    strong{color:var(--text)}
+    .small{font-size:14px; color:rgba(242,244,248,.62)}
+    .mono{font-family:var(--mono)}
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
 
-    /* Layout helpers */
-    .row{ display:flex; gap:18px; }
-    .col{ flex:1; display:flex; flex-direction:column; gap:12px; }
-    .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
-    .grid3{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap:14px; }
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    .grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
 
-    .card{
-      background: rgba(255,255,255,.035);
+    .box{
       border:1px solid var(--line);
-      border-radius:16px;
-      padding:16px 18px;
+      border-radius:12px;
+      padding:14px 14px;
+      background:rgba(0,0,0,.10);
     }
-    .callout{
-      border-left:4px solid var(--accent);
-      background: rgba(121,194,255,.07);
+    .label{
+      font-size:12px;
+      color:rgba(242,244,248,.78);
+      font-weight:700;
+      margin-bottom:8px;
     }
-    .warn{
-      border-left:4px solid var(--warn);
-      background: rgba(255,211,107,.07);
-    }
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:6px 10px;
+    .pill{
+      display:inline-block;
+      padding:4px 10px;
       border:1px solid var(--line);
       border-radius:999px;
-      background: rgba(0,0,0,.18);
-      color:var(--text);
-      font-weight:650;
-      font-size:13px;
-      width:fit-content;
+      font-size:12px;
+      color:rgba(242,244,248,.78);
+      margin-right:8px;
     }
-    .tag .mini{
-      width:8px;height:8px;border-radius:50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 3px rgba(121,194,255,.14);
+    .accentline{
+      height:2px;
+      width:44px;
+      background:var(--accent);
+      border-radius:999px;
+      margin-top:4px;
     }
 
-    /* Footer */
     .footer{
       margin-top:auto;
       display:flex;
       align-items:flex-end;
       justify-content:space-between;
-      gap:14px;
+      gap:10px;
       padding-top:10px;
-      border-top:1px solid rgba(233,238,252,.10);
+      border-top:1px solid rgba(255,255,255,.10);
     }
     .page{
-      color:rgba(233,238,252,.65);
       font-family:var(--mono);
       font-size:12px;
+      color:rgba(242,244,248,.58);
     }
 
-    /* Simple flow diagram */
+    /* simple flow */
     .flow{
       display:flex;
-      align-items:stretch;
-      gap:12px;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
       margin-top:6px;
     }
-    .node{
-      flex:1;
-      background: rgba(255,255,255,.035);
+    .step{
+      padding:10px 12px;
       border:1px solid var(--line);
-      border-radius:16px;
-      padding:14px 14px;
-      position:relative;
-      min-height:90px;
+      border-radius:12px;
+      background:rgba(0,0,0,.10);
+      min-width: 180px;
+      flex:1;
     }
-    .node .title{
-      font-weight:850;
-      margin-bottom:6px;
-      color:var(--text);
-      font-size:16px;
-    }
-    .node .desc{
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.55;
-    }
+    .step b{display:block; color:var(--text); margin-bottom:4px}
     .arrow{
-      width:52px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:rgba(233,238,252,.55);
+      color:rgba(242,244,248,.45);
       font-family:var(--mono);
-      font-size:18px;
+      padding:0 4px;
       user-select:none;
     }
 
-    /* Table-like bullets */
-    .kpi{
-      display:grid;
-      grid-template-columns: 180px 1fr;
-      gap:10px 14px;
-      align-items:start;
-      font-size:18px;
-      color:var(--muted);
-      line-height:1.55;
-    }
-    .kpi .k{
-      color:rgba(233,238,252,.78);
-      font-weight:700;
-    }
-    .kpi .v strong{ color:var(--text); }
-
-    /* Responsive tweaks */
     @media (max-width: 900px){
-      .content{ padding:28px; }
-      h1{ font-size:34px; }
-      h2{ font-size:28px; }
-      p, ul{ font-size:16px; }
-      .kpi{ font-size:16px; grid-template-columns: 140px 1fr; }
-      .grid2{ grid-template-columns: 1fr; }
-      .flow{ flex-direction:column; }
-      .arrow{ width:auto; height:36px; font-size:16px; }
+      .content{padding:22px}
+      h1{font-size:30px}
+      h2{font-size:24px}
+      p,ul{font-size:16px}
+      .grid2,.grid3{grid-template-columns:1fr}
+      .step{min-width: unset}
     }
   </style>
 </head>
 <body>
-  <div class="deck">
-    <header class="topbar">
-      <div class="brand"><span class="dot"></span>名古屋市：規格外農産物の堆肥化×食品ロス削減</div>
-      <div class="hint">移動：<kbd>↑</kbd><kbd>↓</kbd> / <kbd>PgUp</kbd><kbd>PgDn</kbd> / スクロール</div>
-    </header>
+  <header>
+    <div class="title">名古屋市：規格外品の堆肥化（斡旋型）</div>
+    <div class="hint">↑↓ / PgUp PgDn / scroll</div>
+  </header>
 
-    <main class="slides" id="slides">
+  <main class="slides" id="slides">
 
-      <!-- 1) タイトル（結論） -->
-      <section class="slide" id="s1">
-        <div class="frame">
-          <div class="content">
-            <div class="eyebrow">タイトル（結論）</div>
-            <h1>新規施設ゼロで回す。<br>「斡旋型」堆肥化ルートで<br><span style="color:var(--accent)">規格外品</span>を資源循環へ</h1>
-            <p>
-              既存の堆肥センター・民間事業者を活用し、名古屋市は<strong>回収主体にならず</strong>に
-              「マッチング（斡旋）」「ルール整備」「見える化」を担う。<br>
-              低コストで、食品ロス削減と循環型農業を同時に前進させる。
-            </p>
+    <!-- 1 -->
+    <section class="slide" id="s1">
+      <div class="frame">
+        <div class="content">
+          <div class="eyebrow">タイトル（結論）</div>
+          <h1>新しい施設は作らない。<br>既存の堆肥先へ「つなぐ」</h1>
+          <p>
+            規格外品を、堆肥センターや民間事業者に回せるようにする。<br>
+            名古屋市は回収主体にならず、<strong>マッチング（斡旋）</strong>を担当する。
+          </p>
 
-            <div class="grid3">
-              <div class="card callout">
-                <div class="tag"><span class="mini"></span>狙い</div>
-                <p class="small">畑で発生する規格外品を「廃棄」ではなく「資源」として流通させる。</p>
-              </div>
-              <div class="card callout">
-                <div class="tag"><span class="mini"></span>手段</div>
-                <p class="small">自治体は「運搬・処理」ではなく「つなぐ」役割に徹する。</p>
-              </div>
-              <div class="card callout">
-                <div class="tag"><span class="mini"></span>強み</div>
-                <p class="small">新設投資を避け、既存施策（おかえりやさい）と接続しやすい。</p>
-              </div>
+          <div class="grid3">
+            <div class="box">
+              <div class="label">狙い</div>
+              <p class="small">生産段階のロスを減らす</p>
             </div>
-
-            <div class="footer">
-              <div class="small">名古屋市における規格外農産物の堆肥化と食品ロス削減に関する総合レポート（要約スライド）</div>
-              <div class="page">01 / 11</div>
+            <div class="box">
+              <div class="label">手段</div>
+              <p class="small">受入先の整理＋条件調整</p>
+            </div>
+            <div class="box">
+              <div class="label">強み</div>
+              <p class="small">予算負担を小さく始められる</p>
             </div>
           </div>
-        </div>
-      </section>
 
-      <!-- 2) 経緯 -->
-      <section class="slide" id="s2">
-        <div class="frame">
-          <div class="content">
-            <div class="eyebrow">経緯</div>
-            <h2>「生産段階のロス」に照準を合わせる</h2>
-
-            <div class="grid2">
-              <div class="card">
-                <div class="tag"><span class="mini"></span>問題設定</div>
-                <ul>
-                  <li>食品ロスは消費段階だけでなく、<strong>生産段階</strong>でも発生する。</li>
-                  <li>野菜には、市場規格に合わず出荷されない<strong>規格外品</strong>が存在。</li>
-                  <li>多くは鋤き込み・廃棄で処理され、資源循環につながりにくい。</li>
-                </ul>
-              </div>
-              <div class="card warn">
-                <div class="tag"><span class="mini" style="background:var(--warn)"></span>制約条件</div>
-                <ul>
-                  <li>新規堆肥施設は<strong>予算面のツッコミ</strong>が強い（政治的・財政的ハードル）。</li>
-                  <li>個別農家の自家堆肥化は、<strong>量と手間が中途半端</strong>で成立しづらい。</li>
-                  <li>だからこそ「既存インフラを使い倒す」方向へ。</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="footer">
-              <div class="small">前提：名古屋市の既存循環施策「おかえりやさい」を拡張起点とする</div>
-              <div class="page">02 / 11</div>
-            </div>
+          <div class="footer">
+            <div class="small">規格外農産物の堆肥化と食品ロス削減（9枚）</div>
+            <div class="page">01 / 09</div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- 3) 現状の名古屋の課題（規格外品の説明） -->
-      <section class="slide" id="s3">
-        <div class="frame">
-          <div class="content">
-            <div class="eyebrow">現状の名古屋の課題</div>
-            <h2>規格外品は「出荷されない」だけで、<br>価値がゼロなわけではない</h2>
-
-            <div class="card">
-              <div class="kpi">
-                <div class="k">全国の未出荷率</div>
-                <div class="v">2022年：収穫量 約<strong>1,284万トン</strong>／出荷量 約<strong>1,113万トン</strong> → 差分 約<strong>170万トン</strong>（約<strong>13%</strong>）</div>
-
-                <div class="k">未出荷の内訳</div>
-                <div class="v">規格外品／価格調整／自家消費など。<strong>全量が廃棄ではない</strong>が、鋤き込み・廃棄が一定割合で生じる。</div>
-
-                <div class="k">名古屋の見立て</div>
-                <div class="v">都市近郊の多品目・小規模が中心 → 規格外品も<strong>「少なすぎず、多すぎない」</strong>量になりやすい。</div>
-              </div>
-            </div>
-
-            <div class="grid2">
-              <div class="card callout">
-                <div class="tag"><span class="mini"></span>規格外品とは</div>
-                <p class="small">
-                  味や安全性ではなく、主に<strong>形・サイズ・傷</strong>などの市場規格で外れるもの。
-                  「食べられるのに売れない」ゾーンが発生しやすい。
-                </p>
-              </div>
-              <div class="card warn">
-                <div class="tag"><span class="mini" style="background:var(--warn)"></span>名古屋の課題（要点）</div>
-                <p class="small">
-                  規格外品の発生量・処理実態を<strong>市単独の統計で掴みにくい</strong>。
-                  その結果、政策は「必要性は分かるが設計しづらい」に陥りやすい。
-                </p>
-              </div>
-            </div>
-
-            <div class="footer">
-              <div class="small">出典：農林水産省「作物統計調査（野菜）」</div>
-              <div class="page">03 / 11</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 4) 名古屋市農家：規格外品量の推定（課題の具体化） -->
-      <section class="slide" id="s4">
-        <div class="frame">
-          <div class="content">
-            <div class="eyebrow">現状把握（推定）</div>
-            <h2>名古屋市：農家1戸あたりの規格外品は<br>年<strong>約390kg〜1,300kg</strong>（仮定ベース）</h2>
-
-            <div class="grid2">
-              <div class="card">
-                <div class="tag"><span class="mini"></span>仮定（レポートの前提）</div>
-                <ul>
-                  <li>未出荷率：全国平均の<strong>約13%</strong>を採用</li>
-                  <li>野菜収量：<strong>10t/ha</strong>（都市近郊・多品目小規模を想定し保守的）</li>
-                  <li>経営耕地面積：<strong>0.3〜1.0ha</strong>（名古屋市単独統計が乏しいため幅で置く）</li>
-                </ul>
-              </div>
-              <div class="card callout">
-                <div class="tag"><span class="mini"></span>計算イメージ</div>
-                <p class="small mono">
-                  規格外（未出荷）量 ≒ 面積(ha) × 収量(kg/ha) × 未出荷率
-                </p>
-                <ul>
-                  <li>0.3ha：0.3 × 10,000 × 0.13 ≒ <strong>390kg/年</strong></li>
-                  <li>1.0ha：1.0 × 10,000 × 0.13 ≒ <strong>1,300kg/年</strong></li>
-                </ul>
-                <p class="small">※推定であり、実態の精密値ではない（ただし政策設計の“当たり”は付けられる）。</p>
-              </div>
-            </div>
-
-            <div class="footer">
-              <div class="small">出典：農林水産省「農業構造動態調査」（参照）／仮定はレポート記載の通り</div>
-              <div class="page">04 / 11</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 5) 「おかえりやさい」について -->
-      <section class="slide" id="s5">
-        <div class="frame">
-          <div class="content">
-            <div class="eyebrow">「おかえりやさい」について</div>
-            <h2>すでにある循環を“支点”にする</h2>
-
-            <div class="grid2">
-              <div class="card">
-                <div class="tag"><span class="mini"></span>事業の骨格（要約）</div>
-                <ul>
-                  <li>生ごみを堆肥化し、その堆肥で育てた野菜を市内で消費する循環を目指す。</li>
-                  <li>自治体・事業者・農家・市民が連携する循環型施策として実績がある。</li>
-                </ul>
-              </div>
-              <div class="card callout">
-                <div class="tag"><span class="mini"></span>なぜ拡張しやすい？</div>
-                <ul>
-                  <li>対象は生ごみ中心だが、仕組みは<strong>規格外農産物</strong>にも応用可能。</li>
-                  <li>新規立ち上げより、既存事業の延伸は<strong>合意形成が早い</strong>。</li>
-                  <li>「循環型の物語（ストーリー）」が既に市民向けにある。</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="footer">
-              <div class="small">出典：名古屋市「なごや循環型野菜『おかえりやさい』」公式資料</div>
-              <div class="page">05 / 11</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 6) 今回のプラン -->
-      <section class="slide" id="s6">
-        <div class="frame">
-          <div class="content">
-            <div class="eyebrow">今回のプラン</div>
-            <h2>既存堆肥センターへの<strong>斡旋型モデル</strong></h2>
-
-            <div class="card callout">
-              <div class="tag"><span class="mini"></span>基本方針</div>
-              <p>
-                名古屋市は「回収・処理の当事者」ではなく、<strong>再生利用先を紹介・支援するハブ</strong>になる。
-                既存の堆肥センター／民間堆肥化事業者のキャパを活かし、規格外品の循環ルートを増やす。
-              </p>
-            </div>
-
-            <div class="grid2">
-              <div class="card">
-                <div class="tag"><span class="mini"></span>自治体がやること</div>
-                <ul>
-                  <li>マッチング：農家 ↔ 堆肥センター（受入条件・量・頻度の調整）</li>
-                  <li>ルール整備：受入基準、異物混入対策、品質の最低ライン</li>
-                  <li>見える化：参加者数・受入量・削減量の公表（実績づくり）</li>
-                </ul>
-              </div>
-              <div class="card warn">
-                <div class="tag"><span class="mini" style="background:var(--warn)"></span>法令の扱い（要点）</div>
-                <ul>
-                  <li>食品リサイクル法の趣旨：食品循環資源の再生利用を促進。</li>
-                  <li>規格外農産物は、再利用を前提とする限り、廃棄物処理法上の「廃棄物」に<strong>必ずしも</strong>該当しない整理が可能。</li>
-                  <li>自治体が<strong>直接回収しない</strong>斡旋型なら、新たな許可取得を増やしにくい。</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="footer">
-              <div class="small">参照法令：食品リサイクル法／廃棄物処理法（本スライドはレポート記載の整理を要約）</div>
-              <div class="page">06 / 11</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 7) プランの構造（全体像） -->
-      <section class="slide" id="s7">
-        <div class="frame">
-          <div class="content">
-            <div class="eyebrow">プランの構造（1/3）</div>
-            <h2>流れをシンプルに：<br>“捨てない導線”を標準装備にする</h2>
-
-            <div class="flow">
-              <div class="node">
-                <div class="title">農家（発生源）</div>
-                <div class="desc">規格外品（年390〜1,300kg規模を想定）<br>保管スペース・時間が制約</div>
-              </div>
-              <div class="arrow">→</div>
-              <div class="node">
-                <div class="title">名古屋市（斡旋ハブ）</div>
-                <div class="desc">受入先の一覧化／条件調整／<br>参加登録・実績集計</div>
-              </div>
-              <div class="arrow">→</div>
-              <div class="node">
-                <div class="title">堆肥センター・民間</div>
-                <div class="desc">受入（事前合意の範囲）→堆肥化<br>品質管理・異物除去</div>
-              </div>
-              <div class="arrow">→</div>
-              <div class="node">
-                <div class="title">農地・市内循環</div>
-                <div class="desc">堆肥の活用（おかえりやさい等と接続）<br>循環の可視化</div>
-              </div>
-            </div>
-
-            <div class="grid2">
-              <div class="card callout">
-                <div class="tag"><span class="mini"></span>ここがキモ</div>
-                <p class="small">自治体が運搬を抱えると一気に重くなる。だから<strong>「つなぐ」</strong>に徹して、制度疲労を避ける。</p>
-              </div>
-              <div class="card">
-                <div class="tag"><span class="mini"></span>想定アウトカム</div>
-                <p class="small">規格外品の「処理コスト／心理コスト」を下げ、鋤き込み・廃棄を減らす。</p>
-              </div>
-            </div>
-
-            <div class="footer">
-              <div class="small">運用の実務は「受入条件の標準化」が勝負どころ</div>
-              <div class="page">07 / 11</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 8) プランの構造（コスト・規模問題） -->
-      <section class="slide" id="s8">
-        <div class="frame">
-          <div class="content">
-            <div class="eyebrow">プランの構造（2/3）</div>
-            <h2>なぜ農家単独の堆肥化が進みにくいか：<br>「量」と「固定費」のミスマッチ</h2>
-
-            <div class="grid2">
-              <div class="card">
-                <div class="tag"><span class="mini"></span>中途半端問題</div>
-                <ul>
-                  <li>家庭用・小規模コンポスター：<strong>年数百kg〜1t規模</strong>の安定処理は難しい。</li>
-                  <li>本格設備：数百万円規模の初期投資＋維持管理費が必要。</li>
-                  <li>結果：<strong>「惜しいが、自家処理には多すぎる」</strong>ゾーンが残る。</li>
-                </ul>
-              </div>
-              <div class="card warn">
-                <div class="tag"><span class="mini" style="background:var(--warn)"></span>政策設計の示唆</div>
-                <ul>
-                  <li>個別最適ではなく、地域で束ねて<strong>規模の経済</strong>を作る。</li>
-                  <li>農家の負担は「分別・一時保管」までに圧縮する。</li>
-                  <li>処理はプロ（既存施設）に寄せるのが現実的。</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="card callout">
-              <div class="tag"><span class="mini"></span>一言で言うと</div>
-              <p>堆肥化は善意だけで回らない。だから、仕組みで“ラクに正しく”回す。</p>
-            </div>
-
-            <div class="footer">
-              <div class="small">参照：農林水産省「家畜排せつ物・有機性資源の堆肥化に関する資料」（レポート引用）</div>
-              <div class="page">08 / 11</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 9) プランの構造（運用設計：受入基準・見える化） -->
-      <section class="slide" id="s9">
-        <div class="frame">
-          <div class="content">
-            <div class="eyebrow">プランの構造（3/3）</div>
-            <h2>運用の設計図：<br>「受入条件」×「見える化」×「拡張」</h2>
-
-            <div class="grid3">
-              <div class="card">
-                <div class="tag"><span class="mini"></span>受入条件の標準化</div>
-                <ul class="small">
-                  <li>対象：野菜くず／規格外野菜（異物なし）</li>
-                  <li>NG：ビニール、金属、土砂過多 など</li>
-                  <li>頻度：週1 / 隔週 など、無理のない単位</li>
-                </ul>
-              </div>
-              <div class="card">
-                <div class="tag"><span class="mini"></span>参加しやすい導線</div>
-                <ul class="small">
-                  <li>参加登録（農家・受入先）</li>
-                  <li>マッチング（条件が合う者同士）</li>
-                  <li>トラブル窓口（異物混入など）</li>
-                </ul>
-              </div>
-              <div class="card callout">
-                <div class="tag"><span class="mini"></span>見える化（実績づくり）</div>
-                <ul class="small">
-                  <li>受入量（kg/月）</li>
-                  <li>参加農家数／受入先数</li>
-                  <li>推定削減量（未出荷→循環へ）</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="grid2">
-              <div class="card">
-                <div class="tag"><span class="mini"></span>段階的拡張</div>
-                <ul>
-                  <li>まずは「おかえりやさい」関係者ネットワークから開始。</li>
-                  <li>次に、民間堆肥化事業者・近隣自治体の施設へも接続。</li>
-                  <li>実績が貯まれば、補助制度や共同回収（任意）など追加も可能。</li>
-                </ul>
-              </div>
-              <div class="card warn">
-                <div class="tag"><span class="mini" style="background:var(--warn)"></span>リスクと対策（最小限）</div>
-                <ul>
-                  <li>異物混入 → 受入条件の明文化＋チェック運用</li>
-                  <li>季節変動 → 受入先を複線化（逃げ道を作る）</li>
-                  <li>データ不足 → 参加者からの簡易報告で推計精度を改善</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="footer">
-              <div class="small">実務の敵は「善意の疲弊」なので、運用を軽く設計する</div>
-              <div class="page">09 / 11</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 10) まとめ -->
-      <section class="slide" id="s10">
-        <div class="frame">
-          <div class="content">
-            <div class="eyebrow">まとめ</div>
-            <h2>名古屋市が“回収しない”から、回る</h2>
-
-            <div class="grid2">
-              <div class="card callout">
-                <div class="tag"><span class="mini"></span>結論</div>
-                <ul>
-                  <li>規格外品は一定量発生し、鋤き込み・廃棄を減らす余地がある。</li>
-                  <li>個別農家の自家堆肥化は、量と固定費のミスマッチで進みにくい。</li>
-                  <li>既存堆肥センターへつなぐ<strong>斡旋型</strong>が、財政負担を抑えて現実的。</li>
-                </ul>
-              </div>
-              <div class="card">
-                <div class="tag"><span class="mini"></span>次の一手（実装）</div>
-                <ul>
-                  <li>受入先リストと受入条件の標準化（まず“台帳”）</li>
-                  <li>おかえりやさい関係者でパイロット（小さく始める）</li>
-                  <li>実績の見える化→参加拡大（政策は数字が燃料）</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="card warn">
-              <div class="tag"><span class="mini" style="background:var(--warn)"></span>締めの一文</div>
-              <p>「堆肥施設を建てる」より先に、「堆肥に行ける道」を敷く。道ができてから、必要なら橋を架ければいい。</p>
-            </div>
-
-            <div class="footer">
-              <div class="small">推定・仮定を明示したうえで、まず“設計可能なモデル”に落とす</div>
-              <div class="page">10 / 11</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 11) 参考文献 -->
-      <section class="slide" id="s11">
-        <div class="frame">
-          <div class="content">
-            <div class="eyebrow">参考文献</div>
-            <h2>引用・参照（レポート記載の出典）</h2>
-
-            <div class="card">
+    <!-- 2 -->
+    <section class="slide" id="s2">
+      <div class="frame">
+        <div class="content">
+          <div class="eyebrow">経緯</div>
+          <h2>食品ロスは「作る側」でも起きる</h2>
+          <div class="grid2">
+            <div class="box">
+              <div class="label">問題</div>
               <ul>
-                <li>農林水産省「作物統計調査（野菜）」 https://www.maff.go.jp/j/tokei/kouhyou/sakumotu/index.html</li>
-                <li>農林水産省「農業構造動態調査」 https://www.maff.go.jp/j/tokei/kouhyou/noukou/index.html</li>
-                <li>名古屋市「なごや循環型野菜『おかえりやさい』」公式資料（名古屋市公開情報）</li>
-                <li>農林水産省「家畜排せつ物・有機性資源の堆肥化に関する資料」（レポート引用）</li>
+                <li>規格に合わない野菜は出荷されないことがある</li>
+                <li>鋤き込み・廃棄が残る</li>
+              </ul>
+            </div>
+            <div class="box">
+              <div class="label">制約</div>
+              <ul>
+                <li>新設の堆肥施設は予算で厳しい</li>
+                <li>農家単独の堆肥化は負担が大きい</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="footer">
+            <div class="small">だから「既存の受入先」を活用する方針</div>
+            <div class="page">02 / 09</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="slide" id="s3">
+      <div class="frame">
+        <div class="content">
+          <div class="eyebrow">現状（全国）</div>
+          <h2>未出荷は約13%（2022年）</h2>
+          <div class="box">
+            <div class="label">作物統計（野菜）</div>
+            <ul>
+              <li>収穫量：約<strong>1,284万t</strong></li>
+              <li>出荷量：約<strong>1,113万t</strong></li>
+              <li>差分：約<strong>170万t</strong> → 約<strong>13%</strong></li>
+            </ul>
+            <p class="small" style="margin-top:8px;">未出荷＝規格外品だけではない（価格調整・自家消費なども含む）。</p>
+          </div>
+
+          <div class="footer">
+            <div class="small">出典：農林水産省「作物統計調査（野菜）」</div>
+            <div class="page">03 / 09</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="slide" id="s4">
+      <div class="frame">
+        <div class="content">
+          <div class="eyebrow">現状（名古屋：推定）</div>
+          <h2>農家1戸あたり：年390〜1,300kg（仮定）</h2>
+
+          <div class="grid2">
+            <div class="box">
+              <div class="label">仮定</div>
+              <ul>
+                <li>未出荷率：13%</li>
+                <li>収量：10t/ha（保守的）</li>
+                <li>耕地面積：0.3〜1.0ha</li>
+              </ul>
+            </div>
+            <div class="box">
+              <div class="label">計算</div>
+              <p class="mono small">未出荷量 ≒ 面積 × 10,000(kg/ha) × 0.13</p>
+              <ul>
+                <li>0.3ha → 約<strong>390kg</strong></li>
+                <li>1.0ha → 約<strong>1,300kg</strong></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="footer">
+            <div class="small">出典：農林水産省「農業構造動態調査」（参照）</div>
+            <div class="page">04 / 09</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="slide" id="s5">
+      <div class="frame">
+        <div class="content">
+          <div class="eyebrow">名古屋の課題</div>
+          <h2>「少なすぎず多すぎない量」が扱いづらい</h2>
+
+          <div class="grid2">
+            <div class="box">
+              <div class="label">規格外品とは</div>
+              <p>形・サイズ・傷などで市場規格から外れたもの。<br><span class="small">（食べられる場合も多い）</span></p>
+              <div class="accentline"></div>
+            </div>
+            <div class="box">
+              <div class="label">起きやすいこと</div>
+              <ul>
+                <li>鋤き込み／廃棄に流れる</li>
+                <li>市単独で実態データを掴みにくい</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="footer">
+            <div class="small">課題は「処理の導線」と「データ不足」</div>
+            <div class="page">05 / 09</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="slide" id="s6">
+      <div class="frame">
+        <div class="content">
+          <div class="eyebrow">既存施策</div>
+          <h2>「おかえりやさい」を起点にする</h2>
+
+          <div class="grid2">
+            <div class="box">
+              <div class="label">何をしている？</div>
+              <ul>
+                <li>生ごみを堆肥化</li>
+                <li>堆肥で野菜を育てて市内で消費</li>
+              </ul>
+            </div>
+            <div class="box">
+              <div class="label">なぜ使える？</div>
+              <ul>
+                <li>循環の枠組みが既にある</li>
+                <li>規格外品の受入・循環にも応用しやすい</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="footer">
+            <div class="small">出典：名古屋市「なごや循環型野菜『おかえりやさい』」公式資料</div>
+            <div class="page">06 / 09</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="slide" id="s7">
+      <div class="frame">
+        <div class="content">
+          <div class="eyebrow">今回のプラン</div>
+          <h2>斡旋型：受入先を整理して、つなぐ</h2>
+
+          <div class="box">
+            <div class="label">名古屋市がやること</div>
+            <span class="pill">受入先の一覧</span>
+            <span class="pill">条件の標準化</span>
+            <span class="pill">マッチング</span>
+            <span class="pill">実績の見える化</span>
+            <p class="small" style="margin-top:10px;">
+              ポイント：市が直接回収しない（運用を重くしない）。<br>
+              法令整理は所管の最新運用に従う前提で、まずは「斡旋」に寄せる。
+            </p>
+          </div>
+
+          <div class="footer">
+            <div class="small">参照：食品リサイクル法／廃棄物処理法（レポート要約）</div>
+            <div class="page">07 / 09</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="slide" id="s8">
+      <div class="frame">
+        <div class="content">
+          <div class="eyebrow">プランの構造（＋コスト）</div>
+          <h2>流れ：農家の負担は「分別・一時保管」まで</h2>
+
+          <div class="flow">
+            <div class="step">
+              <b>農家</b>
+              <div class="small">分別／一時保管</div>
+            </div>
+            <div class="arrow">→</div>
+            <div class="step">
+              <b>名古屋市</b>
+              <div class="small">条件整理／斡旋</div>
+            </div>
+            <div class="arrow">→</div>
+            <div class="step">
+              <b>堆肥センター等</b>
+              <div class="small">受入／堆肥化</div>
+            </div>
+            <div class="arrow">→</div>
+            <div class="step">
+              <b>循環</b>
+              <div class="small">農地へ還元</div>
+            </div>
+          </div>
+
+          <div class="grid2" style="margin-top:10px;">
+            <div class="box">
+              <div class="label">なぜ自家堆肥化が難しい？</div>
+              <ul>
+                <li>小型：年数百kg〜1tの安定処理が難しい</li>
+                <li>本格：初期投資＋維持管理が重い</li>
+              </ul>
+            </div>
+            <div class="box">
+              <div class="label">この案の狙い</div>
+              <ul>
+                <li>処理は既存施設へ集約（規模のメリット）</li>
+                <li>継続しやすい運用にする</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="footer">
+            <div class="small">参照：農林水産省「家畜排せつ物・有機性資源の堆肥化に関する資料」（レポート引用）</div>
+            <div class="page">08 / 09</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="slide" id="s9">
+      <div class="frame">
+        <div class="content">
+          <div class="eyebrow">まとめ／参考文献</div>
+          <h2>まとめ：小さく始めて、実績で広げる</h2>
+
+          <div class="grid2">
+            <div class="box">
+              <div class="label">まとめ</div>
+              <ul>
+                <li>未出荷は全国で約13%（生産段階ロスの余地）</li>
+                <li>名古屋は推定で年390〜1,300kg/戸の規模感</li>
+                <li>新設なしで、既存受入先へつなぐのが現実的</li>
+              </ul>
+            </div>
+            <div class="box">
+              <div class="label">参考文献</div>
+              <ul class="small">
+                <li>農林水産省「作物統計調査（野菜）」<br>
+                  <a href="https://www.maff.go.jp/j/tokei/kouhyou/sakumotu/index.html">https://www.maff.go.jp/j/tokei/kouhyou/sakumotu/index.html</a>
+                </li>
+                <li>農林水産省「農業構造動態調査」<br>
+                  <a href="https://www.maff.go.jp/j/tokei/kouhyou/noukou/index.html">https://www.maff.go.jp/j/tokei/kouhyou/noukou/index.html</a>
+                </li>
+                <li>名古屋市「なごや循環型野菜『おかえりやさい』」公式資料</li>
+                <li>農林水産省「家畜排せつ物・有機性資源の堆肥化に関する資料」</li>
                 <li>食品循環資源の再生利用等の促進に関する法律（食品リサイクル法）</li>
                 <li>廃棄物の処理及び清掃に関する法律（廃棄物処理法）</li>
               </ul>
-              <p class="small" style="margin-top:10px;">
-                ※法令の解釈・運用は自治体の担当部署・所管官庁の最新整理に従う（本資料は政策アイデアの整理）。
-              </p>
-            </div>
-
-            <div class="footer">
-              <div class="small">以上</div>
-              <div class="page">11 / 11</div>
             </div>
           </div>
-        </div>
-      </section>
 
-    </main>
-  </div>
+          <div class="footer">
+            <div class="small">（注）法令運用は所管の最新整理に従う。本資料は政策案の要約。</div>
+            <div class="page">09 / 09</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
 
   <script>
-    // Minimal keyboard navigation (no framework, no fuss)
     (function(){
       const slides = document.getElementById('slides');
       const sections = Array.from(document.querySelectorAll('section.slide'));
@@ -744,13 +524,10 @@
           e.preventDefault(); go(currentIndex()+1);
         }else if(['ArrowUp','PageUp'].includes(e.key)){
           e.preventDefault(); go(currentIndex()-1);
-        }else if(e.key === 'Home'){
-          e.preventDefault(); go(0);
-        }else if(e.key === 'End'){
-          e.preventDefault(); go(sections.length-1);
         }
       }, {passive:false});
     })();
   </script>
 </body>
 </html>
+
