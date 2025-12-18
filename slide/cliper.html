@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MP4クリッパー — テンプレ一致で自動切り出し（試作）</title>
+  <title>MP4クリッパー（試作）</title>
   <meta name="description" content="PyQt5 + OpenCVでテンプレ画像一致を検出し、MP4から区間を自動でクリップ化する試作ツールの紹介ページ。" />
   <link rel="stylesheet" href="cliper.css" />
 </head>
@@ -11,29 +11,28 @@
 <body>
   <header class="hero">
     <div class="container hero__inner">
-      <div class="badge">Prototype</div>
+      <div class="badge">試作</div>
       <h1>MP4クリッパー</h1>
       <p class="lead">
-        PyQt5 + OpenCVで、<strong>テンプレ画像が映った瞬間</strong>を検出し<br />
-        MP4動画から自動でクリップを書き出す試作ツール。
+        テンプレ画像の一致を検出して、MP4動画から一致区間を自動で切り出すツール（試作）。
       </p>
 
-      <div class="hero__cta">
-        <a class="btn btn--primary" href="#features">機能を見る</a>
-        <a class="btn btn--ghost" href="#limits">うまくいかなかった点</a>
-        <a class="btn btn--ghost" href="#source">ソースコード</a>
-      </div>
+      <nav class="hero__cta" aria-label="ページ内リンク">
+        <a class="btn btn--primary" href="#features">機能</a>
+        <a class="btn" href="#limits">うまくいかなかった点</a>
+        <a class="btn" href="#source">ソースコード</a>
+      </nav>
 
-      <div class="hero__meta">
-        <div class="metaCard">
+      <div class="hero__meta" role="list">
+        <div class="metaCard" role="listitem">
           <div class="metaCard__label">UI</div>
           <div class="metaCard__value">PyQt5</div>
         </div>
-        <div class="metaCard">
+        <div class="metaCard" role="listitem">
           <div class="metaCard__label">検出</div>
           <div class="metaCard__value">cv2.matchTemplate</div>
         </div>
-        <div class="metaCard">
+        <div class="metaCard" role="listitem">
           <div class="metaCard__label">出力</div>
           <div class="metaCard__value">clips/*.mp4</div>
         </div>
@@ -46,18 +45,15 @@
       <h2>概要</h2>
       <p>
         任意のMP4動画に対して、特定のUI・アイコン・通知などの「見た目」をテンプレ画像として指定し、
-        動画内で一致度が閾値を超えたフレームを集めて、連続した区間を<strong>セグメント</strong>としてまとめます。
-        そのセグメントを、<strong>個別のmp4</strong>として切り出して保存します。
+        動画内で一致度が閾値を超えたフレームを集めて連続区間をセグメント化します。
+        その区間を個別のmp4として切り出して保存します。
       </p>
 
       <div class="callout">
-        <div class="callout__icon">🧪</div>
-        <div class="callout__body">
-          <p class="callout__title">これは試作ツールです</p>
-          <p class="callout__text">
-            動作は確認できたものの、狙い通りに安定運用するには課題が残りました（詳細は後述）。
-          </p>
-        </div>
+        <p class="callout__title">注意</p>
+        <p class="callout__text">
+          これは試作です。動作は確認できたものの、安定運用には課題が残りました（後述）。
+        </p>
       </div>
     </section>
 
@@ -78,15 +74,13 @@
           <h3>閾値（threshold）を調整</h3>
           <p>
             一致判定の閾値をスライダーで調整（0.00〜1.00）。
-            値が高いほど厳しめ判定、低いほど拾いやすい判定になります。
+            値が高いほど厳しめ、低いほど拾いやすくなります。
           </p>
         </article>
 
         <article class="card">
           <h3>一致区間を検出して切り出し</h3>
-          <p>
-            一致したフレームを連結してセグメント化し、clips/に連番で保存します。
-          </p>
+          <p>一致したフレームを連結してセグメント化し、clips/に連番で保存します。</p>
           <div class="code">
             clips/clip_1.mp4<br />
             clips/clip_2.mp4<br />
@@ -108,7 +102,7 @@
       <h2>使い方（ざっくり）</h2>
       <ol class="steps">
         <li><span class="stepNum">1</span> MP4動画を選択</li>
-        <li><span class="stepNum">2</span> テンプレ画像を選択（検出したい表示の切り抜き）</li>
+        <li><span class="stepNum">2</span> テンプレ画像を選択</li>
         <li><span class="stepNum">3</span> 閾値を調整</li>
         <li><span class="stepNum">4</span> 実行 → clips/に書き出し</li>
       </ol>
@@ -119,43 +113,31 @@
 
       <div class="dangerBox">
         <h3>狙い通りに抽出できなかった & とにかく遅かった</h3>
-        <p>
-          この試作で厳しかった点は、主に次の2つです。
-        </p>
-
         <div class="dangerGrid">
           <div class="dangerItem">
             <div class="dangerItem__title">閾値調整を手動でやる必要がある</div>
             <div class="dangerItem__text">
-              テンプレ一致は<strong>threshold（閾値）</strong>に強く依存し、
-              こちらが毎回スライダーで試行錯誤しないといけませんでした。
-              その結果、狙っていた画像（場面）を<strong>安定して抽出できない</strong>ことがありました。
+              threshold（閾値）に強く依存し、毎回スライダーで試行錯誤が必要でした。
+              その結果、狙いの画像（場面）を安定して抽出できないことがありました。
             </div>
           </div>
 
           <div class="dangerItem">
             <div class="dangerItem__title">処理速度がめちゃくちゃ遅い</div>
             <div class="dangerItem__text">
-              全フレームで照合処理を回すため、動画が長くなるほど重くなり、
-              体感でも「待ち時間が長すぎる」状態になりました。
+              全フレームで照合処理を回すため、長尺動画だと待ち時間が大きくなりました。
             </div>
           </div>
         </div>
-
-        <p class="fineprint">
-          まとめると、「動く」けれど「狙い通りに、速く、ラクに」は達成できなかった、という結果です。
-        </p>
       </div>
     </section>
 
     <section id="source" class="section">
       <h2>ソースコード</h2>
-      <p class="note">
-        長いので、折りたたみ（開閉）形式で掲載します。
-      </p>
+      <p class="note">折りたたみ（開閉）形式で掲載します。</p>
 
       <details class="details">
-        <summary><span class="details__title">main.py（シンプル版）</span><span class="details__meta">クリックで開閉</span></summary>
+        <summary><span class="details__title">main.py（シンプル版）</span><span class="details__meta">開閉</span></summary>
         <pre class="pre"><code class="language-python">import sys
 from PyQt5.QtWidgets import(
     QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QFileDialog, QSlider, QLineEdit
@@ -179,17 +161,14 @@ class App(QWidget):
     def init_ui(self):
         layout = QVBoxLayout()
 
-        # 動画ファイルのラベルとボタン
         self.video_label = QLabel('動画ファイル：未選択')
         self.video_btn = QPushButton('動画を選択')
         self.video_btn.clicked.connect(self.select_video)
 
-        # テンプレ画像のラベル・ボタン
         self.template_label = QLabel('テンプレ画像：未選択')
         self.template_btn = QPushButton('テンプレ画像を選択')
         self.template_btn.clicked.connect(self.select_template)
 
-        # 閾値スライダー
         self.threshold_label = QLabel('閾値')
         self.threshold_input = QLineEdit('0.8')
         self.threshold_input.setReadOnly(True)
@@ -200,14 +179,12 @@ class App(QWidget):
         self.threshold_slider.setValue(int(self.threshold * 100))
         self.threshold_slider.valueChanged.connect(self.update_threshold)
 
-        # 実行ボタン
         self.run_btn = QPushButton('実行')
         self.run_btn.clicked.connect(self.run_detection)
 
-        # 進捗%
         self.progress_label = QLabel("進行状況: 0%")
-        layout.addWidget(self.progress_label)
 
+        layout.addWidget(self.progress_label)
         layout.addWidget(self.video_label)
         layout.addWidget(self.video_btn)
         layout.addWidget(self.template_label)
@@ -238,31 +215,26 @@ class App(QWidget):
         elif not self.template_path:
             print('error: テンプレ画像が選ばれていません')
             return
-        else:
-            print(f"done: 動画: {self.video_path}")
-            print(f"done: テンプレ画像: {self.template_path}")
-            print("映像解析を始めます...")
-            segments = find_matching_segments(
-                self.video_path,
-                self.template_path,
-                threshold=self.threshold,
-                min_length=10,
-                progress_callback=self.update_progress
-            )
-            if not segments:
-                print("⚠️ 一致セグメントが見つかりませんでした。")
-                return
 
-            print(f"🎞 {len(segments)} 個のセグメントを検出しました。保存処理を開始します...")
+        print(f"done: 動画: {self.video_path}")
+        print(f"done: テンプレ画像: {self.template_path}")
+        print("映像解析を始めます...")
 
-            export_clips(
-                self.video_path,
-                segments,
-                output_dir="clips"
-            )
+        segments = find_matching_segments(
+            self.video_path,
+            self.template_path,
+            threshold=self.threshold,
+            min_length=10,
+            progress_callback=self.update_progress
+        )
 
-            print("✅ すべてのクリップを保存しました！clips/フォルダを確認してください。")
-            self.update_progress(100.0)
+        if not segments:
+            print("⚠️ 一致セグメントが見つかりませんでした。")
+            return
+
+        export_clips(self.video_path, segments, output_dir="clips")
+        print("✅ すべてのクリップを保存しました！clips/フォルダを確認してください。")
+        self.update_progress(100.0)
 
     def update_threshold(self, value):
         self.threshold = value / 100.0
@@ -279,7 +251,7 @@ if __name__ == '__main__':
       </details>
 
       <details class="details">
-        <summary><span class="details__title">main2.py（スレッド版）</span><span class="details__meta">クリックで開閉</span></summary>
+        <summary><span class="details__title">main2.py（スレッド版）</span><span class="details__meta">開閉</span></summary>
         <pre class="pre"><code class="language-python">import sys
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton, QLabel,
@@ -328,7 +300,6 @@ class App(QWidget):
         self.video_path = None
         self.template_path = None
         self.threshold = 0.8
-
         self.init_ui()
 
     def init_ui(self):
@@ -398,11 +369,7 @@ class App(QWidget):
 
         self.progress_label.setText("進行状況: 0%")
 
-        self.worker = WorkerThread(
-            self.video_path,
-            self.template_path,
-            self.threshold
-        )
+        self.worker = WorkerThread(self.video_path, self.template_path, self.threshold)
         self.worker.progress.connect(self.update_progress)
         self.worker.finished.connect(self.detection_finished)
         self.worker.error.connect(self.detection_error)
@@ -423,7 +390,7 @@ if __name__ == '__main__':
       </details>
 
       <details class="details">
-        <summary><span class="details__title">matcher.py（検出・書き出し）</span><span class="details__meta">クリックで開閉</span></summary>
+        <summary><span class="details__title">matcher.py（検出・書き出し）</span><span class="details__meta">開閉</span></summary>
         <pre class="pre"><code class="language-python">import cv2
 import numpy as np
 import os
@@ -503,8 +470,9 @@ def export_clips(video_path, segments, output_dir='clips', prefix='clip'):
     </section>
 
     <footer class="footer">
-      <p>© Prototype: MP4クリッパー / PyQt5 + OpenCV</p>
+      <p>MP4クリッパー（試作）</p>
     </footer>
   </main>
 </body>
 </html>
+
