@@ -8,8 +8,9 @@
 </head>
 <body>
 
-  <header>
-    <h1>ポートフォリオ</h1>
+<header class="site-header">
+  <div class="container nav-row">
+    <h1 class="logo">ポートフォリオ</h1>
     <nav>
       <ul>
         <li><a href="#about">自己紹介</a></li>
@@ -19,95 +20,132 @@
         <li><a href="#hobby">趣味</a></li>
       </ul>
     </nav>
-  </header>
+  </div>
+</header>
 
-  <main>
+<main>
 
-    <section id="hero">
+  <section id="hero" class="container">
+    <div class="hero-content">
       <h2>ようこそ！</h2>
-      <p>このサイトは私のポートフォリオです。</p>
-    </section>
+      <p class="lead">このサイトは私のポートフォリオです。</p>
+    </div>
+    <div class="hero-visual" aria-hidden="true"></div>
+  </section>
 
-    <section id="about">
+  <section id="about" class="container">
+    <div class="section-header">
+      <p class="eyebrow">About</p>
       <h2>自己紹介</h2>
-      <p>将来の夢を模索中…</p>
-    </section>
+    </div>
+    <div class="info-grid">
+      <div class="info-card single">
+        <p>将来の夢を模索中…</p>
+      </div>
+    </div>
+  </section>
 
-    <section id="skills">
+  <section id="skills" class="container">
+    <div class="section-header">
+      <p class="eyebrow">Skills</p>
       <h2>スキル</h2>
-      <ul>
-        <li>HTML / CSS</li>
-        <li>Python / データ分析</li>
-      </ul>
-    </section>
+    </div>
+    <div class="chip-row">
+      <span class="chip">HTML / CSS</span>
+      <span class="chip">Python / データ分析</span>
+    </div>
+  </section>
 
-    <section id="works">
+  <section id="works" class="container">
+    <div class="section-header">
+      <p class="eyebrow">Works</p>
       <h2>作品一覧</h2>
-      
-      <div class="work">
+    </div>
+    <div class="card-grid">
+      <article class="work">
         <h3>卒業制作に係る発表</h3>
-        <a href='slide/zemi_tour/slide.html'>こちらから</a>
-        <p>ゼミのプレゼンをするために作ったスライドです。パワポ等ではなく、html,cssにて作成しました。</p>
-      </div>
+        <p class="description">ゼミのプレゼンをするために作ったスライドです。パワポ等ではなく、html,cssにて作成しました。</p>
+        <a class="btn link" href='slide/zemi_tour/slide.html'>こちらから</a>
+      </article>
       
-      <div class="work">
+      <article class="work">
         <h3>産学連携プロジェクト</h3>
-        <a href='ind_ac_main.html'>こちらから</a>
-        <p>産学連携に係るものまとめです。</p>
-      </div>
+        <p class="description">産学連携に係るものまとめです。</p>
+        <a class="btn link" href='ind_ac_main.html'>こちらから</a>
+      </article>
 
-      <div class="work">
+      <article class="work">
         <h3>StreetFighter 6のデータ分析について</h3>
-        <a href='sf6_scrape/sf6_scrape.html'>こちらから</a>
-        <p>StreetFighter 6の対戦データやキャラクター性能などをPythonを用いて分析した結果です。</p>
-      </div>
+        <p class="description">StreetFighter 6の対戦データやキャラクター性能などをPythonを用いて分析した結果です。</p>
+        <a class="btn link" href='sf6_scrape/sf6_scrape.html'>こちらから</a>
+      </article>
 
-      <div class="work">
+      <article class="work">
         <h3>あったらいいなぁという構想</h3>
-        <a href='hope.html'>こちらから</a>
-        <p>あったらいいなぁ。</p>
-      </div>
+        <p class="description">あったらいいなぁ。</p>
+        <a class="btn link" href='hope.html'>こちらから</a>
+      </article>
 
-      <div class="work">
+      <article class="work">
         <h3>名古屋と行政</h3>
-        <a href='slide/nagoya_gyosei.html'>こちらから</a>
-        <p>nagoya_gyosei</p>
-      </div>
+        <p class="description">nagoya_gyosei</p>
+        <a class="btn link" href='slide/nagoya_gyosei.html'>こちらから</a>
+      </article>
 
-    </section>
+    </div>
+  </section>
 
-    <section id="contact">
+  <section id="contact" class="container">
+    <div class="section-header">
+      <p class="eyebrow">Contact</p>
       <h2>連絡先</h2>
-      <p>工事中…</p>
-    </section>
+      <div class="contact-placeholder">工事中…</div>
+    </div>
+  </section>
 
-    <section id="hobby">
+  <section id="hobby" class="container">
+    <div class="section-header">
+      <p class="eyebrow">Hobby</p>
       <h2>趣味</h2>
-      <div class="hobby-grid">
-        <a href="hobby_game.html" class="hobby-card">
-          <img src="images/hobby_game.jpg" alt="ゲーム">
-          <div class="overlay">好きなゲームのジャンルから、ただの独り言。</div>
-        </a>
-        <a href="hobby_music.html" class="hobby-card">
-          <img src="images/hobby_music.jpg" alt="音楽">
-          <div class="overlay">好きな音楽。備忘録。</div>
-        </a>
-        <a href="hobby_photo.html" class="hobby-card">
-          <img src="images/hobby_photo.jpg" alt="写真">
-          <div class="overlay">多分更新なし。</div>
-        </a>
-        <a href="hobby_anime.html" class="hobby-card">
-          <img src="images/hobby_anime.jpg" alt="アニメ">
-          <div class="overlay">好きなアニメ。</div>
-        </a>
-      </div>
-    </section>
+    </div>
+    <div class="hobby-grid">
+      <a href="hobby_game.html" class="hobby-card">
+        <img src="images/hobby_game.jpg" alt="ゲーム">
+        <div class="overlay">
+          <p class="overlay-title">ゲーム</p>
+          <p class="overlay-text">好きなゲームのジャンルから、ただの独り言。</p>
+        </div>
+      </a>
+      <a href="hobby_music.html" class="hobby-card">
+        <img src="images/hobby_music.jpg" alt="音楽">
+        <div class="overlay">
+          <p class="overlay-title">音楽</p>
+          <p class="overlay-text">好きな音楽。備忘録。</p>
+        </div>
+      </a>
+      <a href="hobby_photo.html" class="hobby-card">
+        <img src="images/hobby_photo.jpg" alt="写真">
+        <div class="overlay">
+          <p class="overlay-title">写真</p>
+          <p class="overlay-text">多分更新なし。</p>
+        </div>
+      </a>
+      <a href="hobby_anime.html" class="hobby-card">
+        <img src="images/hobby_anime.jpg" alt="アニメ">
+        <div class="overlay">
+          <p class="overlay-title">アニメ</p>
+          <p class="overlay-text">好きなアニメ。</p>
+        </div>
+      </a>
+    </div>
+  </section>
 
-  </main>
+</main>
 
-  <footer>
-    <p>&copy; 2025 柴田健智</p>
-  </footer>
+<footer>
+  <p>&copy; 2025 柴田健智</p>
+</footer>
 
 </body>
 </html>
+
