@@ -365,3 +365,63 @@ h1{
   .grid{ grid-template-columns: 1fr; }
   .dangerGrid{ grid-template-columns: 1fr; }
 }
+
+/* 図・スクショ */
+.figureGrid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.figureCard{
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.figureMedia{
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  aspect-ratio: 16 / 9;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* 画像未用意でも崩れにくくする */
+.figureMedia img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display:block;
+  background: #fff;
+}
+
+/* 画像が読み込めない時の代替表示っぽさ */
+.figureMedia img:not([src]), 
+.figureMedia img[src=""]{
+  display:none;
+}
+
+.figureCaption{
+  padding: 12px 12px;
+}
+
+.figureTitle{
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.figureText{
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+@media (max-width: 860px){
+  .figureGrid{ grid-template-columns: 1fr; }
+}
