@@ -2,532 +2,509 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>名古屋市：規格外品の堆肥化（斡旋型）</title>
-  <style>
-    :root{
-      --bg:#0f1115;
-      --panel:#151a22;
-      --line:rgba(255,255,255,.12);
-      --text:#f2f4f8;
-      --muted:rgba(242,244,248,.72);
-      --accent:#7aa7ff;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-    }
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:var(--sans);
-      color:var(--text);
-      background:var(--bg);
-      overflow:hidden;
-    }
-
-    /* top */
-    header{
-      height:44px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:0 14px;
-      border-bottom:1px solid var(--line);
-      background:rgba(0,0,0,.12);
-    }
-    header .title{
-      font-weight:700;
-      font-size:14px;
-      letter-spacing:.02em;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width:72vw;
-    }
-    header .hint{
-      font-family:var(--mono);
-      font-size:12px;
-      color:var(--muted);
-      white-space:nowrap;
-    }
-
-    /* slides area */
-    .slides{
-      height:calc(100% - 44px);
-      overflow:auto;
-      scroll-snap-type:y mandatory;
-      scroll-behavior:smooth;
-      padding:18px 0;
-    }
-    section.slide{
-      scroll-snap-align:start;
-      min-height: calc(100% - 36px);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px 14px;
-      box-sizing:border-box;
-    }
-
-    /* 16:9 frame */
-    .frame{
-      width:min(1080px, 96vw);
-      aspect-ratio: 16/9;
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:14px;
-      position:relative;
-      overflow:hidden;
-    }
-    .content{
-      position:absolute; inset:0;
-      padding:34px;
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-    }
-
-    .eyebrow{
-      font-size:12px;
-      color:var(--muted);
-      letter-spacing:.08em;
-      text-transform:uppercase;
-    }
-    h1,h2{margin:0; line-height:1.2}
-    h1{font-size:38px}
-    h2{font-size:30px}
-    p{margin:0; color:var(--muted); font-size:18px; line-height:1.6}
-    ul{margin:0; padding-left:1.1em; color:var(--muted); font-size:18px; line-height:1.6}
-    li{margin:.25em 0}
-    strong{color:var(--text)}
-    .small{font-size:14px; color:rgba(242,244,248,.62)}
-    .mono{font-family:var(--mono)}
-    a{color:var(--accent); text-decoration:none}
-    a:hover{text-decoration:underline}
-
-    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-    .grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
-
-    .box{
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:14px 14px;
-      background:rgba(0,0,0,.10);
-    }
-    .label{
-      font-size:12px;
-      color:rgba(242,244,248,.78);
-      font-weight:700;
-      margin-bottom:8px;
-    }
-    .pill{
-      display:inline-block;
-      padding:4px 10px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      font-size:12px;
-      color:rgba(242,244,248,.78);
-      margin-right:8px;
-    }
-    .accentline{
-      height:2px;
-      width:44px;
-      background:var(--accent);
-      border-radius:999px;
-      margin-top:4px;
-    }
-
-    .footer{
-      margin-top:auto;
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:10px;
-      padding-top:10px;
-      border-top:1px solid rgba(255,255,255,.10);
-    }
-    .page{
-      font-family:var(--mono);
-      font-size:12px;
-      color:rgba(242,244,248,.58);
-    }
-
-    /* simple flow */
-    .flow{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:6px;
-    }
-    .step{
-      padding:10px 12px;
-      border:1px solid var(--line);
-      border-radius:12px;
-      background:rgba(0,0,0,.10);
-      min-width: 180px;
-      flex:1;
-    }
-    .step b{display:block; color:var(--text); margin-bottom:4px}
-    .arrow{
-      color:rgba(242,244,248,.45);
-      font-family:var(--mono);
-      padding:0 4px;
-      user-select:none;
-    }
-
-    @media (max-width: 900px){
-      .content{padding:22px}
-      h1{font-size:30px}
-      h2{font-size:24px}
-      p,ul{font-size:16px}
-      .grid2,.grid3{grid-template-columns:1fr}
-      .step{min-width: unset}
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MP4クリッパー — テンプレ一致で自動切り出し（試作）</title>
+  <meta name="description" content="PyQt5 + OpenCVでテンプレ画像一致を検出し、MP4から区間を自動でクリップ化する試作ツールの紹介ページ。" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
-  <header>
-    <div class="title">名古屋市：規格外品の堆肥化（斡旋型）</div>
-    <div class="hint">↑↓ / PgUp PgDn / scroll</div>
+  <header class="hero">
+    <div class="container hero__inner">
+      <div class="badge">Prototype</div>
+      <h1>MP4クリッパー</h1>
+      <p class="lead">
+        PyQt5 + OpenCVで、<strong>テンプレ画像が映った瞬間</strong>を検出し<br />
+        MP4動画から自動でクリップを書き出す試作ツール。
+      </p>
+
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="#features">機能を見る</a>
+        <a class="btn btn--ghost" href="#limits">うまくいかなかった点</a>
+        <a class="btn btn--ghost" href="#source">ソースコード</a>
+      </div>
+
+      <div class="hero__meta">
+        <div class="metaCard">
+          <div class="metaCard__label">UI</div>
+          <div class="metaCard__value">PyQt5</div>
+        </div>
+        <div class="metaCard">
+          <div class="metaCard__label">検出</div>
+          <div class="metaCard__value">cv2.matchTemplate</div>
+        </div>
+        <div class="metaCard">
+          <div class="metaCard__label">出力</div>
+          <div class="metaCard__value">clips/*.mp4</div>
+        </div>
+      </div>
+    </div>
   </header>
 
-  <main class="slides" id="slides">
+  <main class="container">
+    <section id="overview" class="section">
+      <h2>概要</h2>
+      <p>
+        任意のMP4動画に対して、特定のUI・アイコン・通知などの「見た目」をテンプレ画像として指定し、
+        動画内で一致度が閾値を超えたフレームを集めて、連続した区間を<strong>セグメント</strong>としてまとめます。
+        そのセグメントを、<strong>個別のmp4</strong>として切り出して保存します。
+      </p>
 
-    <!-- 1 -->
-    <section class="slide" id="s1">
-      <div class="frame">
-        <div class="content">
-          <div class="eyebrow">タイトル（結論）</div>
-          <h1>新しい施設は作らない。<br>既存の堆肥先へ「つなぐ」</h1>
-          <p>
-            規格外品を、堆肥センターや民間事業者に回せるようにする。<br>
-            名古屋市は回収主体にならず、<strong>マッチング（斡旋）</strong>を担当する。
+      <div class="callout">
+        <div class="callout__icon">🧪</div>
+        <div class="callout__body">
+          <p class="callout__title">これは試作ツールです</p>
+          <p class="callout__text">
+            動作は確認できたものの、狙い通りに安定運用するには課題が残りました（詳細は後述）。
           </p>
-
-          <div class="grid3">
-            <div class="box">
-              <div class="label">狙い</div>
-              <p class="small">生産段階のロスを減らす</p>
-            </div>
-            <div class="box">
-              <div class="label">手段</div>
-              <p class="small">受入先の整理＋条件調整</p>
-            </div>
-            <div class="box">
-              <div class="label">強み</div>
-              <p class="small">予算負担を小さく始められる</p>
-            </div>
-          </div>
-
-          <div class="footer">
-            <div class="small">規格外農産物の堆肥化と食品ロス削減（9枚）</div>
-            <div class="page">01 / 09</div>
-          </div>
         </div>
       </div>
     </section>
 
-    <!-- 2 -->
-    <section class="slide" id="s2">
-      <div class="frame">
-        <div class="content">
-          <div class="eyebrow">経緯</div>
-          <h2>食品ロスは「作る側」でも起きる</h2>
-          <div class="grid2">
-            <div class="box">
-              <div class="label">問題</div>
-              <ul>
-                <li>規格に合わない野菜は出荷されないことがある</li>
-                <li>鋤き込み・廃棄が残る</li>
-              </ul>
-            </div>
-            <div class="box">
-              <div class="label">制約</div>
-              <ul>
-                <li>新設の堆肥施設は予算で厳しい</li>
-                <li>農家単独の堆肥化は負担が大きい</li>
-              </ul>
-            </div>
-          </div>
+    <section id="features" class="section">
+      <h2>できること</h2>
 
-          <div class="footer">
-            <div class="small">だから「既存の受入先」を活用する方針</div>
-            <div class="page">02 / 09</div>
+      <div class="grid">
+        <article class="card">
+          <h3>動画とテンプレ画像を選ぶ</h3>
+          <p>MP4動画と、PNG/JPGのテンプレ画像をGUIから選択します。</p>
+          <ul class="list">
+            <li>動画：*.mp4</li>
+            <li>テンプレ：*.png / *.jpg / *.jpeg</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>閾値（threshold）を調整</h3>
+          <p>
+            一致判定の閾値をスライダーで調整（0.00〜1.00）。
+            値が高いほど厳しめ判定、低いほど拾いやすい判定になります。
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>一致区間を検出して切り出し</h3>
+          <p>
+            一致したフレームを連結してセグメント化し、clips/に連番で保存します。
+          </p>
+          <div class="code">
+            clips/clip_1.mp4<br />
+            clips/clip_2.mp4<br />
+            ...
           </div>
-        </div>
+        </article>
+
+        <article class="card">
+          <h3>進捗表示（改良版）</h3>
+          <p>
+            main2.pyではQThreadを使い、処理中でもUIが固まりにくいようにしています。
+            進捗%もラベルに反映します。
+          </p>
+        </article>
       </div>
     </section>
 
-    <!-- 3 -->
-    <section class="slide" id="s3">
-      <div class="frame">
-        <div class="content">
-          <div class="eyebrow">現状（全国）</div>
-          <h2>未出荷は約13%（2022年）</h2>
-          <div class="box">
-            <div class="label">作物統計（野菜）</div>
-            <ul>
-              <li>収穫量：約<strong>1,284万t</strong></li>
-              <li>出荷量：約<strong>1,113万t</strong></li>
-              <li>差分：約<strong>170万t</strong> → 約<strong>13%</strong></li>
-            </ul>
-            <p class="small" style="margin-top:8px;">未出荷＝規格外品だけではない（価格調整・自家消費なども含む）。</p>
+    <section id="workflow" class="section">
+      <h2>使い方（ざっくり）</h2>
+      <ol class="steps">
+        <li><span class="stepNum">1</span> MP4動画を選択</li>
+        <li><span class="stepNum">2</span> テンプレ画像を選択（検出したい表示の切り抜き）</li>
+        <li><span class="stepNum">3</span> 閾値を調整</li>
+        <li><span class="stepNum">4</span> 実行 → clips/に書き出し</li>
+      </ol>
+    </section>
+
+    <section id="limits" class="section section--danger">
+      <h2>うまくいかなかったこと（重要）</h2>
+
+      <div class="dangerBox">
+        <h3>狙い通りに抽出できなかった & とにかく遅かった</h3>
+        <p>
+          この試作で厳しかった点は、主に次の2つです。
+        </p>
+
+        <div class="dangerGrid">
+          <div class="dangerItem">
+            <div class="dangerItem__title">閾値調整を手動でやる必要がある</div>
+            <div class="dangerItem__text">
+              テンプレ一致は<strong>threshold（閾値）</strong>に強く依存し、
+              こちらが毎回スライダーで試行錯誤しないといけませんでした。
+              その結果、狙っていた画像（場面）を<strong>安定して抽出できない</strong>ことがありました。
+            </div>
           </div>
 
-          <div class="footer">
-            <div class="small">出典：農林水産省「作物統計調査（野菜）」</div>
-            <div class="page">03 / 09</div>
+          <div class="dangerItem">
+            <div class="dangerItem__title">処理速度がめちゃくちゃ遅い</div>
+            <div class="dangerItem__text">
+              全フレームで照合処理を回すため、動画が長くなるほど重くなり、
+              体感でも「待ち時間が長すぎる」状態になりました。
+            </div>
           </div>
         </div>
+
+        <p class="fineprint">
+          まとめると、「動く」けれど「狙い通りに、速く、ラクに」は達成できなかった、という結果です。
+        </p>
       </div>
     </section>
 
-    <!-- 4 -->
-    <section class="slide" id="s4">
-      <div class="frame">
-        <div class="content">
-          <div class="eyebrow">現状（名古屋：推定）</div>
-          <h2>農家1戸あたり：年390〜1,300kg（仮定）</h2>
+    <section id="source" class="section">
+      <h2>ソースコード</h2>
+      <p class="note">
+        長いので、折りたたみ（開閉）形式で掲載します。
+      </p>
 
-          <div class="grid2">
-            <div class="box">
-              <div class="label">仮定</div>
-              <ul>
-                <li>未出荷率：13%</li>
-                <li>収量：10t/ha（保守的）</li>
-                <li>耕地面積：0.3〜1.0ha</li>
-              </ul>
-            </div>
-            <div class="box">
-              <div class="label">計算</div>
-              <p class="mono small">未出荷量 ≒ 面積 × 10,000(kg/ha) × 0.13</p>
-              <ul>
-                <li>0.3ha → 約<strong>390kg</strong></li>
-                <li>1.0ha → 約<strong>1,300kg</strong></li>
-              </ul>
-            </div>
-          </div>
+      <details class="details">
+        <summary><span class="details__title">main.py（シンプル版）</span><span class="details__meta">クリックで開閉</span></summary>
+        <pre class="pre"><code class="language-python">import sys
+from PyQt5.QtWidgets import(
+    QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QFileDialog, QSlider, QLineEdit
+)
+from PyQt5.QtCore import Qt
+from matcher import find_matching_segments, export_clips
 
-          <div class="footer">
-            <div class="small">出典：農林水産省「農業構造動態調査」（参照）</div>
-            <div class="page">04 / 09</div>
-          </div>
-        </div>
-      </div>
+class App(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('MP4クリッパー')
+        self.setGeometry(100, 100, 400, 300)
+
+        # 初期値
+        self.video_path = None
+        self.template_path = None
+        self.threshold = 0.8
+
+        self.init_ui()
+
+    def init_ui(self):
+        layout = QVBoxLayout()
+
+        # 動画ファイルのラベルとボタン
+        self.video_label = QLabel('動画ファイル：未選択')
+        self.video_btn = QPushButton('動画を選択')
+        self.video_btn.clicked.connect(self.select_video)
+
+        # テンプレ画像のラベル・ボタン
+        self.template_label = QLabel('テンプレ画像：未選択')
+        self.template_btn = QPushButton('テンプレ画像を選択')
+        self.template_btn.clicked.connect(self.select_template)
+
+        # 閾値スライダー
+        self.threshold_label = QLabel('閾値')
+        self.threshold_input = QLineEdit('0.8')
+        self.threshold_input.setReadOnly(True)
+
+        self.threshold_slider = QSlider(Qt.Horizontal)
+        self.threshold_slider.setMinimum(0)
+        self.threshold_slider.setMaximum(100)
+        self.threshold_slider.setValue(int(self.threshold * 100))
+        self.threshold_slider.valueChanged.connect(self.update_threshold)
+
+        # 実行ボタン
+        self.run_btn = QPushButton('実行')
+        self.run_btn.clicked.connect(self.run_detection)
+
+        # 進捗%
+        self.progress_label = QLabel("進行状況: 0%")
+        layout.addWidget(self.progress_label)
+
+        layout.addWidget(self.video_label)
+        layout.addWidget(self.video_btn)
+        layout.addWidget(self.template_label)
+        layout.addWidget(self.template_btn)
+        layout.addWidget(self.threshold_label)
+        layout.addWidget(self.threshold_input)
+        layout.addWidget(self.threshold_slider)
+        layout.addWidget(self.run_btn)
+
+        self.setLayout(layout)
+
+    def select_video(self):
+        file, _ = QFileDialog.getOpenFileName(self, '動画ファイルを選択', '', 'MP4 files (*.mp4);;すべてのファイル (*.*)')
+        if file:
+            self.video_path = file
+            self.video_label.setText(f"動画ファイル: {file}")
+
+    def select_template(self):
+        file, _ = QFileDialog.getOpenFileName(self, 'テンプレ画像', '', '画像ファイル (*.png *.jpg *.jpeg);;すべてのファイル (*.*)')
+        if file:
+            self.template_path = file
+            self.template_label.setText(f"テンプレ画像: {file}")
+
+    def run_detection(self):
+        if not self.video_path:
+            print('error: 動画ファイルが選ばれていません')
+            return
+        elif not self.template_path:
+            print('error: テンプレ画像が選ばれていません')
+            return
+        else:
+            print(f"done: 動画: {self.video_path}")
+            print(f"done: テンプレ画像: {self.template_path}")
+            print("映像解析を始めます...")
+            segments = find_matching_segments(
+                self.video_path,
+                self.template_path,
+                threshold=self.threshold,
+                min_length=10,
+                progress_callback=self.update_progress
+            )
+            if not segments:
+                print("⚠️ 一致セグメントが見つかりませんでした。")
+                return
+
+            print(f"🎞 {len(segments)} 個のセグメントを検出しました。保存処理を開始します...")
+
+            export_clips(
+                self.video_path,
+                segments,
+                output_dir="clips"
+            )
+
+            print("✅ すべてのクリップを保存しました！clips/フォルダを確認してください。")
+            self.update_progress(100.0)
+
+    def update_threshold(self, value):
+        self.threshold = value / 100.0
+        self.threshold_input.setText(f"{self.threshold:.2f}")
+
+    def update_progress(self, percent):
+        self.progress_label.setText(f"進行状況: {percent:.1f}%")
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    win = App()
+    win.show()
+    sys.exit(app.exec_())</code></pre>
+      </details>
+
+      <details class="details">
+        <summary><span class="details__title">main2.py（スレッド版）</span><span class="details__meta">クリックで開閉</span></summary>
+        <pre class="pre"><code class="language-python">import sys
+from PyQt5.QtWidgets import (
+    QApplication, QWidget, QVBoxLayout, QPushButton, QLabel,
+    QFileDialog, QSlider, QLineEdit
+)
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from matcher import find_matching_segments, export_clips
+
+class WorkerThread(QThread):
+    progress = pyqtSignal(float)
+    finished = pyqtSignal()
+    error = pyqtSignal(str)
+
+    def __init__(self, video_path, template_path, threshold):
+        super().__init__()
+        self.video_path = video_path
+        self.template_path = template_path
+        self.threshold = threshold
+
+    def run(self):
+        try:
+            segments = find_matching_segments(
+                self.video_path,
+                self.template_path,
+                threshold=self.threshold,
+                min_length=10,
+                progress_callback=self.progress.emit
+            )
+
+            if not segments:
+                self.error.emit("一致セグメントが見つかりませんでした。")
+                return
+
+            export_clips(self.video_path, segments, output_dir="clips")
+            self.finished.emit()
+
+        except Exception as e:
+            self.error.emit(str(e))
+
+class App(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('MP4クリッパー')
+        self.setGeometry(100, 100, 400, 350)
+
+        self.video_path = None
+        self.template_path = None
+        self.threshold = 0.8
+
+        self.init_ui()
+
+    def init_ui(self):
+        layout = QVBoxLayout()
+
+        self.video_label = QLabel('動画ファイル：未選択')
+        self.video_btn = QPushButton('動画を選択')
+        self.video_btn.clicked.connect(self.select_video)
+
+        self.template_label = QLabel('テンプレ画像：未選択')
+        self.template_btn = QPushButton('テンプレ画像を選択')
+        self.template_btn.clicked.connect(self.select_template)
+
+        self.threshold_label = QLabel('閾値')
+        self.threshold_input = QLineEdit('0.8')
+        self.threshold_input.setReadOnly(True)
+
+        self.threshold_slider = QSlider(Qt.Horizontal)
+        self.threshold_slider.setMinimum(0)
+        self.threshold_slider.setMaximum(100)
+        self.threshold_slider.setValue(int(self.threshold * 100))
+        self.threshold_slider.valueChanged.connect(self.update_threshold)
+
+        self.run_btn = QPushButton('実行')
+        self.run_btn.clicked.connect(self.run_detection)
+
+        self.progress_label = QLabel("進行状況: 0%")
+
+        layout.addWidget(self.video_label)
+        layout.addWidget(self.video_btn)
+        layout.addWidget(self.template_label)
+        layout.addWidget(self.template_btn)
+        layout.addWidget(self.threshold_label)
+        layout.addWidget(self.threshold_input)
+        layout.addWidget(self.threshold_slider)
+        layout.addWidget(self.run_btn)
+        layout.addWidget(self.progress_label)
+
+        self.setLayout(layout)
+
+    def select_video(self):
+        file, _ = QFileDialog.getOpenFileName(self, '動画ファイルを選択', '', 'MP4 files (*.mp4);;すべてのファイル (*.*)')
+        if file:
+            self.video_path = file
+            self.video_label.setText(f"動画ファイル: {file}")
+
+    def select_template(self):
+        file, _ = QFileDialog.getOpenFileName(self, 'テンプレ画像を選択', '', '画像ファイル (*.png *.jpg *.jpeg);;すべてのファイル (*.*)')
+        if file:
+            self.template_path = file
+            self.template_label.setText(f"テンプレ画像: {file}")
+
+    def update_threshold(self, value):
+        self.threshold = value / 100.0
+        self.threshold_input.setText(f"{self.threshold:.2f}")
+
+    def update_progress(self, percent):
+        self.progress_label.setText(f"進行状況: {percent:.1f}%")
+
+    def run_detection(self):
+        if not self.video_path:
+            print('error: 動画ファイルが選ばれていません')
+            return
+        if not self.template_path:
+            print('error: テンプレ画像が選ばれていません')
+            return
+
+        self.progress_label.setText("進行状況: 0%")
+
+        self.worker = WorkerThread(
+            self.video_path,
+            self.template_path,
+            self.threshold
+        )
+        self.worker.progress.connect(self.update_progress)
+        self.worker.finished.connect(self.detection_finished)
+        self.worker.error.connect(self.detection_error)
+        self.worker.start()
+
+    def detection_finished(self):
+        self.update_progress(100.0)
+        print("✅ すべてのクリップを保存しました！clips/フォルダを確認してください。")
+
+    def detection_error(self, message):
+        print(f"❌ エラー発生: {message}")
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    win = App()
+    win.show()
+    sys.exit(app.exec_())</code></pre>
+      </details>
+
+      <details class="details">
+        <summary><span class="details__title">matcher.py（検出・書き出し）</span><span class="details__meta">クリックで開閉</span></summary>
+        <pre class="pre"><code class="language-python">import cv2
+import numpy as np
+import os
+
+def group_frames(frames, min_length=10):
+    if not frames:
+        return []
+
+    segments = []
+    start = None
+    prev = -2
+
+    for idx in frames:
+        if idx != prev + 1:
+            if start is not None and prev - start + 1 >= min_length:
+                segments.append((start, prev))
+            start = idx
+        prev = idx
+
+    if start is not None and prev - start + 1 >= min_length:
+        segments.append((start, prev))
+
+    return segments
+
+def find_matching_segments(video_path, template_path, threshold=0.8, min_length=10, progress_callback=None):
+    cap = cv2.VideoCapture(video_path)
+    template = cv2.imread(template_path, 0)
+    match_frames = []
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    frame_idx = 0
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        res = cv2.matchTemplate(gray, template, cv2.TM_CCOEFF_NORMED)
+
+        if np.max(res) >= threshold:
+            match_frames.append(frame_idx)
+
+        if progress_callback and frame_idx % 10 == 0:
+            percent = (frame_idx / total_frames) * 100
+            progress_callback(percent)
+
+        frame_idx += 1
+
+    cap.release()
+    return group_frames(match_frames, min_length)
+
+def export_clips(video_path, segments, output_dir='clips', prefix='clip'):
+    cap = cv2.VideoCapture(video_path)
+
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    for i, (start, end) in enumerate(segments):
+        cap.set(cv2.CAP_PROP_POS_FRAMES, start)
+
+        out_path = os.path.join(output_dir, f"{prefix}_{i+1}.mp4")
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        out = cv2.VideoWriter(out_path, fourcc, fps, (width, height))
+
+        for _ in range(end - start + 1):
+            ret, frame = cap.read()
+            if not ret:
+                break
+            out.write(frame)
+        out.release()
+
+    cap.release()</code></pre>
+      </details>
     </section>
 
-    <!-- 5 -->
-    <section class="slide" id="s5">
-      <div class="frame">
-        <div class="content">
-          <div class="eyebrow">名古屋の課題</div>
-          <h2>「少なすぎず多すぎない量」が扱いづらい</h2>
-
-          <div class="grid2">
-            <div class="box">
-              <div class="label">規格外品とは</div>
-              <p>形・サイズ・傷などで市場規格から外れたもの。<br><span class="small">（食べられる場合も多い）</span></p>
-              <div class="accentline"></div>
-            </div>
-            <div class="box">
-              <div class="label">起きやすいこと</div>
-              <ul>
-                <li>鋤き込み／廃棄に流れる</li>
-                <li>市単独で実態データを掴みにくい</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="footer">
-            <div class="small">課題は「処理の導線」と「データ不足」</div>
-            <div class="page">05 / 09</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 6 -->
-    <section class="slide" id="s6">
-      <div class="frame">
-        <div class="content">
-          <div class="eyebrow">既存施策</div>
-          <h2>「おかえりやさい」を起点にする</h2>
-
-          <div class="grid2">
-            <div class="box">
-              <div class="label">何をしている？</div>
-              <ul>
-                <li>生ごみを堆肥化</li>
-                <li>堆肥で野菜を育てて市内で消費</li>
-              </ul>
-            </div>
-            <div class="box">
-              <div class="label">なぜ使える？</div>
-              <ul>
-                <li>循環の枠組みが既にある</li>
-                <li>規格外品の受入・循環にも応用しやすい</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="footer">
-            <div class="small">出典：名古屋市「なごや循環型野菜『おかえりやさい』」公式資料</div>
-            <div class="page">06 / 09</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 7 -->
-    <section class="slide" id="s7">
-      <div class="frame">
-        <div class="content">
-          <div class="eyebrow">今回のプラン</div>
-          <h2>斡旋型：受入先を整理して、つなぐ</h2>
-
-          <div class="box">
-            <div class="label">名古屋市がやること</div>
-            <span class="pill">受入先の一覧</span>
-            <span class="pill">条件の標準化</span>
-            <span class="pill">マッチング</span>
-            <span class="pill">実績の見える化</span>
-            <p class="small" style="margin-top:10px;">
-              ポイント：市が直接回収しない（運用を重くしない）。<br>
-              法令整理は所管の最新運用に従う前提で、まずは「斡旋」に寄せる。
-            </p>
-          </div>
-
-          <div class="footer">
-            <div class="small">参照：食品リサイクル法／廃棄物処理法（レポート要約）</div>
-            <div class="page">07 / 09</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 8 -->
-    <section class="slide" id="s8">
-      <div class="frame">
-        <div class="content">
-          <div class="eyebrow">プランの構造（＋コスト）</div>
-          <h2>流れ：農家の負担は「分別・一時保管」まで</h2>
-
-          <div class="flow">
-            <div class="step">
-              <b>農家</b>
-              <div class="small">分別／一時保管</div>
-            </div>
-            <div class="arrow">→</div>
-            <div class="step">
-              <b>名古屋市</b>
-              <div class="small">条件整理／斡旋</div>
-            </div>
-            <div class="arrow">→</div>
-            <div class="step">
-              <b>堆肥センター等</b>
-              <div class="small">受入／堆肥化</div>
-            </div>
-            <div class="arrow">→</div>
-            <div class="step">
-              <b>循環</b>
-              <div class="small">農地へ還元</div>
-            </div>
-          </div>
-
-          <div class="grid2" style="margin-top:10px;">
-            <div class="box">
-              <div class="label">なぜ自家堆肥化が難しい？</div>
-              <ul>
-                <li>小型：年数百kg〜1tの安定処理が難しい</li>
-                <li>本格：初期投資＋維持管理が重い</li>
-              </ul>
-            </div>
-            <div class="box">
-              <div class="label">この案の狙い</div>
-              <ul>
-                <li>処理は既存施設へ集約（規模のメリット）</li>
-                <li>継続しやすい運用にする</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="footer">
-            <div class="small">参照：農林水産省「家畜排せつ物・有機性資源の堆肥化に関する資料」（レポート引用）</div>
-            <div class="page">08 / 09</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 9 -->
-    <section class="slide" id="s9">
-      <div class="frame">
-        <div class="content">
-          <div class="eyebrow">まとめ／参考文献</div>
-          <h2>まとめ：小さく始めて、実績で広げる</h2>
-
-          <div class="grid2">
-            <div class="box">
-              <div class="label">まとめ</div>
-              <ul>
-                <li>未出荷は全国で約13%（生産段階ロスの余地）</li>
-                <li>名古屋は推定で年390〜1,300kg/戸の規模感</li>
-                <li>新設なしで、既存受入先へつなぐのが現実的</li>
-              </ul>
-            </div>
-            <div class="box">
-              <div class="label">参考文献</div>
-              <ul class="small">
-                <li>農林水産省「作物統計調査（野菜）」<br>
-                  <a href="https://www.maff.go.jp/j/tokei/kouhyou/sakumotu/index.html">https://www.maff.go.jp/j/tokei/kouhyou/sakumotu/index.html</a>
-                </li>
-                <li>農林水産省「農業構造動態調査」<br>
-                  <a href="https://www.maff.go.jp/j/tokei/kouhyou/noukou/index.html">https://www.maff.go.jp/j/tokei/kouhyou/noukou/index.html</a>
-                </li>
-                <li>名古屋市「なごや循環型野菜『おかえりやさい』」公式資料</li>
-                <li>農林水産省「家畜排せつ物・有機性資源の堆肥化に関する資料」</li>
-                <li>食品循環資源の再生利用等の促進に関する法律（食品リサイクル法）</li>
-                <li>廃棄物の処理及び清掃に関する法律（廃棄物処理法）</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="footer">
-            <div class="small">（注）法令運用は所管の最新整理に従う。本資料は政策案の要約。</div>
-            <div class="page">09 / 09</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
+    <footer class="footer">
+      <p>© Prototype: MP4クリッパー / PyQt5 + OpenCV</p>
+    </footer>
   </main>
-
-  <script>
-    (function(){
-      const slides = document.getElementById('slides');
-      const sections = Array.from(document.querySelectorAll('section.slide'));
-      function currentIndex(){
-        const top = slides.scrollTop;
-        let best = 0, bestDist = Infinity;
-        sections.forEach((s,i)=>{
-          const dist = Math.abs(s.offsetTop - top);
-          if(dist < bestDist){ bestDist = dist; best = i; }
-        });
-        return best;
-      }
-      function go(i){
-        i = Math.max(0, Math.min(sections.length - 1, i));
-        sections[i].scrollIntoView({behavior:'smooth', block:'start'});
-      }
-      window.addEventListener('keydown', (e)=>{
-        if(['ArrowDown','PageDown',' '].includes(e.key)){
-          e.preventDefault(); go(currentIndex()+1);
-        }else if(['ArrowUp','PageUp'].includes(e.key)){
-          e.preventDefault(); go(currentIndex()-1);
-        }
-      }, {passive:false});
-    })();
-  </script>
 </body>
 </html>
-
