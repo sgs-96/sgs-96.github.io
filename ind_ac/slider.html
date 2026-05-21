@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>カーリース×地方活性化 試算ツール（簡易版）</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="slider.css">
+</head>
+<body>
+  <header>
+    <h1>カーリース × 地方活性化 試算シミュレーター</h1>
+    <p>リース・協賛の条件を調整して、損益と協賛誘因を即時計算</p>
+  </header>
+
+  <main>
+    <section class="panel formula">
+      <h2>計算式</h2>
+      <div class="formula-box">
+        <p><strong>事業収益：</strong>  
+        収益 ＝ ( 協賛単価 × 協賛団体数 ＋ リース単価 × リース利用数 ) − ( 車両調達・保有コスト × リース利用数 ＋ 雑費 )</p>
+        <p><strong>協賛企業の誘因：</strong>  
+        誘因 ＝ 経済効果 / 協賛団体数 − 協賛単価</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>スライダーで調整</h2>
+      <div class="grid">
+        <label>
+          <span>リース単価（円／月）</span>
+          <input type="range" id="pL" min="0" max="60000" step="1000" value="20000">
+          <output id="pL_out">20,000</output>
+        </label>
+
+        <label>
+          <span>協賛単価（円／社）</span>
+          <input type="range" id="pS" min="0" max="2000000" step="10000" value="300000">
+          <output id="pS_out">300,000</output>
+        </label>
+
+        <label>
+          <span>協賛団体数（社）</span>
+          <input type="range" id="NS" min="0" max="300" step="1" value="40">
+          <output id="NS_out">40</output>
+        </label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>数値を直接入力</h2>
+      <div class="grid small">
+        <label>
+          <span>リース利用数（組）</span>
+          <input type="number" id="NU" value="230">
+        </label>
+
+        <label>
+          <span>車両調達・保有コスト（円／月）</span>
+          <input type="number" id="cV" value="60000">
+        </label>
+
+        <label>
+          <span>雑費（運営費・アプリ費など, 円／月）</span>
+          <input type="number" id="Z" value="1000000">
+        </label>
+
+        <label>
+          <span>経済効果（合計）</span>
+          <input type="number" id="E" value="11154000">
+        </label>
+      </div>
+    </section>
+
+    <section class="panel result">
+      <h2>計算結果</h2>
+      <div class="result-grid">
+        <div class="result-card">
+          <h3>事業収益（円／月）</h3>
+          <div class="value" id="profit_view">—</div>
+        </div>
+        <div class="result-card">
+          <h3>協賛企業の誘因（円／団体）</h3>
+          <div class="value" id="incentive_view">—</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 簡易試算モデル for Seminar Discussion</p>
+  </footer>
+
+  <script>
+    const fmt = (n)=>n.toLocaleString('ja-JP');
+    const get=(id)=>document.getElementById(id);
+
+    const vars=['pL','NU','pS','NS','cV','Z','E'];
+
+    const calc=()=>{
+      const v={};
+      vars.forEach(k=>v[k]=Number(get(k).value));
+
+      // 収益 = (pS×NS + pL×NU) − (cV + Z)
+      const revenue=(v.pS*v.NS)+(v.pL*v.NU);
+      const cost=v.cV*v.NU+v.Z;
+      const profit=revenue-cost;
+
+      // 協賛誘因 = (v.E / v.NS) - v.pS
+      const incentive=(v.E / v.NS) - v.pS;
+
+      get('profit_view').textContent=fmt(Math.round(profit));
+      get('incentive_view').textContent=fmt(Math.round(incentive));
+
+      get('profit_view').style.color=profit>=0?'#2ecc71':'#e74c3c';
+      get('incentive_view').style.color=incentive>=0?'#2ecc71':'#e74c3c';
+    };
+
+    ['pL','pS','NS'].forEach(id=>{
+      const el=get(id);
+      const out=get(id+'_out');
+      el.addEventListener('input',()=>{
+        out.textContent=fmt(el.value);
+        calc();
+      });
+    });
+
+    ['NU','cV','Z','E'].forEach(id=>{
+      get(id).addEventListener('input',calc);
+    });
+
+    document.addEventListener('DOMContentLoaded',calc);
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

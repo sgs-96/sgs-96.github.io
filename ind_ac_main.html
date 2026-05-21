@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>産学連携 目次 | 柴田健智</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav-row">
+    <h1 class="logo">SGS / Industry-Academia</h1>
+    <nav aria-label="サブナビゲーション">
+      <ul>
+        <li><a href="index.html#works">作品一覧へ</a></li>
+        <li><a href="index.html">トップ</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<section class="subpage-header">
+  <div class="container">
+    <div>
+      <p class="eyebrow">Works / Industry-Academia</p>
+      <h1>産学連携 目次</h1>
+    </div>
+    <a class="back-link" href="index.html">トップへ戻る</a>
+  </div>
+</section>
+
+<main>
+  <div class="container reveal">
+    <article class="prose">
+      <h2>このページについて</h2>
+      <p>
+        産学連携の活動に関連して制作したものをまとめています。
+        ゼミでの議論をきっかけに作った試算ツールなどを、ここから辿れるようにしています。
+      </p>
+    </article>
+
+    <ul class="link-list">
+      <li><a href="ind_ac/slider.html">カーリース × 地方活性化：予算シミュレーター</a></li>
+    </ul>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2025 柴田健智 / Shibata Kenji</p>
+</footer>
+
+<a href="#" class="to-top" aria-label="ページトップへ戻る">↑</a>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  const toTop = document.querySelector('.to-top');
+  const toggleToTop = () => {
+    if (window.scrollY > 320) toTop.classList.add('visible');
+    else toTop.classList.remove('visible');
+  };
+  window.addEventListener('scroll', toggleToTop, { passive: true });
+  toggleToTop();
+</script>
+
+</body>
+</html>

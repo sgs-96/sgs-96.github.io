@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Unified Timer Notification System Diagram</title>
+    <link rel="stylesheet" href="hope.css">
+</head>
+<body>
+
+<div class="diagram-container">
+
+    <h1>統合タイマー通知システムのイメージ</h1>
+    <p class="subtitle">
+        PCでの自動イベント検知・スマホでの手動タイマー開始を統合し、<br>
+        サーバ側でタイマー管理を行い、完了時に通知を送る仕組み。
+    </p>
+
+    <div class="row">
+
+        <!-- PC側 -->
+        <div class="box">
+            <h2>PC クライアント</h2>
+            <p>・HTML5アプリの通信を自動検知</p>
+            <p>・イベント開始 → 期間を計算</p>
+            <p>・タイマー開始をサーバへ送信</p>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <!-- Server -->
+        <div class="box server">
+            <h2>タイマー管理サーバ</h2>
+            <p>・PC/スマホから受け取った時刻を統合管理</p>
+            <p>・終了予定時刻を監視</p>
+            <p>・完了時に通知処理を実行</p>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <!-- Notifications -->
+        <div class="box notify">
+            <h2>通知サービス</h2>
+            <p>・メール送信</p>
+            <p>・スマホへのポップアップ通知</p>
+        </div>
+
+    </div>
+
+    <div class="row-bottom">
+
+        <!-- Smartphone -->
+        <div class="box smartphone">
+            <h2>スマホ アプリ</h2>
+            <p>・自動検知は不可</p>
+            <p>・ユーザーが手動でタイマーを開始</p>
+            <p>・タイマー情報をサーバへ送信</p>
+        </div>
+
+        <div class="arrow-up">↑</div>
+
+        <!-- Link to Server (bottom left to center) -->
+        <div class="note">
+            スマホの手動開始も<br>
+            PCの自動検知も<br>
+            すべて同じタイマー管理へ統合
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

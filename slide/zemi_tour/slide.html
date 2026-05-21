@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>卒業制作：ストリートファイター分析アプリ</title>
+  <link rel="stylesheet" href="slide_style.css" />
+</head>
+<body>
+  <div class="slide active">
+    <h1>卒業制作でやりたいこと</h1>
+    <p>柴田健智</p>
+  </div>
+
+  <div class="slide">
+    <h2>このゲーム知ってますか？</h2>
+    <img src="../../images/slide_image/sf6_f7p6.1280.png" alt="ストリートファイター６" class="slide_image" style="width: 70%;">
+  </div>
+  
+  <div class="slide">
+    <h2>このゲーム知ってますか？</h2>
+    <img src="../../images/slide_image/sf6_battle.png" alt="ストリートファイター６" class="slide_image" style="width: 70%;">
+    <p>「ストリートファイター6」は2023年6月2日にカプコンから発売された、人気格闘ゲームシリーズの最新作。</p>
+    <p>キャラクターごとの技やコンボが異なり、どの技を、いつどのようにどういう意思で振るのか、という<strong>駆け引き</strong>が非常に重要。</p>
+  </div>
+
+  <div class="slide">
+    <h2>本題</h2>
+    <p><strong>ストリートファイターによる、ストリートファイターのための、総合アプリを作りたい。</strong></p>
+  </div>
+
+  <div class="slide">
+    <h2>概要１：プレイヤー向け機能</h2>
+    <ul>
+      <li>キャラごとの「コンボ」「セットプレイ」一覧</li>
+      <li>ランク帯ごとの統計的分析</li>
+      <li>簡単なキャラ対策</li>
+      <li>→初心者〜上級者まで、上達の「ヒント」を提供</li>
+    </ul>
+  </div>
+
+  <div class="slide">
+    <h2>概要２：自己改善支援機能</h2>
+    <ul>
+      <li>各試合の振り返り機能（自省）</li>
+      <li>練習メニュー管理</li>
+      <li>行動の定着度チェック</li>
+      <li>→PDCAを促進し、自己学習を支援</li>
+    </ul>
+  </div>
+
+  <div class="slide">
+    <h2>現時点の進捗①</h2>
+    <p>Pythonを使い、スクレイピングを実施</p>
+    <p>→現在、<strong>上位750人のデータ</strong>を取得済み</p>
+    <img src="../../images/slide_image/scrape_code.png" alt="ストリートファイター６" class="slide_image" style="width: 70%;">
+  </div>
+
+  <div class="slide">
+    <h2>現時点の進捗②</h2>
+    <p>上位プレイヤーの<strong>行動パターンを統計的に分析</strong></p>
+    <p>→プレイヤーの「強い行動」の共通点を抽出</p>
+    <img src="../../images/slide_image/sf6_ranking_scraped.png" alt="ストリートファイター６" class="slide_image" style="width: 70%;">
+  </div>
+
+  <div class="slide">
+    <img src="../../images/slide_image/sf6_data.png" alt="ストリートファイター６" class="slide_image" style="width: 70%;">
+    <p>スト6内のシステムで、リソースを使った割合や攻撃を受けた数が記録されている</p>
+  </div>
+
+  <div class="slide">
+    <h2>今後の展望</h2>
+    <ul>
+      <li>上位750人に限らず、マスター帯全体、ダイヤ帯以下まで拡張</li>
+      <li>自分のデータと比較して「何が足りないか」が分かる</li>
+      <li>→あらゆる層にヒントを与えるアプリへ</li>
+    </ul>
+  </div>
+
+  <div class="thumbnail-bar" id="thumbnailBar"></div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const thumbnailBar = document.getElementById('thumbnailBar');
+    let current = 0;
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+        const thumb = thumbnailBar.children[i];
+        if (thumb) thumb.classList.toggle('active', i === index);
+      });
+    }
+
+    function createThumbnails() {
+      slides.forEach((slide, i) => {
+        const h = slide.querySelector('h1, h2');
+        const thumb = document.createElement('div');
+        thumb.classList.add('thumbnail');
+        thumb.textContent = h ? h.textContent : `スライド${i+1}`;
+        thumb.addEventListener('click', () => {
+          current = i;
+          showSlide(current);
+        });
+        thumbnailBar.appendChild(thumb);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      createThumbnails();
+      showSlide(current);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') {
+        current = (current + 1) % slides.length;
+        showSlide(current);
+      } else if (e.key === 'ArrowLeft') {
+        current = (current - 1 + slides.length) % slides.length;
+        showSlide(current);
+      } else if (e.key === 'ArrowUp') {
+        thumbnailBar.classList.add('visible');
+      } else if (e.key === 'ArrowDown') {
+        thumbnailBar.classList.remove('visible');
+      } else if (e.altKey && e.key === 'Enter') {
+        document.documentElement.requestFullscreen();
+      } else if (e.key === 'Escape') {
+        document.exitFullscreen();
+        thumbnailBar.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+</html>
