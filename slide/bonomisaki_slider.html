@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>坊ノ岬沖海戦 ─ 戦況推移 / Interactive Battle Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Oswald:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#020508;
+    --deep:#060c14;
+    --abyss:#0a131e;
+    --bone:#c8c0a6;
+    --bone-dim:#807859;
+    --bone-dark:#4b4532;
+    --gold:#9a7a38;
+    --gold-b:#c9a24a;
+    --gold-bright:#e4bf6a;
+    --blood:#8a2020;
+    --blood-b:#c03030;
+    --blood-bright:#e85050;
+    --steel:#3d5668;
+    --steel-b:#6a8598;
+    --sea:#0c1a2a;
+    --sea-deep:#040a12;
+    --land:#14140e;
+    --intact:#a8a89c;
+    --damaged:#c9a24a;
+    --heavy:#c03030;
+    --crippled:#7a1515;
+    --sunk:#2a2820;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;user-select:none}
+  body{
+    background:var(--void);color:var(--bone);
+    font-family:"Shippori Mincho",serif;
+    background:
+      radial-gradient(ellipse at 30% 20%,rgba(60,80,100,.08),transparent 50%),
+      radial-gradient(ellipse at 70% 80%,rgba(138,32,32,.06),transparent 60%),
+      linear-gradient(180deg,#020508,#050a14 50%,#020508);
+  }
+
+  /* フィルムグレイン */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:100;
+    background-image:repeating-linear-gradient(
+      0deg,rgba(255,255,255,.012) 0 1px,transparent 1px 3px
+    );
+    mix-blend-mode:overlay;
+  }
+
+  /* ============= LAYOUT ============= */
+  .app{
+    display:grid;
+    grid-template-columns:1fr 340px;
+    grid-template-rows:54px 1fr 120px;
+    grid-template-areas:
+      "top top"
+      "map side"
+      "bottom bottom";
+    height:100vh;
+  }
+
+  /* ============= TOP BAR ============= */
+  .top{
+    grid-area:top;display:flex;justify-content:space-between;align-items:center;
+    padding:0 28px;border-bottom:1px solid rgba(154,122,56,.25);
+    background:linear-gradient(180deg,rgba(2,5,8,.95),rgba(2,5,8,.5));
+    backdrop-filter:blur(4px);z-index:10;
+  }
+  .title-group{display:flex;align-items:baseline;gap:18px}
+  .title-jp{font-weight:700;letter-spacing:.3em;font-size:15px;color:var(--bone)}
+  .title-en{font-family:"Oswald",sans-serif;font-weight:400;font-size:10px;color:var(--gold);letter-spacing:.5em;text-transform:uppercase}
+  .title-date{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--bone-dim);letter-spacing:.3em}
+
+  .top-stats{display:flex;align-items:center;gap:22px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.25em}
+  .top-stat{display:flex;align-items:baseline;gap:8px}
+  .top-stat .k{color:var(--bone-dark);font-size:9px}
+  .top-stat .v{font-family:"Oswald",sans-serif;font-weight:500;font-size:16px;color:var(--gold-bright);letter-spacing:.05em}
+  .top-stat .v.red{color:var(--blood-bright);font-weight:600}
+  .top-stat .v.sunk-count{transition:color .6s,transform .6s}
+  .top-stat .v.sunk-count.changed{transform:scale(1.15)}
+  .sep{width:1px;height:24px;background:rgba(154,122,56,.25)}
+
+  /* ============= MAP ============= */
+  .map-wrap{
+    grid-area:map;position:relative;overflow:hidden;
+    background:var(--sea);
+    background:
+      radial-gradient(ellipse at 40% 50%,rgba(61,86,104,.12),transparent 60%),
+      linear-gradient(180deg,#08121c,#040a14);
+  }
+
+  /* 海面の波紋レイヤー */
+  .map-wrap::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:
+      radial-gradient(ellipse at 50% 65%,rgba(30,50,70,.2),transparent 50%);
+    z-index:1;
+  }
+
+  .map-svg{position:absolute;inset:0;width:100%;height:100%}
+
+  /* マップグリッド */
+  .grid-layer line{stroke:rgba(106,133,152,.08);stroke-width:1}
+  .grid-layer line.major{stroke:rgba(154,122,56,.12)}
+  .grid-layer text{fill:rgba(106,133,152,.35);font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.15em}
+
+  /* 九州 */
+  .kyushu{fill:#0a0d0a;stroke:rgba(154,122,56,.28);stroke-width:1}
+  .kyushu-label{fill:rgba(200,192,166,.35);font-family:"Shippori Mincho",serif;font-weight:600;font-size:14px;letter-spacing:.3em}
+  .kyushu-label-en{fill:rgba(128,120,89,.4);font-family:"Oswald",sans-serif;font-size:9px;letter-spacing:.4em}
+  .landmark-dot{fill:var(--gold-b)}
+  .landmark-label{fill:var(--bone-dim);font-family:"Shippori Mincho",serif;font-size:11px;letter-spacing:.12em}
+  .landmark-label-small{fill:var(--bone-dark);font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:.2em}
+
+  /* 航跡 */
+  .wake{fill:none;stroke:rgba(106,133,152,.3);stroke-width:1;stroke-dasharray:2 4}
+  .ship-trail{fill:none;stroke:rgba(200,192,166,.3);stroke-width:1;stroke-linecap:round}
+  .ship-trail.sunk{stroke:rgba(192,48,48,.3)}
+
+  /* 艦艇マーカー */
+  .ship-marker{
+    cursor:pointer;transition:opacity .4s;
+  }
+  .ship-marker .hull{
+    transition:fill .6s,stroke .6s;
+  }
+  .ship-marker .label{
+    fill:var(--bone);font-family:"Shippori Mincho",serif;font-weight:700;font-size:13px;letter-spacing:.1em;
+    paint-order:stroke;stroke:rgba(2,5,8,.9);stroke-width:3;
+    transition:fill .6s;
+  }
+  .ship-marker .label-en{
+    fill:var(--bone-dim);font-family:"Oswald",sans-serif;font-size:8px;letter-spacing:.25em;
+    paint-order:stroke;stroke:rgba(2,5,8,.9);stroke-width:3;
+  }
+  .ship-marker.sunk{opacity:.5}
+  .ship-marker.sunk .label{fill:var(--blood-b);text-decoration:line-through}
+  .ship-marker.sunk .label-en{fill:var(--crippled)}
+  .ship-marker.focused .label,.ship-marker.focused .label-en{fill:var(--gold-bright)}
+  .ship-marker.focused .hull{stroke:var(--gold-bright);stroke-width:2}
+
+  /* 沈没マーカー */
+  .sink-mark{
+    animation:sinkIn 1.2s ease forwards;
+  }
+  .sink-mark line{stroke:var(--blood-b);stroke-width:1.5}
+  .sink-mark circle{fill:none;stroke:var(--blood);stroke-width:1;opacity:.5}
+  .sink-mark .time{fill:var(--blood-bright);font-family:"Oswald",sans-serif;font-size:10px;font-weight:500;letter-spacing:.15em}
+  .sink-mark .name{fill:var(--blood-b);font-family:"Shippori Mincho",serif;font-size:11px;font-weight:700;letter-spacing:.1em}
+
+  /* 攻撃ベクトル */
+  .attack-vector{
+    stroke:var(--blood-b);stroke-width:1;stroke-dasharray:3 4;
+    opacity:0;transition:opacity .6s;
+  }
+  .attack-vector.active{opacity:.5;animation:pulse 1.8s ease infinite}
+
+  /* ============= SIDE PANEL ============= */
+  .side{
+    grid-area:side;border-left:1px solid rgba(154,122,56,.25);
+    background:linear-gradient(180deg,rgba(6,12,20,.85),rgba(2,5,8,.95));
+    backdrop-filter:blur(6px);
+    display:flex;flex-direction:column;overflow:hidden;z-index:5;
+  }
+  .side-header{
+    padding:12px 18px;border-bottom:1px solid rgba(154,122,56,.2);
+    font-family:"Oswald",sans-serif;font-size:10px;letter-spacing:.5em;
+    color:var(--gold-bright);text-transform:uppercase;font-weight:500;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .ship-list{flex:1;overflow-y:auto;padding:8px}
+  .ship-list::-webkit-scrollbar{width:4px}
+  .ship-list::-webkit-scrollbar-thumb{background:rgba(154,122,56,.3)}
+
+  .ship-row{
+    padding:10px 12px;margin-bottom:4px;background:rgba(8,14,22,.5);
+    border-left:2px solid var(--intact);position:relative;cursor:pointer;
+    transition:background .3s,border-color .5s;
+  }
+  .ship-row:hover{background:rgba(20,28,40,.8)}
+  .ship-row.focused{background:rgba(154,122,56,.1);border-left-color:var(--gold-bright)!important}
+  .ship-row.sunk{opacity:.55}
+  .ship-row.sunk .sr-name{text-decoration:line-through;text-decoration-color:rgba(192,48,48,.6)}
+  .ship-row[data-status="damaged"]{border-left-color:var(--damaged)}
+  .ship-row[data-status="heavy"]{border-left-color:var(--heavy)}
+  .ship-row[data-status="crippled"]{border-left-color:var(--crippled)}
+  .ship-row[data-status="sunk"]{border-left-color:var(--crippled)}
+
+  .sr-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+  .sr-name{font-size:15px;font-weight:700;letter-spacing:.1em;color:var(--bone)}
+  .sr-class{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.2em;color:var(--bone-dark)}
+  .sr-status{
+    font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.2em;
+    color:var(--intact);transition:color .5s;
+  }
+  .sr-hp{
+    height:2px;background:rgba(128,120,89,.15);position:relative;overflow:hidden;margin-bottom:6px;
+  }
+  .sr-hp::after{
+    content:"";position:absolute;left:0;top:0;bottom:0;
+    background:var(--intact);width:var(--hp,100%);
+    transition:width .6s cubic-bezier(.7,0,.3,1),background .5s;
+  }
+  .ship-row[data-status="damaged"] .sr-status,.ship-row[data-status="damaged"] .sr-hp::after{color:var(--damaged);background:var(--damaged)}
+  .ship-row[data-status="heavy"] .sr-status,.ship-row[data-status="heavy"] .sr-hp::after{color:var(--heavy);background:var(--heavy)}
+  .ship-row[data-status="crippled"] .sr-status,.ship-row[data-status="crippled"] .sr-hp::after{color:var(--crippled);background:var(--crippled)}
+  .ship-row[data-status="sunk"] .sr-status{color:var(--crippled)}
+  .ship-row[data-status="sunk"] .sr-hp::after{background:var(--sunk);width:0%}
+
+  .sr-event{
+    font-family:"Cormorant Garamond",serif;font-size:12px;line-height:1.5;color:var(--bone-dim);
+    font-style:italic;letter-spacing:.02em;min-height:14px;
+  }
+  .sr-event.red{color:var(--blood-b);font-style:normal;font-weight:500}
+  .sr-event.warn{color:var(--gold-b)}
+
+  /* 艦詳細パネル(focus時) */
+  .sr-detail{
+    display:none;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(154,122,56,.2);
+    font-family:"JetBrains Mono",monospace;font-size:10px;line-height:1.8;color:var(--bone-dim);
+    letter-spacing:.04em;
+  }
+  .ship-row.focused .sr-detail{display:block}
+  .sr-detail .dk{color:var(--bone-dark);font-size:9px;letter-spacing:.2em}
+  .sr-detail .dv{color:var(--bone)}
+  .sr-detail .dv.red{color:var(--blood-bright)}
+
+  /* ============= BOTTOM ============= */
+  .bottom{
+    grid-area:bottom;border-top:1px solid rgba(154,122,56,.25);
+    background:linear-gradient(0deg,rgba(2,5,8,.98),rgba(2,5,8,.6));
+    backdrop-filter:blur(6px);
+    padding:14px 28px;display:flex;flex-direction:column;gap:10px;z-index:10;
+  }
+
+  .event-strip{
+    display:flex;align-items:center;gap:18px;min-height:26px;
+  }
+  .event-time{
+    font-family:"Oswald",sans-serif;font-weight:600;font-size:28px;
+    color:var(--gold-bright);letter-spacing:.05em;line-height:1;flex-shrink:0;
+  }
+  .event-date{
+    font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--bone-dark);letter-spacing:.3em;
+  }
+  .event-text{
+    font-family:"Shippori Mincho",serif;font-size:14px;color:var(--bone);letter-spacing:.05em;line-height:1.5;
+    flex:1;transition:color .3s;
+  }
+  .event-text.red{color:var(--blood-bright);font-weight:500}
+  .event-text.warn{color:var(--gold-bright)}
+  .event-text.calm{color:var(--bone-dim);font-style:italic}
+
+  /* スライダー */
+  .slider-wrap{
+    position:relative;padding:22px 0 8px;
+  }
+  .slider-track-bg{
+    position:absolute;left:0;right:0;top:32px;height:2px;
+    background:linear-gradient(90deg,rgba(106,133,152,.15),rgba(106,133,152,.3),rgba(138,32,32,.3),rgba(106,133,152,.15));
+  }
+  .slider-progress{
+    position:absolute;left:0;top:32px;height:2px;
+    background:linear-gradient(90deg,var(--gold),var(--gold-bright),var(--blood-b));
+    pointer-events:none;transition:width .05s linear;
+  }
+  /* イベントマーカー */
+  .event-marker{
+    position:absolute;top:28px;width:10px;height:10px;border-radius:50%;
+    transform:translate(-50%,0);cursor:pointer;z-index:3;
+    background:var(--gold);border:1px solid var(--gold-bright);
+    transition:transform .2s,background .2s;
+  }
+  .event-marker.major{background:var(--blood);border-color:var(--blood-bright);width:12px;height:12px;top:27px}
+  .event-marker:hover{transform:translate(-50%,0) scale(1.5);z-index:5}
+  .event-marker .tip{
+    position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
+    background:rgba(2,5,8,.95);border:1px solid var(--line);padding:4px 10px;white-space:nowrap;
+    font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.2em;
+    color:var(--bone);opacity:0;pointer-events:none;transition:opacity .2s;
+  }
+  .event-marker:hover .tip{opacity:1}
+
+  .slider{
+    -webkit-appearance:none;appearance:none;width:100%;background:transparent;
+    height:30px;cursor:pointer;position:relative;z-index:2;
+  }
+  .slider::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;
+    background:var(--gold-bright);border:2px solid var(--void);cursor:pointer;
+    box-shadow:0 0 12px rgba(228,191,106,.4);
+    margin-top:-7px;
+  }
+  .slider::-moz-range-thumb{
+    width:16px;height:16px;border-radius:50%;background:var(--gold-bright);border:2px solid var(--void);cursor:pointer;
+    box-shadow:0 0 12px rgba(228,191,106,.4);
+  }
+  .slider::-webkit-slider-runnable-track{
+    height:2px;background:transparent;
+  }
+
+  /* 時刻ラベル */
+  .time-ticks{
+    display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;
+    font-size:9px;color:var(--bone-dark);letter-spacing:.2em;margin-top:-2px;
+  }
+
+  /* プレイバックコントロール */
+  .controls{
+    display:flex;align-items:center;gap:14px;
+  }
+  .ctrl-btn{
+    background:transparent;border:1px solid rgba(154,122,56,.3);color:var(--bone-dim);
+    padding:5px 14px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.25em;
+    cursor:pointer;transition:all .25s;
+  }
+  .ctrl-btn:hover{border-color:var(--gold-bright);color:var(--gold-bright)}
+  .ctrl-btn.active{background:rgba(154,122,56,.15);border-color:var(--gold-b);color:var(--gold-bright)}
+  .ctrl-btn.play{min-width:68px}
+
+  .speed-group{display:flex;border:1px solid rgba(154,122,56,.2)}
+  .speed-group .ctrl-btn{border:none;border-right:1px solid rgba(154,122,56,.15);padding:4px 10px}
+  .speed-group .ctrl-btn:last-child{border-right:none}
+
+  .hint{
+    margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--bone-dark);letter-spacing:.25em;
+  }
+  .hint kbd{
+    display:inline-block;padding:2px 5px;border:1px solid var(--bone-dark);border-bottom-width:2px;
+    margin:0 2px;color:var(--bone-dim);font-size:9px;
+  }
+
+  /* メモリアル */
+  .memorial{
+    position:absolute;right:360px;top:70px;z-index:5;
+    max-width:240px;pointer-events:none;
+  }
+  .memorial-head{
+    font-family:"Oswald",sans-serif;font-size:9px;letter-spacing:.5em;color:var(--blood-b);margin-bottom:8px;
+    text-transform:uppercase;
+  }
+  .memorial-list{
+    display:flex;flex-direction:column;gap:4px;
+  }
+  .memorial-item{
+    padding:5px 10px;background:rgba(138,32,32,.12);border-left:2px solid var(--blood);
+    font-family:"Shippori Mincho",serif;font-size:11px;color:var(--bone);letter-spacing:.1em;
+    opacity:0;transform:translateX(10px);transition:opacity .6s,transform .6s;
+    display:flex;justify-content:space-between;gap:12px;
+  }
+  .memorial-item.show{opacity:1;transform:translateX(0)}
+  .memorial-item .mt{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--blood-bright)}
+
+  /* アニメ */
+  @keyframes pulse{
+    0%,100%{opacity:.3}
+    50%{opacity:.7}
+  }
+  @keyframes sinkIn{
+    from{opacity:0;transform:scale(1.5)}
+    to{opacity:1;transform:scale(1)}
+  }
+
+  @media (max-width:900px){
+    .app{grid-template-columns:1fr;grid-template-areas:"top" "map" "side" "bottom";grid-template-rows:54px 40vh 30vh 130px}
+    .side{border-left:none;border-top:1px solid rgba(154,122,56,.25)}
+    .memorial{display:none}
+    .title-en{display:none}
+    .top-stats{gap:12px}
+    .event-time{font-size:22px}
+    .event-text{font-size:12px}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ========== TOP BAR ========== -->
+  <header class="top">
+    <div class="title-group">
+      <div class="title-jp">坊ノ岬沖海戦</div>
+      <div class="title-en">BATTLE OFF CAPE BŌNO</div>
+      <div class="title-date">1945.04.07</div>
+    </div>
+    <div class="top-stats">
+      <div class="top-stat"><span class="k">FLEET</span><span class="v" id="stat-fleet">10</span></div>
+      <div class="sep"></div>
+      <div class="top-stat"><span class="k">LOST</span><span class="v red sunk-count" id="stat-lost">0</span></div>
+      <div class="sep"></div>
+      <div class="top-stat"><span class="k">KIA</span><span class="v red" id="stat-kia">0</span></div>
+    </div>
+  </header>
+
+  <!-- ========== MAP ========== -->
+  <div class="map-wrap">
+    <svg class="map-svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet">
+      <!-- 格子 -->
+      <g class="grid-layer" id="grid"></g>
+
+      <!-- 九州 -->
+      <g id="kyushu-group">
+        <path class="kyushu" d="
+          M 1200 40
+          L 1100 60
+          L 1080 140
+          C 1070 180, 1050 200, 1060 240
+          L 1020 270
+          C 990 290, 970 310, 978 350
+          C 985 380, 1000 400, 985 440
+          C 970 480, 990 510, 1020 530
+          C 1040 540, 1045 555, 1005 568
+          C 990 572, 980 580, 985 592
+          C 990 600, 1030 598, 1060 608
+          C 1090 620, 1115 625, 1140 630
+          L 1200 660
+          Z"/>
+        <!-- 九州ラベル -->
+        <text class="kyushu-label" x="1100" y="400">九州</text>
+        <text class="kyushu-label-en" x="1096" y="418">KYUSHU</text>
+
+        <!-- ランドマーク -->
+        <circle class="landmark-dot" cx="1005" cy="568" r="3"/>
+        <text class="landmark-label" x="1010" y="565">坊ノ岬</text>
+        <text class="landmark-label-small" x="1010" y="580">CAPE BŌNO</text>
+
+        <circle class="landmark-dot" cx="920" cy="180" r="3"/>
+        <text class="landmark-label" x="840" y="176">佐世保</text>
+        <text class="landmark-label-small" x="840" y="190">SASEBO</text>
+
+        <circle class="landmark-dot" cx="1080" cy="500" r="2.5"/>
+        <text class="landmark-label" x="1088" y="503" style="font-size:10px">鹿児島</text>
+      </g>
+
+      <!-- 沖縄方向 -->
+      <g opacity=".5">
+        <line x1="380" y1="760" x2="440" y2="795" stroke="rgba(154,122,56,.4)" stroke-width="1" stroke-dasharray="3 4"/>
+        <text x="280" y="780" fill="rgba(154,122,56,.6)" font-family="Shippori Mincho" font-size="11" letter-spacing=".12em">▼ 沖縄 500 km</text>
+        <text x="280" y="794" fill="rgba(128,120,89,.5)" font-family="JetBrains Mono" font-size="9" letter-spacing=".2em">OBJECTIVE — OKINAWA</text>
+      </g>
+
+      <!-- 予定航路 (仮想) -->
+      <path class="wake" d="M 870 240 Q 700 280, 550 340 Q 430 420, 380 760"/>
+
+      <!-- 艦艇トレイル・攻撃ベクトル・沈没マーカー・艦マーカー -->
+      <g id="attack-layer"></g>
+      <g id="trail-layer"></g>
+      <g id="sink-layer"></g>
+      <g id="ship-layer"></g>
+    </svg>
+
+    <!-- メモリアル -->
+    <div class="memorial">
+      <div class="memorial-head">■ KILLED IN ACTION ■</div>
+      <div class="memorial-list" id="memorial-list"></div>
+    </div>
+  </div>
+
+  <!-- ========== SIDE PANEL ========== -->
+  <aside class="side">
+    <div class="side-header">
+      <span>FLEET · 第一遊撃部隊</span>
+      <span style="font-size:9px;color:var(--bone-dark)">伊藤整一 中将</span>
+    </div>
+    <div class="ship-list" id="ship-list"></div>
+  </aside>
+
+  <!-- ========== BOTTOM ========== -->
+  <div class="bottom">
+    <div class="event-strip">
+      <div class="event-time" id="event-time">08:00</div>
+      <div class="event-date">APR 07 1945</div>
+      <div class="event-text calm" id="event-text">敵機との接触なし、艦隊は輪形陣で南西に進撃中</div>
+    </div>
+
+    <div class="slider-wrap">
+      <div class="slider-track-bg"></div>
+      <div class="slider-progress" id="slider-progress"></div>
+      <div id="event-markers"></div>
+      <input class="slider" id="slider" type="range" min="480" max="900" value="480" step="1"/>
+      <div class="time-ticks" id="ticks"></div>
+    </div>
+
+    <div class="controls">
+      <button class="ctrl-btn play" id="btn-play">▶ 再生</button>
+      <button class="ctrl-btn" id="btn-reset">⟲ リセット</button>
+      <div class="speed-group">
+        <button class="ctrl-btn" data-speed="5">× 5</button>
+        <button class="ctrl-btn active" data-speed="15">× 15</button>
+        <button class="ctrl-btn" data-speed="60">× 60</button>
+      </div>
+      <div class="hint"><kbd>Space</kbd> 再生 · <kbd>←</kbd><kbd>→</kbd> 1 分 · <kbd>⇧</kbd><kbd>←</kbd><kbd>→</kbd> イベント</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// TIME UTILITIES
+// ============================================================
+function tMin(hhmm) {
+  const [h,m] = hhmm.split(':').map(Number);
+  return h * 60 + m;
+}
+function fmtTime(mins) {
+  const h = Math.floor(mins / 60) % 24;
+  const m = Math.floor(mins) % 60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
+
+// ============================================================
+// CONSTANTS
+// ============================================================
+const T_START = tMin('08:00'); // 480
+const T_END   = tMin('15:00'); // 900 -- 本体戦闘範囲
+
+// ============================================================
+// YAMATO MASTER TRACK (位置の基準)
+// ============================================================
+// 座標系: x増=東, y増=南. 1200x800 viewBox.
+// 史実: 大和は14:23に北緯30°43′東経128°04′で沈没 = map(496, 662)
+// 08:00頃は九州南方・東シナ海を西進中
+const YAMATO_TRACK = [
+  { t: tMin('08:00'), x: 870, y: 240 },
+  { t: tMin('10:00'), x: 760, y: 270 },
+  { t: tMin('12:00'), x: 620, y: 380 },
+  { t: tMin('12:20'), x: 595, y: 410 },
+  { t: tMin('12:34'), x: 580, y: 430 },
+  { t: tMin('13:00'), x: 555, y: 470 },
+  { t: tMin('13:33'), x: 528, y: 520 },  // 被雷3本、左回頭多用
+  { t: tMin('14:00'), x: 510, y: 580 },
+  { t: tMin('14:17'), x: 500, y: 640 },
+  { t: tMin('14:23'), x: 496, y: 662 }  // 沈没点
+];
+
+// ============================================================
+// SHIPS — 各艦の定義
+// ============================================================
+const SHIPS = {
+  yamato: {
+    name:'大和', en:'YAMATO', cls:'戦艦', clsEn:'BB · YAMATO-CLASS',
+    size:'bb',
+    offset:{dx:0, dy:0},
+    damage:[
+      {t:tMin('08:40'), status:'intact',  event:'敵機視認、戦闘配置'},
+      {t:tMin('12:34'), status:'intact',  event:'主砲対空射撃開始'},
+      {t:tMin('12:46'), status:'damaged', event:'至近弾多数、回避運動中'},
+      {t:tMin('13:33'), status:'heavy',   event:'左舷に魚雷3本命中、速力18kt'},
+      {t:tMin('13:44'), status:'heavy',   event:'左舷中央に魚雷2本追加命中'},
+      {t:tMin('14:00'), status:'heavy',   event:'中型爆弾3発命中'},
+      {t:tMin('14:12'), status:'crippled',event:'更に魚雷3本、速力12ktへ'},
+      {t:tMin('14:17'), status:'crippled',event:'右舷に致命魚雷、傾斜急増'},
+      {t:tMin('14:20'), status:'crippled',event:'伊藤長官、作戦中止・総員退艦下令'},
+      {t:tMin('14:23'), status:'sunk',    event:'転覆、副砲塔火災引火、大爆発'}
+    ],
+    sunkAt:tMin('14:23'),
+    kia:{time:'14:23', total:2498, saved:269,
+         cause:'米空母ヨークタウン(CV-10)雷撃隊ほか',
+         weapon:'魚雷命中 約10本 / 爆弾多数',
+         coord:'北緯30°43′ 東経128°04′'}
+  },
+
+  yahagi: {
+    name:'矢矧', en:'YAHAGI', cls:'軽巡', clsEn:'CL · AGANO-CLASS',
+    size:'cl',
+    offset:{dx:-50, dy:30},  // 先導位置
+    damage:[
+      {t:tMin('08:40'), status:'intact',  event:'二水戦旗艦、先導'},
+      {t:tMin('12:40'), status:'intact',  event:'対空戦闘中'},
+      {t:tMin('12:46'), status:'crippled',event:'第一波で魚雷2本命中、航行不能'},
+      {t:tMin('13:20'), status:'crippled',event:'漂流中も集中攻撃継続'},
+      {t:tMin('13:50'), status:'crippled',event:'魚雷・爆弾追加命中、浸水拡大'},
+      {t:tMin('14:05'), status:'sunk',    event:'沈没、古村司令官は海中へ'}
+    ],
+    stopAt:tMin('12:46'),
+    sunkAt:tMin('14:05'),
+    kia:{time:'14:05', total:446, saved:555,
+         cause:'空母艦載機による集中攻撃',
+         weapon:'魚雷7本 / 爆弾12発',
+         coord:'大和沈没地点付近'}
+  },
+
+  isokaze: {
+    name:'磯風', en:'ISOKAZE', cls:'駆逐', clsEn:'DD · KAGERŌ-CLASS',
+    size:'dd',
+    offset:{dx:-30, dy:50},  // 左舷前方
+    damage:[
+      {t:tMin('08:40'), status:'intact',  event:'第17駆逐隊司令艦'},
+      {t:tMin('12:46'), status:'damaged', event:'矢矧救援のため接舷試行'},
+      {t:tMin('13:15'), status:'heavy',   event:'至近弾で機械室浸水'},
+      {t:tMin('13:30'), status:'crippled',event:'航行不能、単艦で北進を試みる'},
+      {t:tMin('22:40'), status:'sunk',    event:'雪風により砲雷撃処分'}
+    ],
+    stopAt:tMin('13:30'),
+    sunkAt:tMin('22:40'),
+    scuttled:true,
+    kia:{time:'22:40', total:20, saved:'大半',
+         cause:'自軍による処分(雪風)',
+         weapon:'至近弾で機械室全滅が直接原因',
+         coord:'戦闘海域北方'}
+  },
+
+  hamakaze: {
+    name:'浜風', en:'HAMAKAZE', cls:'駆逐', clsEn:'DD · KAGERŌ-CLASS',
+    size:'dd',
+    offset:{dx:-20, dy:-30},  // 右舷前方
+    damage:[
+      {t:tMin('08:40'), status:'intact',  event:'対空戦闘配置'},
+      {t:tMin('12:45'), status:'heavy',   event:'第一波の魚雷で艦首損傷'},
+      {t:tMin('12:55'), status:'crippled',event:'艦首切断、急速浸水'},
+      {t:tMin('13:00'), status:'sunk',    event:'沈没'}
+    ],
+    stopAt:tMin('12:45'),
+    sunkAt:tMin('13:00'),
+    kia:{time:'13:00', total:45, saved:'多数',
+         cause:'空母艦載機の雷撃',
+         weapon:'魚雷命中（艦首切断）',
+         coord:'大和沈没地点北東 約10km'}
+  },
+
+  fuyuzuki: {
+    name:'冬月', en:'FUYUZUKI', cls:'駆逐', clsEn:'DD · AKIZUKI-CLASS',
+    size:'dd',
+    offset:{dx:35, dy:-30},  // 右舷後方
+    damage:[
+      {t:tMin('08:40'), status:'intact',  event:'対空戦闘配置'},
+      {t:tMin('13:44'), status:'damaged', event:'直撃弾2発（不発）、軽微被害'},
+      {t:tMin('14:23'), status:'damaged', event:'伊藤長官の最後の指示を受諾'},
+      {t:tMin('14:30'), status:'damaged', event:'霞の乗員を救助、処分実施'},
+      {t:tMin('18:00'), status:'damaged', event:'佐世保帰投、生存'}
+    ],
+    survived:true,
+    kia:{total:12, note:'帰投 / 中破'}
+  },
+
+  suzutsuki: {
+    name:'涼月', en:'SUZUTSUKI', cls:'駆逐', clsEn:'DD · AKIZUKI-CLASS',
+    size:'dd',
+    offset:{dx:45, dy:15},  // 右舷側
+    damage:[
+      {t:tMin('08:40'), status:'intact',  event:'対空戦闘配置'},
+      {t:tMin('13:25'), status:'heavy',   event:'艦首に直撃弾、火災発生'},
+      {t:tMin('13:40'), status:'heavy',   event:'通信装置・コンパス破損'},
+      {t:tMin('14:30'), status:'heavy',   event:'艦首沈下、後進9ktで離脱開始'},
+      {t:tMin('22:00'), status:'heavy',   event:'後進のみで単艦、佐世保へ'}
+    ],
+    survived:true,
+    kia:{total:57, note:'艦首大破 / ドック内で擱座'}
+  },
+
+  yukikaze: {
+    name:'雪風', en:'YUKIKAZE', cls:'駆逐', clsEn:'DD · KAGERŌ-CLASS',
+    size:'dd',
+    offset:{dx:55, dy:-5},  // 右舷側
+    damage:[
+      {t:tMin('08:40'), status:'intact',  event:'対空戦闘配置'},
+      {t:tMin('13:00'), status:'intact',  event:'至近弾を回避'},
+      {t:tMin('14:23'), status:'intact',  event:'大和生存者の救助開始'},
+      {t:tMin('22:40'), status:'intact',  event:'磯風を処分、戦死者3名のみ'}
+    ],
+    survived:true,
+    kia:{total:3, note:'奇跡の帰投 / 幸運艦'}
+  },
+
+  hatsushimo: {
+    name:'初霜', en:'HATSUSHIMO', cls:'駆逐', clsEn:'DD · HATSUHARU-CLASS',
+    size:'dd',
+    offset:{dx:-10, dy:-50},  // 右舷後方
+    damage:[
+      {t:tMin('08:40'), status:'intact',  event:'対空戦闘配置'},
+      {t:tMin('13:25'), status:'intact',  event:'大和の通信代行を開始'},
+      {t:tMin('13:55'), status:'intact',  event:'連合艦隊へ戦況電報を打電'},
+      {t:tMin('14:23'), status:'intact',  event:'矢矧・大和生存者を救助'},
+      {t:tMin('17:20'), status:'intact',  event:'古村司令官を救助、旗艦に'}
+    ],
+    survived:true,
+    kia:{total:0, note:'ほぼ無傷 / 戦死者なし'}
+  },
+
+  kasumi: {
+    name:'霞', en:'KASUMI', cls:'駆逐', clsEn:'DD · ASASHIO-CLASS',
+    size:'dd',
+    offset:{dx:15, dy:55},  // 艦隊後方
+    damage:[
+      {t:tMin('08:40'), status:'intact',  event:'対空戦闘配置'},
+      {t:tMin('13:00'), status:'damaged', event:'対空戦闘中、至近弾あり'},
+      {t:tMin('13:25'), status:'heavy',   event:'直撃弾2発、缶室浸水'},
+      {t:tMin('13:30'), status:'crippled',event:'航行不能、艦隊から落伍'},
+      {t:tMin('22:30'), status:'sunk',    event:'冬月により砲雷撃処分'}
+    ],
+    stopAt:tMin('13:30'),
+    sunkAt:tMin('22:30'),
+    scuttled:true,
+    kia:{time:'22:30', total:17, saved:'大半',
+         cause:'自軍による処分(冬月)',
+         weapon:'直撃弾2発・至近弾1発で缶室浸水',
+         coord:'大和沈没地点付近'}
+  },
+
+  asashimo: {
+    name:'朝霜', en:'ASASHIMO', cls:'駆逐', clsEn:'DD · YŪGUMO-CLASS',
+    size:'dd',
+    offset:{dx:-45, dy:-50},  // 艦隊後尾(序盤)
+    damage:[
+      {t:tMin('08:40'), status:'intact',  event:'対空戦闘配置'},
+      {t:tMin('12:20'), status:'damaged', event:'機関故障、速力低下で落伍'},
+      {t:tMin('12:35'), status:'heavy',   event:'単独で米軍第一波に捕捉'},
+      {t:tMin('12:45'), status:'crippled',event:'集中攻撃を受ける'},
+      {t:tMin('12:47'), status:'sunk',    event:'沈没、駆逐隊司令部含め全員戦死'}
+    ],
+    stopAt:tMin('12:20'),
+    sunkAt:tMin('12:47'),
+    // 落伍した位置を明示 (艦隊が12:20時点にいた位置で停止)
+    kia:{time:'12:47', total:'約326（全員）', saved:'0',
+         cause:'単独落伍中に空母艦載機第一波の集中攻撃',
+         weapon:'魚雷・爆弾多数',
+         coord:'艦隊本体の北東約30km'}
+  }
+};
+
+// ============================================================
+// KEY EVENTS (timeline markers)
+// ============================================================
+const EVENTS = [
+  {t:tMin('08:40'), major:false, label:'敵機視認',  text:'大和、水平線上にアメリカ軍偵察機を発見。伊藤長官「神機将ニ動カントス」の訓示'},
+  {t:tMin('12:20'), major:false, label:'朝霜落伍',  text:'朝霜、機関故障。速力低下で艦隊から落伍。単艦で後方に取り残される'},
+  {t:tMin('12:34'), major:true,  label:'戦闘開始',  text:'大和、敵機150機を視認、三式弾含む全火器で対空射撃開始'},
+  {t:tMin('12:47'), major:true,  label:'朝霜沈没',  text:'朝霜、集中攻撃により沈没。駆逐隊司令部を含め乗員全員戦死'},
+  {t:tMin('12:46'), major:true,  label:'矢矧航行不能', text:'矢矧、第一波で魚雷2本が命中し機関室全滅、航行不能に'},
+  {t:tMin('13:00'), major:true,  label:'浜風沈没',  text:'浜風、艦首切断により沈没'},
+  {t:tMin('13:25'), major:false, label:'霞・涼月被弾', text:'霞が直撃弾で缶室浸水し航行不能、涼月も艦首に被弾火災'},
+  {t:tMin('13:33'), major:true,  label:'大和被雷3本', text:'大和左舷に魚雷3本命中、速力25→18kt、左傾斜'},
+  {t:tMin('13:44'), major:true,  label:'大和被雷追加', text:'大和左舷中央に魚雷2本追加命中、被害拡大'},
+  {t:tMin('14:05'), major:true,  label:'矢矧沈没',  text:'矢矧、魚雷・爆弾の集中攻撃で沈没。古村司令官は海中へ'},
+  {t:tMin('14:17'), major:true,  label:'大和致命傷', text:'ヨークタウン雷撃隊が右舷に魚雷命中、傾斜急拡大。伊藤長官が作戦中止下令'},
+  {t:tMin('14:23'), major:true,  label:'大和爆沈',  text:'大和、転覆と同時に火薬庫誘爆、大爆発。黒煙800mが空を覆う'},
+  {t:tMin('14:43'), major:false, label:'生存者銃撃', text:'米軍機が漂流する生存者に機銃掃射を加える'}
+];
+
+// ============================================================
+// INTERPOLATION
+// ============================================================
+function interpTrack(track, t) {
+  if (t <= track[0].t) return { x: track[0].x, y: track[0].y };
+  if (t >= track[track.length-1].t) return { x: track[track.length-1].x, y: track[track.length-1].y };
+  for (let i=0; i<track.length-1; i++) {
+    if (t >= track[i].t && t <= track[i+1].t) {
+      const a = track[i], b = track[i+1];
+      const k = (t - a.t) / (b.t - a.t);
+      return { x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k };
+    }
+  }
+  return { x: track[0].x, y: track[0].y };
+}
+
+function getYamatoPos(t) { return interpTrack(YAMATO_TRACK, t); }
+
+function getShipPos(id, t) {
+  const ship = SHIPS[id];
+  if (id === 'yamato') return getYamatoPos(t);
+
+  // 停止後は、停止時の位置で固定
+  const eff = ship.stopAt != null && t > ship.stopAt ? ship.stopAt : t;
+  const yp = getYamatoPos(eff);
+  return { x: yp.x + ship.offset.dx, y: yp.y + ship.offset.dy };
+}
+
+function getShipStatus(id, t) {
+  const ship = SHIPS[id];
+  let cur = { status:'intact', event:'', t:0 };
+  for (const d of ship.damage) {
+    if (d.t <= t) cur = d;
+    else break;
+  }
+  return cur;
+}
+
+function getShipColor(status) {
+  switch(status){
+    case 'intact':   return '#b8b0a0';
+    case 'damaged':  return '#c9a24a';
+    case 'heavy':    return '#c03030';
+    case 'crippled': return '#7a1515';
+    case 'sunk':     return '#3a3028';
+    default: return '#b8b0a0';
+  }
+}
+
+function getHPPercent(status) {
+  return {intact:100, damaged:70, heavy:40, crippled:15, sunk:0}[status] || 100;
+}
+
+function getStatusLabel(status) {
+  return {intact:'健在', damaged:'小破', heavy:'大破', crippled:'航行不能', sunk:'沈没'}[status] || '';
+}
+
+// ============================================================
+// INITIAL RENDERING
+// ============================================================
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  let html = '';
+  // 緯度線 (200px刻み → 約1度ごと)
+  for (let y=100; y<=700; y+=150) {
+    html += `<line x1="0" y1="${y}" x2="1200" y2="${y}" class="${y===400?'major':''}"/>`;
+    if (y%150===100) html += `<text x="10" y="${y-4}">${33 - (y-100)/150}°N</text>`;
+  }
+  for (let x=100; x<=1100; x+=150) {
+    html += `<line x1="${x}" y1="0" x2="${x}" y2="800" class="${x===550?'major':''}"/>`;
+    html += `<text x="${x+3}" y="14">${127 + (x-100)/150}°E</text>`;
+  }
+  grid.innerHTML = html;
+}
+
+function renderShipList() {
+  const list = document.getElementById('ship-list');
+  list.innerHTML = Object.entries(SHIPS).map(([id, s]) => `
+    <div class="ship-row" data-id="${id}" data-status="intact">
+      <div class="sr-head">
+        <div>
+          <span class="sr-name">${s.name}</span>
+          <span class="sr-class" style="margin-left:6px">${s.cls}</span>
+        </div>
+        <div class="sr-status" data-f="status">健在</div>
+      </div>
+      <div class="sr-hp" style="--hp:100%"></div>
+      <div class="sr-event" data-f="event">────</div>
+      <div class="sr-detail" data-f="detail"></div>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.ship-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const id = row.dataset.id;
+      focusedShip = focusedShip === id ? null : id;
+      renderAt(currentT);
+    });
+  });
+}
+
+function renderShipMarkers() {
+  // SVG上の艦艇マーカー初期化
+  const layer = document.getElementById('ship-layer');
+  let html = '';
+  Object.entries(SHIPS).forEach(([id,s]) => {
+    const size = s.size === 'bb' ? 18 : s.size === 'cl' ? 14 : 10;
+    const h    = s.size === 'bb' ? 6  : s.size === 'cl' ? 5  : 4;
+    html += `
+      <g class="ship-marker" data-id="${id}" transform="translate(0,0)">
+        <rect class="hull" x="${-size/2}" y="${-h/2}" width="${size}" height="${h}"
+              fill="#b8b0a0" stroke="rgba(200,192,166,.5)" stroke-width=".5"/>
+        <text class="label" x="${size/2+4}" y="-4">${s.name}</text>
+        <text class="label-en" x="${size/2+4}" y="7">${s.en}</text>
+      </g>
+    `;
+  });
+  layer.innerHTML = html;
+
+  layer.querySelectorAll('.ship-marker').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.id;
+      focusedShip = focusedShip === id ? null : id;
+      renderAt(currentT);
+    });
+  });
+}
+
+function renderEventMarkers() {
+  const container = document.getElementById('event-markers');
+  const ticksEl = document.getElementById('ticks');
+  let html = '';
+  EVENTS.forEach(ev => {
+    const pct = ((ev.t - T_START) / (T_END - T_START)) * 100;
+    html += `<div class="event-marker ${ev.major?'major':''}" style="left:${pct}%" data-t="${ev.t}">
+               <div class="tip">${fmtTime(ev.t)} · ${ev.label}</div>
+             </div>`;
+  });
+  container.innerHTML = html;
+
+  container.querySelectorAll('.event-marker').forEach(el => {
+    el.addEventListener('click', () => {
+      currentT = parseInt(el.dataset.t);
+      slider.value = currentT;
+      renderAt(currentT);
+    });
+  });
+
+  // 時刻ラベル
+  const ticks = ['08:00','10:00','12:00','13:00','14:00','15:00'];
+  ticksEl.innerHTML = ticks.map(t => `<span>${t}</span>`).join('');
+}
+
+// ============================================================
+// MAIN UPDATE
+// ============================================================
+let focusedShip = null;
+let currentT = T_START;
+let sunkOrder = []; // 沈没順
+
+function renderAt(t) {
+  currentT = t;
+
+  // ---- 艦艇マーカー更新 ----
+  let sunkCount = 0;
+  let totalKia = 0;
+  const newlySunk = [];
+
+  Object.entries(SHIPS).forEach(([id, s]) => {
+    const pos = getShipPos(id, t);
+    const st = getShipStatus(id, t);
+    const marker = document.querySelector(`.ship-marker[data-id="${id}"]`);
+    const row = document.querySelector(`.ship-row[data-id="${id}"]`);
+
+    if (marker) {
+      marker.setAttribute('transform', `translate(${pos.x},${pos.y})`);
+      const hull = marker.querySelector('.hull');
+      hull.setAttribute('fill', getShipColor(st.status));
+      marker.classList.toggle('sunk', st.status === 'sunk');
+      marker.classList.toggle('focused', focusedShip === id);
+    }
+
+    if (row) {
+      row.dataset.status = st.status;
+      row.classList.toggle('sunk', st.status === 'sunk');
+      row.classList.toggle('focused', focusedShip === id);
+      row.querySelector('[data-f="status"]').textContent = getStatusLabel(st.status);
+      const hp = row.querySelector('.sr-hp');
+      hp.style.setProperty('--hp', getHPPercent(st.status) + '%');
+      const ev = row.querySelector('[data-f="event"]');
+      ev.textContent = st.event || '────';
+      ev.className = 'sr-event';
+      if (['heavy','crippled','sunk'].includes(st.status)) ev.classList.add('red');
+      else if (st.status === 'damaged') ev.classList.add('warn');
+
+      // 詳細(focus時のみ)
+      const detail = row.querySelector('[data-f="detail"]');
+      if (s.kia) {
+        if (st.status === 'sunk') {
+          detail.innerHTML = `
+            <div><span class="dk">沈没時刻</span> <span class="dv red">${s.kia.time || fmtTime(s.sunkAt)}</span></div>
+            <div><span class="dk">直接要因</span> <span class="dv">${s.kia.weapon || '-'}</span></div>
+            <div><span class="dk">攻撃元</span> <span class="dv">${s.kia.cause || '-'}</span></div>
+            <div><span class="dk">沈没地点</span> <span class="dv">${s.kia.coord || '-'}</span></div>
+            <div><span class="dk">戦死</span> <span class="dv red">${s.kia.total || '-'}名</span> <span class="dk">／ 生存</span> <span class="dv">${s.kia.saved || '-'}</span></div>
+          `;
+        } else if (s.survived) {
+          detail.innerHTML = `<div><span class="dk">最終結果</span> <span class="dv">${s.kia.note || ''}</span> · 戦死${s.kia.total}名</div>`;
+        } else {
+          detail.innerHTML = `<div><span class="dk">STATUS</span> <span class="dv">戦闘中</span></div>`;
+        }
+      }
+    }
+
+    if (st.status === 'sunk') {
+      sunkCount++;
+      if (typeof s.kia?.total === 'number') totalKia += s.kia.total;
+      if (!sunkOrder.find(x => x.id === id)) {
+        sunkOrder.push({id, name:s.name, time:s.sunkAt, pos});
+        newlySunk.push({id, name:s.name, time:s.sunkAt, pos});
+      }
+    } else {
+      // 過去に沈没登録されていて、時刻を巻き戻した場合は除去
+      sunkOrder = sunkOrder.filter(x => x.id !== id);
+    }
+  });
+
+  // ---- 沈没マーカー更新 ----
+  const sinkLayer = document.getElementById('sink-layer');
+  sinkLayer.innerHTML = sunkOrder.map(s => `
+    <g class="sink-mark" transform="translate(${s.pos.x},${s.pos.y})">
+      <circle r="14"/>
+      <line x1="-6" y1="-6" x2="6" y2="6"/>
+      <line x1="6"  y1="-6" x2="-6" y2="6"/>
+      <text class="time" x="10" y="-8">${fmtTime(s.time)}</text>
+    </g>
+  `).join('');
+
+  // ---- メモリアル(戦死艦リスト) ----
+  const mem = document.getElementById('memorial-list');
+  mem.innerHTML = sunkOrder.map(s => {
+    const ship = SHIPS[s.id];
+    return `<div class="memorial-item show">
+              <span>${s.name}</span>
+              <span class="mt">${fmtTime(s.time)}</span>
+            </div>`;
+  }).join('');
+
+  // ---- 戦況テキスト (現在時刻の最新イベント) ----
+  let currentEvent = null;
+  for (const ev of EVENTS) {
+    if (ev.t <= t) currentEvent = ev;
+    else break;
+  }
+  const evTime = document.getElementById('event-time');
+  const evText = document.getElementById('event-text');
+  evTime.textContent = fmtTime(t);
+  if (currentEvent) {
+    evText.textContent = `${currentEvent.label}：${currentEvent.text}`;
+    evText.className = 'event-text';
+    if (currentEvent.major) evText.classList.add('red');
+    else if (t - currentEvent.t < 15) evText.classList.add('warn');
+    else evText.classList.add('calm');
+  } else {
+    evText.textContent = '敵機との接触なし、艦隊は輪形陣で南西に進撃中';
+    evText.className = 'event-text calm';
+  }
+
+  // ---- トップの統計 ----
+  document.getElementById('stat-fleet').textContent = 10 - sunkCount;
+  const lostEl = document.getElementById('stat-lost');
+  const prevLost = parseInt(lostEl.textContent);
+  lostEl.textContent = sunkCount;
+  if (sunkCount !== prevLost) {
+    lostEl.classList.add('changed');
+    setTimeout(() => lostEl.classList.remove('changed'), 600);
+  }
+  // 累積戦死数 (沈没艦のみ積算)
+  let kiaCumulative = 0;
+  sunkOrder.forEach(s => {
+    const k = SHIPS[s.id].kia?.total;
+    if (typeof k === 'number') kiaCumulative += k;
+    else if (typeof k === 'string') {
+      const num = parseInt(k.replace(/[^0-9]/g,''));
+      if (!isNaN(num)) kiaCumulative += num;
+    }
+  });
+  document.getElementById('stat-kia').textContent = kiaCumulative.toLocaleString();
+
+  // ---- スライダー進行バー ----
+  const pct = ((t - T_START) / (T_END - T_START)) * 100;
+  document.getElementById('slider-progress').style.width = pct + '%';
+
+  // ---- 航跡(trail)描画 ----
+  updateTrails(t);
+}
+
+function updateTrails(t) {
+  const layer = document.getElementById('trail-layer');
+  let html = '';
+  Object.keys(SHIPS).forEach(id => {
+    const s = SHIPS[id];
+    // 過去の位置を一定間隔でサンプリング
+    const points = [];
+    const step = 10; // 分
+    const endT = Math.min(t, s.stopAt != null ? s.stopAt : t);
+    for (let tt = T_START; tt <= endT; tt += step) {
+      const p = getShipPos(id, tt);
+      points.push(`${p.x.toFixed(0)},${p.y.toFixed(0)}`);
+    }
+    // 停止地点を追加
+    const p = getShipPos(id, endT);
+    points.push(`${p.x.toFixed(0)},${p.y.toFixed(0)}`);
+    if (points.length > 1) {
+      const status = getShipStatus(id, t).status;
+      const isSunk = status === 'sunk';
+      html += `<polyline class="ship-trail ${isSunk?'sunk':''}" points="${points.join(' ')}" opacity="${isSunk?0.4:0.5}"/>`;
+    }
+  });
+  layer.innerHTML = html;
+}
+
+// ============================================================
+// SLIDER + PLAYBACK
+// ============================================================
+const slider = document.getElementById('slider');
+slider.addEventListener('input', e => {
+  currentT = parseFloat(e.target.value);
+  sunkOrder = []; // 時刻巻き戻しに対応
+  renderAt(currentT);
+});
+
+let isPlaying = false;
+let playSpeed = 15; // min per second
+let lastFrameT = 0;
+
+function tick(now) {
+  if (!isPlaying) return;
+  if (!lastFrameT) lastFrameT = now;
+  const dt = (now - lastFrameT) / 1000;
+  lastFrameT = now;
+  currentT += playSpeed * dt;
+  if (currentT >= T_END) {
+    currentT = T_END;
+    stopPlay();
+  }
+  slider.value = currentT;
+  renderAt(currentT);
+  if (isPlaying) requestAnimationFrame(tick);
+}
+
+function startPlay() {
+  if (currentT >= T_END) {
+    currentT = T_START;
+    sunkOrder = [];
+    slider.value = currentT;
+  }
+  isPlaying = true;
+  lastFrameT = 0;
+  document.getElementById('btn-play').textContent = '❚❚ 一時停止';
+  requestAnimationFrame(tick);
+}
+
+function stopPlay() {
+  isPlaying = false;
+  document.getElementById('btn-play').textContent = '▶ 再生';
+}
+
+document.getElementById('btn-play').addEventListener('click', () => {
+  isPlaying ? stopPlay() : startPlay();
+});
+document.getElementById('btn-reset').addEventListener('click', () => {
+  stopPlay();
+  currentT = T_START;
+  sunkOrder = [];
+  slider.value = currentT;
+  renderAt(currentT);
+});
+
+// 速度切替
+document.querySelectorAll('.speed-group .ctrl-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    playSpeed = parseInt(btn.dataset.speed);
+    document.querySelectorAll('.speed-group .ctrl-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// キーボード操作
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space') {
+    e.preventDefault();
+    isPlaying ? stopPlay() : startPlay();
+  } else if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    if (e.shiftKey) {
+      // 次のイベントへ
+      const next = EVENTS.find(ev => ev.t > currentT);
+      if (next) { currentT = next.t; }
+    } else {
+      currentT = Math.min(T_END, currentT + 1);
+    }
+    sunkOrder = [];
+    slider.value = currentT;
+    renderAt(currentT);
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    if (e.shiftKey) {
+      const prev = [...EVENTS].reverse().find(ev => ev.t < currentT);
+      if (prev) { currentT = prev.t; }
+    } else {
+      currentT = Math.max(T_START, currentT - 1);
+    }
+    sunkOrder = [];
+    slider.value = currentT;
+    renderAt(currentT);
+  }
+});
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+renderGrid();
+renderShipMarkers();
+renderShipList();
+renderEventMarkers();
+renderAt(T_START);
+</script>
+
+</body>
+</html>

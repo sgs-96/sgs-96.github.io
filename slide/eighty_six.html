@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>86 -EIGHTY SIX- ／ We are the dead who have not yet died.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Oswald:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#05080c;
+    --ash:#0c1118;
+    --ash-2:#141b24;
+    --ash-3:#1e2733;
+    --bone:#e6e8ec;
+    --bone-dim:#8a93a0;
+    --bone-dark:#4b5463;
+    --sky:#7fb2d9;           /* シンのスカーフ */
+    --sky-bright:#a6d2f0;
+    --sky-deep:#456a8a;
+    --blood:#9e2a2a;         /* 赤い瞳、血 */
+    --blood-bright:#d13838;
+    --blood-glow:#ff5555;
+    --rust:#7a4a2a;
+    --font-jp:"Shippori Mincho","Yu Mincho",serif;
+    --font-body:"Cormorant Garamond","Shippori Mincho",serif;
+    --font-mil:"Oswald",sans-serif;
+    --font-mono:"JetBrains Mono",monospace;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--font-jp);
+    background:var(--void);color:var(--bone);line-height:1.7;
+    overflow-x:hidden;min-height:100vh;
+    background:
+      radial-gradient(ellipse at 30% 10%,rgba(127,178,217,.06),transparent 50%),
+      radial-gradient(ellipse at 70% 80%,rgba(158,42,42,.08),transparent 50%),
+      #05080c;
+  }
+
+  /* スキャンライン */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+    background-image:repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,.02) 0 1px,
+      transparent 1px 3px
+    );
+    mix-blend-mode:overlay;
+  }
+
+  /* 右上に共通で表示される作戦コード的な飾り */
+  .corner-stamp{
+    position:fixed;top:110px;right:30px;z-index:3;
+    font-family:var(--font-mono);font-size:9px;color:var(--bone-dark);
+    letter-spacing:.3em;text-align:right;line-height:2;pointer-events:none;
+  }
+  .corner-stamp .r{color:var(--blood-bright)}
+
+  /* =================== ナビ =================== */
+  .nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:18px 44px;
+    background:linear-gradient(180deg,rgba(5,8,12,.95),rgba(5,8,12,.4));
+    border-bottom:1px solid rgba(127,178,217,.18);
+    backdrop-filter:blur(10px);
+  }
+  .logo{display:flex;align-items:baseline;gap:12px;font-family:var(--font-mil);font-weight:700}
+  .logo .eight{
+    font-size:32px;color:var(--blood-bright);letter-spacing:-.05em;line-height:1;
+    text-shadow:0 0 14px rgba(209,56,56,.35);
+  }
+  .logo .six{font-size:32px;color:var(--bone);letter-spacing:-.05em;line-height:1}
+  .logo .sub{
+    font-family:var(--font-mono);font-size:9px;color:var(--sky);
+    letter-spacing:.4em;text-transform:uppercase;
+  }
+  .nav-links{display:flex;gap:28px}
+  .nav-links a{
+    text-decoration:none;color:var(--bone-dim);
+    font-family:var(--font-mono);font-size:11px;letter-spacing:.3em;
+    text-transform:uppercase;padding:6px 0;position:relative;transition:color .3s;
+  }
+  .nav-links a:hover{color:var(--sky-bright)}
+  .nav-links a::before{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--sky);transform:scaleX(0);transform-origin:left;transition:transform .35s}
+  .nav-links a:hover::before{transform:scaleX(1)}
+
+  /* =================== ヒーロー =================== */
+  .hero{
+    min-height:100vh;position:relative;display:grid;place-items:center;padding:120px 24px 80px;overflow:hidden;
+  }
+
+  /* 背景の巨大 "86" */
+  .hero-bignum{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;
+    font-family:var(--font-mil);font-weight:700;
+    font-size:clamp(280px,45vw,620px);
+    color:var(--ash-2);opacity:.6;
+    letter-spacing:-.08em;line-height:.85;
+    user-select:none;pointer-events:none;
+    text-shadow:0 0 80px rgba(127,178,217,.05);
+  }
+  .hero-bignum .zero{color:var(--ash-3);position:relative}
+
+  /* 飛行機雲のような線 */
+  .hero-line{
+    position:absolute;top:30%;left:-5%;right:-5%;height:1px;
+    background:linear-gradient(90deg,transparent,var(--sky) 20%,var(--sky-bright) 50%,var(--sky) 80%,transparent);
+    opacity:.35;z-index:1;transform:rotate(-3deg);
+  }
+  .hero-line.l2{top:65%;transform:rotate(2deg);background:linear-gradient(90deg,transparent,var(--blood) 30%,var(--blood-bright) 50%,var(--blood) 70%,transparent);opacity:.22}
+
+  .hero-inner{position:relative;z-index:3;text-align:center;max-width:1000px}
+
+  .hero-over{
+    display:inline-flex;align-items:center;gap:14px;
+    font-family:var(--font-mono);font-size:11px;color:var(--sky-bright);letter-spacing:.55em;
+    margin-bottom:44px;text-transform:uppercase;
+    opacity:0;animation:fadeUp .9s .2s forwards;
+  }
+  .hero-over::before,.hero-over::after{content:"";width:38px;height:1px;background:var(--sky)}
+
+  .hero-title{
+    font-family:var(--font-mil);font-weight:700;
+    font-size:clamp(60px,11vw,170px);line-height:.9;letter-spacing:-.03em;
+    margin-bottom:18px;
+    opacity:0;animation:fadeUp 1s .4s forwards;
+  }
+  .hero-title .eighty{color:var(--blood-bright);text-shadow:0 0 40px rgba(209,56,56,.3)}
+  .hero-title .six{color:var(--bone)}
+
+  .hero-title-jp{
+    font-family:var(--font-jp);font-weight:800;font-size:clamp(18px,2.5vw,28px);
+    letter-spacing:.5em;color:var(--bone-dim);margin-bottom:48px;
+    opacity:0;animation:fadeUp .9s .6s forwards;
+  }
+
+  .hero-quote{
+    max-width:700px;margin:0 auto 52px;
+    font-family:var(--font-body);font-style:italic;font-size:clamp(16px,2vw,22px);
+    line-height:2;color:var(--bone-dim);letter-spacing:.03em;
+    opacity:0;animation:fadeUp 1s .8s forwards;
+  }
+  .hero-quote .kill{color:var(--sky-bright);font-style:normal;letter-spacing:.06em;font-weight:500}
+
+  .hero-stats{
+    display:flex;justify-content:center;gap:48px;flex-wrap:wrap;
+    opacity:0;animation:fadeUp .9s 1s forwards;
+  }
+  .hero-stat{
+    font-family:var(--font-mono);text-align:center;
+  }
+  .hero-stat .k{font-size:10px;color:var(--bone-dark);letter-spacing:.35em;margin-bottom:6px;text-transform:uppercase}
+  .hero-stat .v{font-family:var(--font-mil);font-size:24px;color:var(--sky-bright);font-weight:600;letter-spacing:.08em}
+
+  /* スクロール指示 */
+  .hero-scroll{
+    position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+    font-family:var(--font-mono);font-size:10px;letter-spacing:.4em;color:var(--bone-dark);
+    display:flex;flex-direction:column;align-items:center;gap:12px;z-index:3;
+    opacity:0;animation:fadeUp 1s 1.4s forwards;
+  }
+  .hero-scroll::after{
+    content:"";width:1px;height:36px;background:linear-gradient(180deg,var(--sky),transparent);
+    animation:scrollPulse 2.5s ease infinite;
+  }
+
+  /* =================== セクション共通 =================== */
+  .section{
+    padding:140px 40px 100px;max-width:1300px;margin:0 auto;position:relative;z-index:2;
+  }
+  .s-head{margin-bottom:72px;position:relative}
+  .s-head::before{
+    content:"";position:absolute;left:0;top:-8px;width:60px;height:1px;background:var(--sky);
+  }
+  .s-head .code{
+    font-family:var(--font-mono);font-size:11px;color:var(--sky-bright);letter-spacing:.4em;
+    margin-bottom:12px;text-transform:uppercase;
+  }
+  .s-head .code .dot{color:var(--blood-bright)}
+  .s-head .jp{
+    font-family:var(--font-jp);font-weight:700;font-size:clamp(34px,5vw,58px);
+    letter-spacing:.15em;color:var(--bone);line-height:1.2;margin-bottom:10px;
+  }
+  .s-head .en{
+    font-family:var(--font-mil);font-size:14px;color:var(--bone-dark);letter-spacing:.5em;
+    text-transform:uppercase;font-weight:300;
+  }
+
+  /* =================== 世界観ブロック =================== */
+  .world{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:rgba(127,178,217,.12);margin-bottom:60px}
+  .world-card{
+    background:var(--ash);padding:36px 32px;position:relative;transition:background .4s;
+  }
+  .world-card:hover{background:var(--ash-2)}
+  .world-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--sky);
+    transform:scaleX(0);transform-origin:left;transition:transform .5s;
+  }
+  .world-card:hover::before{transform:scaleX(1)}
+  .world-card.enemy::before{background:var(--blood-bright)}
+  .world-tag{
+    display:inline-block;font-family:var(--font-mono);font-size:10px;letter-spacing:.3em;
+    padding:3px 10px;border:1px solid var(--sky-deep);color:var(--sky-bright);
+    margin-bottom:14px;
+  }
+  .world-card.enemy .world-tag{border-color:var(--blood);color:var(--blood-bright)}
+  .world-card.neutral .world-tag{border-color:var(--bone-dark);color:var(--bone-dim)}
+  .world-title{
+    font-family:var(--font-jp);font-size:28px;font-weight:700;letter-spacing:.08em;
+    margin-bottom:4px;
+  }
+  .world-title-en{
+    font-family:var(--font-mil);font-size:11px;color:var(--bone-dark);letter-spacing:.3em;
+    margin-bottom:18px;text-transform:uppercase;
+  }
+  .world-desc{
+    font-family:var(--font-body);font-size:17px;line-height:1.9;color:var(--bone-dim);
+    letter-spacing:.02em;
+  }
+  .world-desc strong{color:var(--bone);font-weight:500}
+  .world-desc .hl{color:var(--sky-bright);font-style:italic}
+  .world-desc .red{color:var(--blood-bright);font-weight:500}
+
+  /* キーワード小ブロック */
+  .keywords{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px;
+  }
+  .kw{
+    padding:22px 22px 22px 26px;background:rgba(20,27,36,.6);
+    border-left:2px solid var(--sky);position:relative;
+  }
+  .kw.red{border-left-color:var(--blood-bright)}
+  .kw-label{
+    font-family:var(--font-mono);font-size:9px;color:var(--bone-dark);letter-spacing:.3em;margin-bottom:6px;
+  }
+  .kw-name{font-family:var(--font-jp);font-size:18px;font-weight:600;margin-bottom:8px;letter-spacing:.05em}
+  .kw-desc{font-family:var(--font-body);font-size:14px;color:var(--bone-dim);line-height:1.7}
+
+  /* =================== タイムライン =================== */
+  .timeline{position:relative;max-width:900px;margin:0 auto;padding-left:90px}
+  .timeline::before{
+    content:"";position:absolute;left:36px;top:10px;bottom:10px;width:1px;
+    background:linear-gradient(180deg,transparent,var(--sky) 5%,var(--sky-deep) 50%,var(--blood) 95%,transparent);
+  }
+
+  .tl-event{position:relative;margin-bottom:54px;padding-top:2px}
+  .tl-event::before{
+    content:"";position:absolute;left:-58px;top:10px;width:13px;height:13px;
+    border:1.5px solid var(--sky);background:var(--void);border-radius:50%;z-index:2;
+  }
+  .tl-event::after{
+    content:"";position:absolute;left:-52px;top:17px;width:44px;height:1px;background:var(--sky);
+  }
+  .tl-event.key::before{background:var(--blood);border-color:var(--blood-bright);width:15px;height:15px;left:-59px;top:9px}
+  .tl-event.key::after{background:var(--blood-bright)}
+
+  .tl-year{
+    font-family:var(--font-mil);font-weight:600;
+    font-size:26px;color:var(--sky-bright);letter-spacing:.05em;line-height:1;margin-bottom:6px;
+  }
+  .tl-event.key .tl-year{color:var(--blood-bright);font-size:30px}
+  .tl-year small{
+    font-family:var(--font-mono);font-size:10px;color:var(--bone-dark);letter-spacing:.25em;margin-left:12px;font-weight:400;
+  }
+  .tl-title{
+    font-family:var(--font-jp);font-size:22px;font-weight:700;color:var(--bone);
+    letter-spacing:.08em;margin-bottom:10px;
+  }
+  .tl-body{
+    font-family:var(--font-body);font-size:16px;line-height:1.95;color:var(--bone-dim);
+    max-width:620px;
+  }
+  .tl-body .hl{color:var(--sky-bright);font-style:italic}
+  .tl-body .red{color:var(--blood-bright);font-weight:500}
+  .tl-body strong{color:var(--bone);font-weight:500}
+
+  /* 引用 */
+  .quote{
+    margin:60px 0;padding:32px 36px 32px 52px;position:relative;
+    background:linear-gradient(90deg,rgba(127,178,217,.06),transparent);
+    border-left:2px solid var(--sky);
+    font-family:var(--font-body);font-style:italic;font-size:22px;line-height:1.9;
+    color:var(--bone);letter-spacing:.03em;
+  }
+  .quote::before{
+    content:"";position:absolute;left:10px;top:50%;transform:translateY(-50%);
+    width:20px;height:20px;border:1.5px solid var(--sky-bright);border-radius:50%;
+  }
+  .quote cite{
+    display:block;margin-top:14px;font-family:var(--font-mono);font-style:normal;
+    font-size:11px;letter-spacing:.4em;color:var(--sky);text-align:right;
+  }
+  .quote.red{border-left-color:var(--blood-bright);background:linear-gradient(90deg,rgba(158,42,42,.08),transparent)}
+  .quote.red::before{border-color:var(--blood-bright)}
+  .quote.red cite{color:var(--blood-bright)}
+
+  /* =================== キャラクター =================== */
+  .chars{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .char{
+    background:linear-gradient(180deg,var(--ash),var(--ash-2));
+    border:1px solid rgba(127,178,217,.12);padding:34px 30px;position:relative;
+    transition:transform .4s,border-color .4s;overflow:hidden;
+  }
+  .char::before{
+    content:attr(data-num);position:absolute;top:22px;right:26px;
+    font-family:var(--font-mil);font-size:48px;color:rgba(127,178,217,.08);font-weight:700;line-height:1;letter-spacing:-.05em;
+  }
+  .char::after{
+    content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--sky);
+    transform:scaleX(0);transform-origin:left;transition:transform .5s;
+  }
+  .char:hover{transform:translateY(-6px);border-color:var(--sky)}
+  .char:hover::after{transform:scaleX(1)}
+
+  .char.leader::before{color:rgba(209,56,56,.12)}
+  .char.leader:hover{border-color:var(--blood-bright)}
+  .char.leader:hover::after{background:var(--blood-bright);transform:scaleX(1)}
+
+  .char-rank{
+    font-family:var(--font-mono);font-size:10px;color:var(--sky-bright);letter-spacing:.3em;margin-bottom:8px;
+  }
+  .char.leader .char-rank{color:var(--blood-bright)}
+  .char-name-jp{
+    font-family:var(--font-jp);font-size:24px;font-weight:700;color:var(--bone);
+    letter-spacing:.06em;margin-bottom:2px;
+  }
+  .char-name-en{
+    font-family:var(--font-mil);font-size:11px;color:var(--bone-dark);letter-spacing:.3em;
+    margin-bottom:6px;text-transform:uppercase;font-weight:400;
+  }
+  .char-personal{
+    font-family:var(--font-body);font-style:italic;font-size:15px;color:var(--sky-bright);letter-spacing:.04em;
+    margin-bottom:20px;
+  }
+  .char.leader .char-personal{color:var(--blood-bright)}
+  .char-sep{
+    width:36px;height:1px;background:var(--sky-deep);margin-bottom:18px;
+  }
+  .char-desc{
+    font-family:var(--font-body);font-size:15px;line-height:1.85;color:var(--bone-dim);
+  }
+  .char-desc strong{color:var(--bone);font-weight:500}
+
+  .char-meta{
+    margin-top:18px;display:flex;gap:8px;flex-wrap:wrap;
+  }
+  .char-meta span{
+    font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;padding:3px 8px;
+    border:1px solid rgba(127,178,217,.2);color:var(--bone-dim);
+  }
+
+  /* =================== レギオン機種 =================== */
+  .legion{
+    margin-top:80px;
+  }
+  .legion-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:rgba(158,42,42,.15);
+  }
+  .legion-card{
+    background:var(--ash);padding:22px 18px;text-align:left;transition:background .3s;
+  }
+  .legion-card:hover{background:var(--ash-2)}
+  .legion-code{
+    font-family:var(--font-mono);font-size:9px;color:var(--blood-bright);letter-spacing:.3em;margin-bottom:10px;
+  }
+  .legion-name{
+    font-family:var(--font-jp);font-size:15px;font-weight:700;letter-spacing:.05em;margin-bottom:2px;
+  }
+  .legion-ger{
+    font-family:var(--font-mil);font-size:10px;color:var(--bone-dark);letter-spacing:.2em;margin-bottom:10px;
+  }
+  .legion-desc{font-family:var(--font-body);font-size:13px;line-height:1.7;color:var(--bone-dim)}
+
+  /* =================== 最終セクション =================== */
+  .finale{
+    min-height:85vh;display:grid;place-items:center;padding:140px 40px;text-align:center;
+    position:relative;z-index:2;background:radial-gradient(ellipse at center,rgba(127,178,217,.05),transparent 60%);
+    border-top:1px solid rgba(127,178,217,.1);
+  }
+  .finale-over{
+    font-family:var(--font-mono);font-size:11px;letter-spacing:.6em;color:var(--sky-bright);margin-bottom:38px;
+  }
+  .finale-title{
+    font-family:var(--font-jp);font-size:clamp(34px,6vw,74px);font-weight:800;line-height:1.25;
+    letter-spacing:.1em;margin-bottom:32px;color:var(--bone);
+  }
+  .finale-title .sky{color:var(--sky-bright)}
+  .finale-body{
+    font-family:var(--font-body);font-size:20px;line-height:2;color:var(--bone-dim);
+    max-width:640px;margin:0 auto 46px;font-style:italic;letter-spacing:.03em;
+  }
+  .finale-sign{font-family:var(--font-mil);font-size:13px;letter-spacing:.6em;color:var(--sky-bright);font-weight:300}
+
+  /* フッタ */
+  footer{
+    padding:60px 40px 36px;border-top:1px solid rgba(127,178,217,.1);position:relative;z-index:2;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:40px;
+  }
+  .foot-col h4{
+    font-family:var(--font-mono);font-size:10px;color:var(--sky-bright);letter-spacing:.4em;
+    margin-bottom:16px;text-transform:uppercase;
+  }
+  .foot-col p,.foot-col a{
+    font-family:var(--font-body);color:var(--bone-dim);font-size:14px;line-height:1.9;display:block;text-decoration:none;
+  }
+  .foot-bottom{
+    grid-column:1/-1;border-top:1px solid rgba(127,178,217,.1);padding-top:20px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;
+    font-family:var(--font-mono);font-size:10px;letter-spacing:.3em;color:var(--bone-dark);
+  }
+
+  /* アニメ */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes scrollPulse{
+    0%{transform:scaleY(0);transform-origin:top}
+    50%{transform:scaleY(1);transform-origin:top}
+    51%{transform:scaleY(1);transform-origin:bottom}
+    100%{transform:scaleY(0);transform-origin:bottom}
+  }
+
+  @media (max-width:900px){
+    .nav{padding:14px 20px}
+    .nav-links{display:none}
+    .corner-stamp{display:none}
+    .hero{padding:100px 20px 60px}
+    .hero-stats{gap:24px}
+    .section{padding:80px 20px 60px}
+    .world{grid-template-columns:1fr}
+    .keywords{grid-template-columns:1fr}
+    .timeline{padding-left:44px}
+    .timeline::before{left:14px}
+    .tl-event::before{left:-30px}
+    .tl-event::after{display:none}
+    .chars{grid-template-columns:1fr}
+    .legion-grid{grid-template-columns:repeat(2,1fr)}
+    footer{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- 右上の作戦コード -->
+<div class="corner-stamp">
+  <div>OP.CODE / <span class="r">SPEARHEAD-01</span></div>
+  <div>SECTOR / EASTERN FRONT</div>
+  <div>DATE / STAR CAL. 2148</div>
+</div>
+
+<!-- ====== ナビ ====== -->
+<header class="nav">
+  <div class="logo">
+    <span class="eight">86</span>
+    <span class="sub">Eighty Six</span>
+  </div>
+  <nav class="nav-links">
+    <a href="#world">World</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#chars">Personnel</a>
+    <a href="#legion">Legion</a>
+  </nav>
+</header>
+
+<!-- ====== ヒーロー ====== -->
+<section class="hero">
+  <div class="hero-bignum">
+    8<span class="zero">6</span>
+  </div>
+  <div class="hero-line"></div>
+  <div class="hero-line l2"></div>
+
+  <div class="hero-inner">
+    <div class="hero-over">STAR CAL. 2148 / EASTERN FRONT</div>
+    <h1 class="hero-title">
+      <span class="eighty">EIGHTY</span> <span class="six">SIX</span>
+    </h1>
+    <div class="hero-title-jp">戦 場 に 置 き 去 り に さ れ た、少 年 達 の 物 語</div>
+
+    <p class="hero-quote">
+      ──『最後まで、誇り高く在れ。』<br>
+      声だけ届く指揮管制官と、<br>
+      <span class="kill">名を持たぬ戦死者たちの</span>、86日間の記録。
+    </p>
+
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="k">Calendar</div><div class="v">Star 2148</div></div>
+      <div class="hero-stat"><div class="k">Sector</div><div class="v">86 · EAST</div></div>
+      <div class="hero-stat"><div class="k">Survival Rate</div><div class="v">0.1 %</div></div>
+      <div class="hero-stat"><div class="k">Unit</div><div class="v">SPEARHEAD</div></div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">DESCEND</div>
+</section>
+
+<!-- ====== WORLD ====== -->
+<section class="section" id="world">
+  <div class="s-head">
+    <div class="code">01<span class="dot">·</span>WORLD</div>
+    <h2 class="jp">この世界の、構造</h2>
+    <div class="en">The Architecture of a Lie</div>
+  </div>
+
+  <div class="world">
+    <div class="world-card">
+      <span class="world-tag">REPUBLIC</span>
+      <div class="world-title">サンマグノリア共和国</div>
+      <div class="world-title-en">Republic of San Magnolia</div>
+      <p class="world-desc">
+        全 <strong>85区画</strong> の行政区から成る連邦共和国。首都は第1区 <span class="hl">「リベルテ・エト・エガリテ」</span>（自由と平等）。かつては多民族国家として栄えたが、隣国ギアーデ帝国の侵攻を機に、白系種 <strong>アルバ</strong> 以外の全有色種 <strong>コロラータ</strong> を人外として扱う差別政策を断行。国民には「戦死者ゼロの平和」と虚報し、壁の内側で偽りの日常を享受している。
+      </p>
+    </div>
+
+    <div class="world-card enemy">
+      <span class="world-tag">EMPIRE</span>
+      <div class="world-title">ギアーデ帝国</div>
+      <div class="world-title-en">Giadian Empire</div>
+      <p class="world-desc">
+        大陸屈指の軍事大国。完全自律無人兵器 <span class="red">「レギオン」</span> を世界初で開発し、周辺諸国に一斉宣戦布告した侵略国家。しかし投入後まもなく国内で革命が発生し、帝国そのものは <strong>自壊</strong>。主を失ったレギオンだけが、最後の命令「敵性勢力の殲滅」に従って進軍を続けている。
+      </p>
+    </div>
+
+    <div class="world-card enemy">
+      <span class="world-tag">WEAPON</span>
+      <div class="world-title">〈レギオン〉</div>
+      <div class="world-title-en">Legion — Autonomous Combat Machines</div>
+      <p class="world-desc">
+        世界初の <strong>完全自律無人戦闘機械</strong>。流体マイクロマシンによる神経網と優秀な自律AIを搭載し、戦術判断・自己増殖・学習を行う。斥候型〈アーマイゼ〉から列車砲型〈モルフォ〉まで多数の戦闘型を擁し、編隊戦を展開する。最も恐ろしいのは、<span class="red">戦死者の脳を取り込み "死霊の声" として蘇らせる</span> 能力 ──。
+      </p>
+    </div>
+
+    <div class="world-card">
+      <span class="world-tag">MACHINE</span>
+      <div class="world-title">〈ジャガーノート〉</div>
+      <div class="world-title-en">Juggernaut — M1A4</div>
+      <p class="world-desc">
+        共和国が「無人」と虚報して投入する <strong>多脚戦闘機械</strong>。実際は人間が搭乗する有人兵器であり、装甲は紙、推力は不足、操縦者の生還は計算に入っていない。搭乗者 <span class="hl">プロセッサー</span> は誰もが死を覚悟し、自機に仲間の遺品の金属片を刻み続ける。
+      </p>
+    </div>
+
+    <div class="world-card neutral">
+      <span class="world-tag">PEOPLE</span>
+      <div class="world-title">エイティシックス</div>
+      <div class="world-title-en">The 86</div>
+      <p class="world-desc">
+        共和国85区の外、"存在しない" 第86区に追放された有色種の総称。市民権はすでに剥奪されており、<strong>人型の豚</strong> と呼ばれる。戦死してもカウントされないため、共和国民からは「人類はまだ一人も死んでいない」 ── その一文を永遠に守る盾として使い潰されている。
+      </p>
+    </div>
+
+    <div class="world-card">
+      <span class="world-tag">TECH</span>
+      <div class="world-title">〈知覚同調(パラレイド)〉</div>
+      <div class="world-title-en">Para-RAID / Sensory Resonance</div>
+      <p class="world-desc">
+        人類が共有する潜在意識を媒介し、聴覚を中心に知覚を直接接続する特殊通信技術。地形・電波妨害の影響を受けない。戦場の86と、後方の指揮管制官 <span class="hl">ハンドラー</span> は、この装置ごしに "声だけ" で出会い、戦い、別れる。
+      </p>
+    </div>
+  </div>
+
+  <div class="keywords">
+    <div class="kw">
+      <div class="kw-label">KEY TERM · 01</div>
+      <div class="kw-name">グラン・ミュール</div>
+      <div class="kw-desc">共和国85区を囲む巨大要塞壁群。実態は連なる要塞。内側の安全と、外側の地獄を分かつ一線。</div>
+    </div>
+    <div class="kw">
+      <div class="kw-label">KEY TERM · 02</div>
+      <div class="kw-name">スピアヘッド戦隊</div>
+      <div class="kw-desc">東部戦線第1戦区の精鋭部隊。隊長は"死神" シンエイ・ノウゼン。本作の物語が始まる場所。</div>
+    </div>
+    <div class="kw">
+      <div class="kw-label">KEY TERM · 03</div>
+      <div class="kw-name">ハンドラー</div>
+      <div class="kw-desc">後方からパラレイドで指揮を執る共和国軍士官。大多数は86を人と見なさず、彼らを死地へ送り続ける。</div>
+    </div>
+    <div class="kw red">
+      <div class="kw-label">KEY TERM · 04</div>
+      <div class="kw-name">死霊の声</div>
+      <div class="kw-desc">レギオンに取り込まれた死者の脳が発する、壊れたラジオのような声。シンだけがそれを "聞く" 異能を持つ。</div>
+    </div>
+    <div class="kw">
+      <div class="kw-label">KEY TERM · 05</div>
+      <div class="kw-name">パーソナルネーム</div>
+      <div class="kw-desc">エイティシックスが名前の代わりに刻む戦場のコードネーム。シン = "アンダーテイカー"（葬儀屋）。</div>
+    </div>
+    <div class="kw red">
+      <div class="kw-label">KEY TERM · 06</div>
+      <div class="kw-name">特別偵察任務</div>
+      <div class="kw-desc">実質的な体の良い死刑宣告。生存率が著しく高い者に課される、帰還前提の無い長距離偵察。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 引用 ====== -->
+<div class="section" style="padding-top:0">
+  <div class="quote red">
+    お前達は人じゃない。人の形をした、豚だ。<br>
+    ── だが、俺達はそれを受け入れて戦っているわけじゃない。
+    <cite>— RAIDEN SHUGA / 87 Sector</cite>
+  </div>
+</div>
+
+<!-- ====== TIMELINE ====== -->
+<section class="section" id="timeline">
+  <div class="s-head">
+    <div class="code">02<span class="dot">·</span>CHRONOLOGY</div>
+    <h2 class="jp">星暦 — 戦の年表</h2>
+    <div class="en">Stellar Calendar — Records of War</div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-event">
+      <div class="tl-year">c. 2138 <small>STAR CALENDAR</small></div>
+      <div class="tl-title">〈レギオン〉完成</div>
+      <div class="tl-body">
+        ギアーデ帝国の女性研究者 <span class="hl">ゼレーネ・ビルケンハイム</span> らによって、世界初の完全自律無人戦闘機械が完成。本来は人命を守るために生まれた兵器だったが、帝国軍部はこれを侵略戦争の切り札として投入することを決定する。
+      </div>
+    </div>
+
+    <div class="tl-event key">
+      <div class="tl-year">2139 <small>戦争開始 / 9年前</small></div>
+      <div class="tl-title">大陸全土、宣戦布告</div>
+      <div class="tl-body">
+        ギアーデ帝国は周辺諸国に <span class="red">一斉宣戦布告</span>。レギオン軍団は瞬く間に各国を席巻し、共和国正規軍はわずか半月で壊滅した。同年、サンマグノリア共和国は緊急大統領令により、白系種以外の全人種を "敵性市民" と指定。全員が強制収容所 ── すなわち <strong>第86区</strong> へ移送される。
+      </div>
+    </div>
+
+    <div class="tl-event">
+      <div class="tl-year">2139</div>
+      <div class="tl-title">ノウゼン家、崩落</div>
+      <div class="tl-body">
+        共和国首都リベルテ・エト・エガリテ。幼いシンエイ・ノウゼンは、隣家のアネットと別れを告げることもなく、家族とともに強制収容所へ連行される。両親は間もなく戦死。シンは兄 <span class="hl">レイ</span> と引き離され、収容所内の教会で神父に育てられる ── 母の死を巡る誤解の果て、兄に <span class="red">首を絞められた傷</span> は、以後一生消えない。
+      </div>
+    </div>
+
+    <div class="tl-event">
+      <div class="tl-year">c. 2140</div>
+      <div class="tl-title">ギアーデ帝国、崩壊</div>
+      <div class="tl-body">
+        レギオン投入から約1年、帝国内で市民革命が勃発。皇家は処刑され <span class="hl">ギアーデ連邦</span> が成立。しかしレギオンは既に制御を離れ、通信電波は全て途絶 ── 「敵性勢力の殲滅」という最後の命令だけを握りしめ、無人の軍団は進軍を続ける。
+      </div>
+    </div>
+
+    <div class="tl-event">
+      <div class="tl-year">c. 2144</div>
+      <div class="tl-title">"死神"、誕生</div>
+      <div class="tl-body">
+        12歳のシンは兵役につく。所属部隊の壊滅を繰り返し生き延び、<strong>戦場の黒い影</strong> として名が轟き始める。同時期、兄レイが戦死。レイの脳はレギオンに取り込まれ、"死霊の声" として永遠に弟を追いかけ始める ── シンが戦い続ける理由が、ここで決定づけられる。
+      </div>
+    </div>
+
+    <div class="tl-event">
+      <div class="tl-year">2145</div>
+      <div class="tl-title">知覚同調の父、自殺</div>
+      <div class="tl-body">
+        アネットの父 <span class="hl">ピエール・ペンローズ</span> 博士は、自らの研究を共和国に悪用されたことへの贖罪として、同調率を最大に設定したレイドデバイスで自殺する。娘アネットの心に、研究に対する拭えない罪の感覚が刻まれた。
+      </div>
+    </div>
+
+    <div class="tl-event key">
+      <div class="tl-year">2148 <small>物語、始まる</small></div>
+      <div class="tl-title">レーナ、スピアヘッド戦隊着任</div>
+      <div class="tl-body">
+        共和国軍少佐 <span class="hl">ヴラディレーナ・ミリーゼ</span>、16歳。東部戦線第1戦区 <strong>スピアヘッド戦隊</strong> のハンドラーに着任する。歴代のハンドラーは皆、"何か" に呑まれて壊れていった部隊。最初のパラレイドで、レーナの耳に届いたのは ── 寡黙な大尉、<span class="red">アンダーテイカー</span> の静かな声だった。
+      </div>
+    </div>
+
+    <div class="tl-event">
+      <div class="tl-year">2148</div>
+      <div class="tl-title">「あの空の向こうへ」</div>
+      <div class="tl-body">
+        86日間に及ぶ、共に在る日々。レーナは部隊員全員の名を覚え、戦歴を尊び、階級章を外して向き合った。スピアヘッドは一つずつ、同胞を失う。カイエ、ハルト、そしてキノ ── 名を刻むシンのジャガーノートに、<strong>新しい名前</strong> が重なっていく。
+      </div>
+    </div>
+
+    <div class="tl-event key">
+      <div class="tl-year">2148 <small>終末</small></div>
+      <div class="tl-title">特別偵察、死出の行軍</div>
+      <div class="tl-body">
+        共和国軍上層部は、長く生き残りすぎたスピアヘッドに <span class="red">「特別偵察任務」</span> ── 実質的な死刑 ── を下した。シン、ライデン、セオ、クレナ、アンジュの5名は通信圏外へと進軍。最後のパラレイドで、レーナは泣きながら叫ぶ。シンの答えは静かだった ── <em>「僕たちは…同じ戦場に立てないけれど、いつか。」</em>
+      </div>
+    </div>
+
+    <div class="tl-event">
+      <div class="tl-year">2149 <small>1期 → 2期</small></div>
+      <div class="tl-title">ギアーデ連邦、収容</div>
+      <div class="tl-body">
+        死地を越え、5人は旧帝国領で <span class="hl">ギアーデ連邦</span> 軍に保護される。連邦暫定大統領 <span class="hl">エルンスト・ツィンマーマン</span> は彼らを戦場から解放し、普通の子供として生きさせようとする。しかし ── 戦場しか知らない彼らは、再び戦場を選ぶ。
+      </div>
+    </div>
+
+    <div class="tl-event">
+      <div class="tl-year">2149</div>
+      <div class="tl-title">最後の皇女、フレデリカ</div>
+      <div class="tl-body">
+        10歳の少女 <span class="hl">フレデリカ・ローゼンフォルト</span> ── 旧帝国最後の女帝と出会う。知人の現在と過去を視る異能を持つ彼女は、シンの中に自らの騎士 <span class="red">キリヤ・ノウゼン</span> の影を見た。シンの叔父キリヤは心を壊し、今ではレギオンの指揮官機となって連邦を焼いている。
+      </div>
+    </div>
+
+    <div class="tl-event key">
+      <div class="tl-year">2149</div>
+      <div class="tl-title">「モルフォ」撃破 — そして再会</div>
+      <div class="tl-body">
+        列車砲型レギオン <span class="red">〈モルフォ〉</span> との決戦。シンは叔父キリヤを葬り ── その戦場に、避難民となって連邦まで流れ着いた <span class="hl">ヴラディレーナ・ミリーゼ</span> が現れる。声だけで出会った二人は、<strong>はじめて、互いの顔を見た</strong>。
+      </div>
+    </div>
+
+    <div class="tl-event">
+      <div class="tl-year">2149 <small>以降</small></div>
+      <div class="tl-title">第86独立機動打撃群、発足</div>
+      <div class="tl-body">
+        シン、レーナ、アネット、そして新たな仲間ベルノルト・ヴェンツェル、ユート・ソレル、ダスティン、旧ロア＝グレキア王子 <span class="hl">ヴィーカ</span> を加え、多国籍旅団 <strong>〈ノルトリヒト〉＝第86独立機動打撃群</strong> が編成される。レギオン本体の停止コードを求めて、各国要塞拠点を巡る戦いが始まる。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 引用 ====== -->
+<div class="section" style="padding-top:40px;padding-bottom:20px">
+  <div class="quote">
+    ──戦え。<br>
+    人としての尊厳を、たった一つ手放さないために。
+    <cite>— UNDERTAKER / Spearhead-01</cite>
+  </div>
+</div>
+
+<!-- ====== CHARACTERS ====== -->
+<section class="section" id="chars">
+  <div class="s-head">
+    <div class="code">03<span class="dot">·</span>PERSONNEL</div>
+    <h2 class="jp">主要人物</h2>
+    <div class="en">Dramatis Personae — Spearhead & Command</div>
+  </div>
+
+  <div class="chars">
+    <div class="char leader" data-num="01">
+      <div class="char-rank">CAPTAIN · SPEARHEAD 01</div>
+      <div class="char-name-jp">シンエイ・ノウゼン</div>
+      <div class="char-name-en">Shinei Nouzen</div>
+      <div class="char-personal">Personal Name: "Undertaker"</div>
+      <div class="char-sep"></div>
+      <p class="char-desc">
+        黒髪に紅の瞳、首に空色のスカーフ。16歳のスピアヘッド戦隊長にして、数々の前線を渡り歩いた <strong>死神</strong>。亡霊の声を聞く異能を持ち、仲間たちの最期を看取る者としての役目を、一人背負い続ける。その静けさは諦めではなく、あまりに深すぎる覚悟に似た何か。
+      </p>
+      <div class="char-meta"><span>AGE 16</span><span>BIRTH 5·19</span><span>BARLEIGH</span></div>
+    </div>
+
+    <div class="char leader" data-num="02">
+      <div class="char-rank">MAJOR · HANDLER ONE</div>
+      <div class="char-name-jp">ヴラディレーナ・ミリーゼ</div>
+      <div class="char-name-en">Vladilena Milizé</div>
+      <div class="char-personal">Call-Sign: "Bloody Reina / 血まみれの女王"</div>
+      <div class="char-sep"></div>
+      <p class="char-desc">
+        サンマグノリア共和国軍少佐、16歳。父の遺志を継ぎ、エイティシックスを "人間" として扱うことを選んだ異端の士官。彼女はシンの声にすがり、シンは彼女の声に人間性の残滓を見た。後に共和国崩壊を経て、ギアーデ連邦で彼らと再び出会う ── 顔を合わせる、その日まで。
+      </p>
+      <div class="char-meta"><span>AGE 16</span><span>ALBA</span><span>HANDLER ONE</span></div>
+    </div>
+
+    <div class="char" data-num="03">
+      <div class="char-rank">LIEUTENANT · VICE CAPTAIN</div>
+      <div class="char-name-jp">ライデン・シュガ</div>
+      <div class="char-name-en">Raiden Shuga</div>
+      <div class="char-personal">Personal Name: "Wehrwolf / 人狼"</div>
+      <div class="char-sep"></div>
+      <p class="char-desc">
+        スピアヘッドの副長。夜黒種の少年で、シンの最も古い戦友にして "兄貴" の立場。誰よりも現実を見据え、誰よりも皮肉屋。彼の <em>「誇りのために戦う」</em> という冷たい哲学こそ、この部隊の背骨を支えている。
+      </p>
+      <div class="char-meta"><span>AGE 17</span><span>AQUILA</span><span>HALBERD</span></div>
+    </div>
+
+    <div class="char" data-num="04">
+      <div class="char-rank">SECOND LIEUTENANT</div>
+      <div class="char-name-jp">セオト・リッカ</div>
+      <div class="char-name-en">Theoto Rikka</div>
+      <div class="char-personal">Personal Name: "Laughing Fox"</div>
+      <div class="char-sep"></div>
+      <p class="char-desc">
+        金系種の少年。部隊のムードメーカーで、スケッチブックに仲間の顔を描き留める習慣を持つ。後に摩天貝楼攻略戦で左前腕を失い、戦場を離れる ── 彼の絵は、死者たちの "もう一つの名前" として残り続ける。
+      </p>
+      <div class="char-meta"><span>AGE 16</span><span>AURATA</span><span>SCOUT-16</span></div>
+    </div>
+
+    <div class="char" data-num="05">
+      <div class="char-rank">SECOND LIEUTENANT</div>
+      <div class="char-name-jp">クレナ・クカナ</div>
+      <div class="char-name-en">Kurena Kukumila</div>
+      <div class="char-personal">Personal Name: "Gunslinger"</div>
+      <div class="char-sep"></div>
+      <p class="char-desc">
+        部隊最高の狙撃手にして、シンを一途に想い続ける少女。その愛情は戦場で何度も彼女を狂わせ、何度も立ち上がらせる。引き金に込めた切なさの分だけ、彼女の弾道は真っ直ぐだ。
+      </p>
+      <div class="char-meta"><span>AGE 15</span><span>RUBRA</span><span>SHARPSHOOTER</span></div>
+    </div>
+
+    <div class="char" data-num="06">
+      <div class="char-rank">SECOND LIEUTENANT</div>
+      <div class="char-name-jp">アンジュ・エマ</div>
+      <div class="char-name-en">Anju Emma</div>
+      <div class="char-personal">Personal Name: "Snow Witch"</div>
+      <div class="char-sep"></div>
+      <p class="char-desc">
+        白銀の髪と優しい微笑みを持つ、部隊の "姉"。アルバとの混血ゆえに差別と愛憎の狭間で育った。戦場でも静かに花を摘み、仲間の墓に供える。誰より柔らかく、誰より遠くを見据えている少女。
+      </p>
+      <div class="char-meta"><span>AGE 16</span><span>ALBA-MIX</span><span>SNIPER</span></div>
+    </div>
+
+    <div class="char" data-num="07">
+      <div class="char-rank">TECH CAPTAIN · PARA-RAID LAB</div>
+      <div class="char-name-jp">アンリエッタ・ペンローズ</div>
+      <div class="char-name-en">Henrietta Penrose</div>
+      <div class="char-personal">Call-Sign: "Minerva"</div>
+      <div class="char-sep"></div>
+      <p class="char-desc">
+        レーナの親友で、パラレイドの研究主任。シンの幼馴染でもあった彼女は、幼き日に彼を <strong>救えなかった</strong> 記憶を一生の荷として背負う。連邦亡命後、第86独立機動打撃群の知覚同調班主任として、彼らと再び並走する道を選んだ。
+      </p>
+      <div class="char-meta"><span>AGE 16</span><span>ALBA</span><span>MINERVA</span></div>
+    </div>
+
+    <div class="char" data-num="08">
+      <div class="char-rank">LAST EMPRESS · AGE 10</div>
+      <div class="char-name-jp">フレデリカ・ローゼンフォルト</div>
+      <div class="char-name-en">Frederica Rosenfort</div>
+      <div class="char-personal">Personal Name: "Augusta"</div>
+      <div class="char-sep"></div>
+      <p class="char-desc">
+        旧ギアーデ帝国最後の皇女。10歳にして滅びた王家の記憶を一人で背負う少女。<strong>知人の現在と過去を視る</strong> 異能を持ち、シンの中に自身の騎士キリヤの影を見出す。シンを「兄」と慕い、戦場から引き戻したいと願う、もう一人の主人公。
+      </p>
+      <div class="char-meta"><span>AGE 10</span><span>ROYAL</span><span>FEDERATION</span></div>
+    </div>
+
+    <div class="char" data-num="09">
+      <div class="char-rank">CROWN PRINCE · 86 STRIKE GROUP</div>
+      <div class="char-name-jp">ヴィクトル・イディンローク</div>
+      <div class="char-name-en">Viktor Idinarohk</div>
+      <div class="char-personal">Call-Sign: "Vika"</div>
+      <div class="char-sep"></div>
+      <p class="char-desc">
+        ロア＝グレキア連合王国の第五王子にして、戦闘用レギオン "レルヒェ" を従える天才技術士官。飄々とした物言いの裏に、母マリアンナが遺した呪いを抱える。シンたちの戦いに戦略眼をもたらす、もう一人の貴種の子供。
+      </p>
+      <div class="char-meta"><span>AGE 17</span><span>VIOLA</span><span>LERCHE</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== LEGION ====== -->
+<section class="section legion" id="legion">
+  <div class="s-head">
+    <div class="code">04<span class="dot">·</span>HOSTILE DATABASE</div>
+    <h2 class="jp">敵性兵器 — レギオン戦闘型</h2>
+    <div class="en">Legion — Combat Typologies</div>
+  </div>
+
+  <div class="legion-grid">
+    <div class="legion-card">
+      <div class="legion-code">TYPE · 01 / SCOUT</div>
+      <div class="legion-name">斥候型</div>
+      <div class="legion-ger">Ameise — 蟻</div>
+      <div class="legion-desc">最小級の偵察兼歩兵掃討ユニット。後続の戦車型に目標を伝送する、軍団の "目"。</div>
+    </div>
+    <div class="legion-card">
+      <div class="legion-code">TYPE · 02 / CLOSE</div>
+      <div class="legion-name">近接猟兵型</div>
+      <div class="legion-ger">Grauwolf — 灰狼</div>
+      <div class="legion-desc">機敏な四脚型。前線に忍び寄り、ジャガーノートを一撃で狩る牙。</div>
+    </div>
+    <div class="legion-card">
+      <div class="legion-code">TYPE · 03 / MBT</div>
+      <div class="legion-name">戦車型</div>
+      <div class="legion-ger">Löwe — 獅子</div>
+      <div class="legion-desc">主力装甲ユニット。共和国の正規軍をわずか半月で瓦解させた、レギオンの象徴。</div>
+    </div>
+    <div class="legion-card">
+      <div class="legion-code">TYPE · 04 / ARTY</div>
+      <div class="legion-name">長距離砲兵型</div>
+      <div class="legion-ger">Skorpion — 蠍</div>
+      <div class="legion-desc">地平線の向こうから死を降らせる遠距離砲兵。スピアヘッド基地をも狙う。</div>
+    </div>
+    <div class="legion-card">
+      <div class="legion-code">TYPE · 05 / ECM</div>
+      <div class="legion-name">阻電撹乱型</div>
+      <div class="legion-ger">Eintagsfliege — 蜉蝣</div>
+      <div class="legion-desc">電波妨害を撒き散らす蝶型。パラレイド以外の通信を封じ、戦場を孤独にする。</div>
+    </div>
+    <div class="legion-card">
+      <div class="legion-code">TYPE · 06 / RAIL</div>
+      <div class="legion-name">電磁加速砲型</div>
+      <div class="legion-ger">Morpho — 蝶</div>
+      <div class="legion-desc">列車砲を背負う超重量型。一射で都市を消滅させる。中枢はシンの叔父キリヤだった。</div>
+    </div>
+    <div class="legion-card">
+      <div class="legion-code">TYPE · 07 / BRAIN</div>
+      <div class="legion-name">指揮官機</div>
+      <div class="legion-ger">Shepherd — 羊飼い</div>
+      <div class="legion-desc">戦死者の脳を取り込んだレギオン。かつての戦友の声で呼びかけてくる、最も恐ろしい個体。</div>
+    </div>
+    <div class="legion-card">
+      <div class="legion-code">TYPE · ∞ / UNKNOWN</div>
+      <div class="legion-name">無慈悲な女王</div>
+      <div class="legion-ger">No Face / Zelene</div>
+      <div class="legion-desc">レギオンの開発者自身が取り込まれた存在。統括ネットワークの最深部で、何かになりつつある。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 最終 ====== -->
+<section class="finale">
+  <div class="finale-over">— TO THOSE WHO STILL FIGHT —</div>
+  <h2 class="finale-title">
+    声は、届いた。<br>
+    ならば <span class="sky">もう一度</span>、<br>
+    その空の下で。
+  </h2>
+  <p class="finale-body">
+    戦死者ゼロの国で、<br>
+    名前を刻み続けた少年たちがいた。<br>
+    彼らは豚ではなかった。<br>
+    ── 最後まで、誇り高く、人間だった。
+  </p>
+  <div class="finale-sign">END OF FILE · 86</div>
+</section>
+
+<footer>
+  <div class="foot-col">
+    <h4>Source</h4>
+    <p>原作：安里アサト『86-エイティシックス-』</p>
+    <p>イラスト：しらび</p>
+    <p>メカニックデザイン：I-IV</p>
+    <p>刊行：電撃文庫（KADOKAWA）</p>
+  </div>
+  <div class="foot-col">
+    <h4>Navigation</h4>
+    <a href="#world">World</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#chars">Personnel</a>
+    <a href="#legion">Legion Database</a>
+  </div>
+  <div class="foot-col">
+    <h4>Record</h4>
+    <p>OPERATION // SPEARHEAD</p>
+    <p>SECTOR // EASTERN FRONT 01</p>
+    <p>STATUS // MIA — STILL WALKING</p>
+  </div>
+  <div class="foot-bottom">
+    <span>© FAN TRIBUTE — NON-COMMERCIAL USE</span>
+    <span>HANDLE WITH CARE / 取扱注意</span>
+  </div>
+</footer>
+
+</body>
+</html>

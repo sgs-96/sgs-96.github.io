@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code によるHP | 柴田健智</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav-row">
+    <h1 class="logo">SGS / Claude Code Works</h1>
+    <nav aria-label="サブナビゲーション">
+      <ul>
+        <li><a href="index.html#works">作品一覧へ</a></li>
+        <li><a href="index.html">トップ</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<section class="subpage-header">
+  <div class="container">
+    <div>
+      <p class="eyebrow">Works / Claude Code</p>
+      <h1>Claude Code によるHP</h1>
+    </div>
+    <a class="back-link" href="index.html">トップへ戻る</a>
+  </div>
+</section>
+
+<main>
+  <div class="container reveal">
+    <article class="prose">
+      <h2>このページについて</h2>
+      <p>
+        <strong>Claude Code</strong> と一緒に作った Web ページのまとめです。
+        歴史・アニメ・ゲームなど、興味のあるテーマを 1 ページの読み物・ビジュアライザとして仕立てています。
+      </p>
+      <p>
+        作品は今後も少しずつ増やしていく予定です。気になるものから覗いてみてください。
+      </p>
+    </article>
+
+    <div class="card-grid" style="margin-top: 1.6rem;">
+
+      <article class="work">
+        <h3>坊ノ岬沖海戦 ─ 戦況推移</h3>
+        <p class="description">
+          大和を中心とした坊ノ岬沖海戦の艦艇配置・時系列の推移を、SVG マップとタイムラインで再現したインタラクティブビジュアライザ。
+        </p>
+        <a class="btn link" href="slide/bonomisaki_slider.html">こちらから</a>
+      </article>
+
+      <article class="work">
+        <h3>86 -EIGHTY SIX-</h3>
+        <p class="description">
+          ライトノベル／アニメ『86 -EIGHTY SIX-』をモチーフにしたファンメイドページ。世界観カード・年表・主要キャラ紹介などを 1 ページに集約。
+        </p>
+        <a class="btn link" href="slide/eighty_six.html">こちらから</a>
+      </article>
+
+      <!-- 今後の追加はここに <article class="work"> を増やすだけで OK -->
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2025 柴田健智 / Shibata Kenji</p>
+</footer>
+
+<a href="#" class="to-top" aria-label="ページトップへ戻る">↑</a>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  const toTop = document.querySelector('.to-top');
+  const toggleToTop = () => {
+    if (window.scrollY > 320) toTop.classList.add('visible');
+    else toTop.classList.remove('visible');
+  };
+  window.addEventListener('scroll', toggleToTop, { passive: true });
+  toggleToTop();
+</script>
+
+</body>
+</html>
