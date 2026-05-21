@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="柴田健智のポートフォリオサイト。スキル・作品・趣味をまとめています。" />
   <title>ポートフォリオ | 柴田健智</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -10,14 +11,14 @@
 
 <header class="site-header">
   <div class="container nav-row">
-    <h1 class="logo">ポートフォリオ</h1>
-    <nav>
+    <h1 class="logo">SGS / Portfolio</h1>
+    <nav aria-label="メインナビゲーション">
       <ul>
-        <li><a href="#about">自己紹介</a></li>
-        <li><a href="#skills">スキル</a></li>
-        <li><a href="#works">作品</a></li>
-        <li><a href="#contact">連絡先</a></li>
-        <li><a href="#hobby">趣味</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#works">Works</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#hobby">Hobby</a></li>
       </ul>
     </nav>
   </div>
@@ -25,103 +26,121 @@
 
 <main>
 
-  <section id="hero" class="container">
+  <section id="hero" class="container reveal">
     <div class="hero-content">
-      <h2>ようこそ！</h2>
-      <p class="lead">このサイトは私のポートフォリオです。</p>
+      <p class="eyebrow">Welcome</p>
+      <h2>ようこそ、<br>柴田健智のポートフォリオへ。</h2>
+      <p class="lead">
+        データ分析や Web 制作を中心に、興味の赴くままに作ったものを置いています。
+        ゆっくり覗いていってください。
+      </p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#works">作品を見る</a>
+        <a class="btn link" href="#about">自己紹介</a>
+      </div>
     </div>
     <div class="hero-visual" aria-hidden="true"></div>
   </section>
 
-  <section id="about" class="container">
+  <section id="about" class="container reveal">
     <div class="section-header">
       <p class="eyebrow">About</p>
       <h2>自己紹介</h2>
+      <p class="section-lead">わたし自身について、少しだけ。</p>
     </div>
     <div class="info-grid">
-      <div class="info-card single">
-        <p>将来の夢を模索中…</p>
+      <div class="info-card">
+        <p><strong>柴田 健智</strong>（しばた けんじ）。<br>大学でデータと向き合う日々。将来の夢は模索中ですが、手を動かして考えるのが好きです。</p>
+      </div>
+      <div class="info-card">
+        <p>興味のあるテーマは <strong>データ分析・可視化</strong>、<strong>個人開発</strong>、<strong>格闘ゲームの統計</strong> など。アイデアが浮かんだら、まず形にしてみる派です。</p>
       </div>
     </div>
   </section>
 
-  <section id="skills" class="container">
+  <section id="skills" class="container reveal">
     <div class="section-header">
       <p class="eyebrow">Skills</p>
       <h2>スキル</h2>
+      <p class="section-lead">日常的に触れている技術・ツール。</p>
     </div>
     <div class="chip-row">
       <span class="chip">HTML / CSS</span>
-      <span class="chip">Python / データ分析</span>
+      <span class="chip">Python</span>
+      <span class="chip">pandas / 可視化</span>
+      <span class="chip">Selenium / スクレイピング</span>
+      <span class="chip">PyQt5</span>
+      <span class="chip">OpenCV</span>
     </div>
   </section>
 
-  <section id="works" class="container">
+  <section id="works" class="container reveal">
     <div class="section-header">
       <p class="eyebrow">Works</p>
       <h2>作品一覧</h2>
+      <p class="section-lead">これまでに作ったもの・取り組んだもの。</p>
     </div>
     <div class="card-grid">
       <article class="work">
         <h3>卒業制作に係る発表</h3>
-        <p class="description">ゼミのプレゼンをするために作ったスライドです。パワポ等ではなく、html,cssにて作成しました。</p>
-        <a class="btn link" href='slide/zemi_tour/slide.html'>こちらから</a>
-      </article>
-      
-      <article class="work">
-        <h3>産学連携プロジェクト</h3>
-        <p class="description">産学連携に係るものまとめです。</p>
-        <a class="btn link" href='ind_ac_main.html'>こちらから</a>
+        <p class="description">ゼミのプレゼン用に作ったスライドです。パワポではなく HTML / CSS で作成しました。</p>
+        <a class="btn link" href="slide/zemi_tour/slide.html">こちらから</a>
       </article>
 
       <article class="work">
-        <h3>StreetFighter 6のデータ分析について</h3>
-        <p class="description">StreetFighter 6の対戦データやキャラクター性能などをPythonを用いて分析した結果です。</p>
-        <a class="btn link" href='sf6_scrape/sf6_scrape.html'>こちらから</a>
+        <h3>産学連携プロジェクト</h3>
+        <p class="description">産学連携の活動に関連する制作物をまとめています。</p>
+        <a class="btn link" href="ind_ac_main.html">こちらから</a>
+      </article>
+
+      <article class="work">
+        <h3>Street Fighter 6 のデータ分析</h3>
+        <p class="description">対戦データやキャラクター性能を Python で分析した結果をまとめました。</p>
+        <a class="btn link" href="sf6_scrape/sf6_scrape.html">こちらから</a>
       </article>
 
       <article class="work">
         <h3>リマインドアプリ</h3>
-        <p class="description">免許の更新やレポートの提出期限など、忘れがちな予定を指定日数前に通知してくれるアプリ（製作中）</p>
-        <a class="btn link" href='https://github.com/sgs-96/remind_app'>こちらから</a>
+        <p class="description">免許の更新やレポート提出など、忘れがちな予定を指定日数前に通知するアプリ（製作中）。</p>
+        <a class="btn link" href="https://github.com/sgs-96/remind_app">こちらから</a>
       </article>
 
       <article class="work">
-        <h3>pythonを用いて特定の映像をクリップ</h3>
-        <p class="description">映像内の特定の画像が表示されているところのみを自動でクリッピングしてくれるアプリです。</p>
-        <a class="btn link" href='slide/cliper.html'>こちらから</a>
-        
+        <h3>映像クリッパー</h3>
+        <p class="description">特定の画像が映ったシーンだけを自動で切り出すツール（Python / PyQt5 / OpenCV）。</p>
+        <a class="btn link" href="slide/cliper.html">こちらから</a>
       </article>
-
     </div>
   </section>
 
-  <section id="contact" class="container">
+  <section id="contact" class="container reveal">
     <div class="section-header">
       <p class="eyebrow">Contact</p>
       <h2>連絡先</h2>
-      <div class="contact-placeholder">工事中…</div>
+      <p class="section-lead">準備中。もう少しお待ちください。</p>
     </div>
+    <div class="contact-placeholder">工事中…</div>
   </section>
 
-  <section id="hobby" class="container">
+  <section id="hobby" class="container reveal">
     <div class="section-header">
       <p class="eyebrow">Hobby</p>
       <h2>趣味</h2>
+      <p class="section-lead">仕事や勉強の外で、夢中になっているもの。</p>
     </div>
     <div class="hobby-grid">
       <a href="hobby_game.html" class="hobby-card">
         <img src="images/hobby_game.jpg" alt="ゲーム">
         <div class="overlay">
           <p class="overlay-title">ゲーム</p>
-          <p class="overlay-text">好きなゲームのジャンルから、ただの独り言。</p>
+          <p class="overlay-text">好きなジャンルや、ただの独り言。</p>
         </div>
       </a>
       <a href="hobby_music.html" class="hobby-card">
         <img src="images/hobby_music.jpg" alt="音楽">
         <div class="overlay">
           <p class="overlay-title">音楽</p>
-          <p class="overlay-text">好きな音楽。備忘録。</p>
+          <p class="overlay-text">好きな音楽の備忘録。</p>
         </div>
       </a>
       <a href="hobby_photo.html" class="hobby-card">
@@ -144,9 +163,32 @@
 </main>
 
 <footer>
-  <p>&copy; 2025 柴田健智</p>
+  <p>&copy; 2025 柴田健智 / Shibata Kenji</p>
 </footer>
+
+<a href="#" class="to-top" aria-label="ページトップへ戻る">↑</a>
+
+<script>
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Back to top visibility
+  const toTop = document.querySelector('.to-top');
+  const toggleToTop = () => {
+    if (window.scrollY > 480) toTop.classList.add('visible');
+    else toTop.classList.remove('visible');
+  };
+  window.addEventListener('scroll', toggleToTop, { passive: true });
+  toggleToTop();
+</script>
 
 </body>
 </html>
-

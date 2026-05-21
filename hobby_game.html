@@ -1,35 +1,83 @@
-<!-- hobby_game.html - 趣味：ゲーム -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>趣味：ゲーム</title>
+  <title>趣味：ゲーム | 柴田健智</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>趣味：ゲーム</h1>
-    <nav>
+
+<header class="site-header">
+  <div class="container nav-row">
+    <h1 class="logo">SGS / Hobby</h1>
+    <nav aria-label="サブナビゲーション">
       <ul>
-        <li><a href="hobby.html">趣味トップへ</a></li>
+        <li><a href="index.html#hobby">趣味トップへ</a></li>
         <li><a href="hobby_game_fighting.html">格闘ゲーム</a></li>
-        <li><a href="hobby_game_strategy.html">ストラテジーゲーム</a></li>
+        <li><a href="hobby_game_strategy.html">ストラテジー</a></li>
       </ul>
     </nav>
-  </header>
+  </div>
+</header>
 
-  <main>
-    <section>
+<section class="subpage-header">
+  <div class="container">
+    <div>
+      <p class="eyebrow">Hobby / Game</p>
+      <h1>趣味：ゲーム</h1>
+    </div>
+    <a class="back-link" href="index.html">トップへ戻る</a>
+  </div>
+</section>
+
+<main>
+  <div class="container reveal">
+    <article class="prose">
       <h2>ゲームの紹介</h2>
-      <p>私はゲームが大好きで、特に格闘ゲームや戦略ゲームを好みます。</p>
-    </section>
-  </main>
+      <p>
+        ゲームが大好きで、特に <strong>格闘ゲーム</strong> や <strong>戦略ゲーム</strong> をよく遊びます。
+        ジャンルごとに考え方も上達の方向もまったく違うのが面白いところです。
+      </p>
+      <p>
+        ここでは、好きなジャンルについての所感や、上手くなるためにやっていることなどを、
+        ゆるく書き残していこうと思っています。
+      </p>
+    </article>
 
-  <footer>
-    <p>&copy; 2025 あなたの名前</p>
-  </footer>
+    <ul class="link-list">
+      <li><a href="hobby_game_fighting.html">格闘ゲームについて</a></li>
+      <li><a href="hobby_game_strategy.html">ストラテジーゲームについて</a></li>
+      <li><a href="sf6_scrape/sf6_scrape.html">関連：Street Fighter 6 のデータ分析</a></li>
+    </ul>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2025 柴田健智 / Shibata Kenji</p>
+</footer>
+
+<a href="#" class="to-top" aria-label="ページトップへ戻る">↑</a>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  const toTop = document.querySelector('.to-top');
+  const toggleToTop = () => {
+    if (window.scrollY > 320) toTop.classList.add('visible');
+    else toTop.classList.remove('visible');
+  };
+  window.addEventListener('scroll', toggleToTop, { passive: true });
+  toggleToTop();
+</script>
+
 </body>
 </html>
-
-<!-- 以下、同じように hobby_music.html, hobby_photo.html, hobby_anime.html を作成 -->
