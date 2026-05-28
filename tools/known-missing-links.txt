@@ -1,0 +1,6 @@
+# These pages are intentionally linked from the site but are not created yet.
+index.html|hobbies/music/index.html
+index.html|hobbies/photo/index.html
+index.html|hobbies/anime/index.html
+hobbies/games/index.html|fighting/index.html
+hobbies/games/index.html|strategy/index.html
