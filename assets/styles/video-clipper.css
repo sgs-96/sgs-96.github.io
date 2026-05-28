@@ -75,7 +75,7 @@ h1{
   align-items:center;
   justify-content:center;
   padding: 9px 12px;
-  border-radius: 10px;
+  border-radius: 8px;
   text-decoration:none;
   border: 1px solid var(--border);
   background: #fff;
@@ -105,7 +105,7 @@ h1{
 
 .metaCard{
   padding: 8px 10px;
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--panel);
   border: 1px solid var(--border);
 }
@@ -142,7 +142,7 @@ h1{
   display:flex;
   gap: 10px;
   padding: 12px 12px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--panel);
   border: 1px solid var(--border);
 }
@@ -150,7 +150,7 @@ h1{
 .callout__icon{
   width: 28px;
   height: 28px;
-  border-radius: 10px;
+  border-radius: 8px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -181,7 +181,7 @@ h1{
 
 .card{
   padding: 14px 14px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: #fff;
   border: 1px solid var(--border);
 }
@@ -207,7 +207,7 @@ h1{
   background: #f3f4f6;
   border: 1px solid var(--border);
   padding: 10px 12px;
-  border-radius: 10px;
+  border-radius: 8px;
   line-height: 1.6;
 }
 
@@ -225,7 +225,7 @@ h1{
   gap: 10px;
   align-items:flex-start;
   padding: 12px 12px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: #fff;
   border: 1px solid var(--border);
   color: var(--muted);
@@ -234,7 +234,7 @@ h1{
 .stepNum{
   width: 26px;
   height: 26px;
-  border-radius: 10px;
+  border-radius: 8px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -252,7 +252,7 @@ h1{
 .dangerBox{
   margin-top: 10px;
   padding: 14px 14px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--dangerBg);
   border: 1px solid rgba(185,28,28,0.18);
 }
@@ -272,7 +272,7 @@ h1{
 
 .dangerItem{
   padding: 12px 12px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: #fff;
   border: 1px solid var(--border);
 }
@@ -298,7 +298,7 @@ h1{
 /* details（折りたたみ） */
 .details{
   margin-top: 12px;
-  border-radius: 12px;
+  border-radius: 8px;
   border: 1px solid var(--border);
   background: #fff;
   overflow: hidden;
@@ -377,7 +377,7 @@ h1{
 .figureCard{
   margin: 0;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 8px;
   background: #fff;
   overflow: hidden;
 }

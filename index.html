@@ -29,7 +29,7 @@
   <section id="hero" class="container reveal">
     <div class="hero-content">
       <p class="eyebrow">Welcome</p>
-      <h2>ようこそ、<br>柴田健智のポートフォリオへ。</h2>
+      <h2>ようこそ、<br>柴田健智の<br>ポートフォリオへ。</h2>
       <p class="lead">
         データ分析や Web 制作を中心に、興味の赴くままに作ったものを置いています。
         ゆっくり覗いていってください。
@@ -39,7 +39,20 @@
         <a class="btn link" href="#about">自己紹介</a>
       </div>
     </div>
-    <div class="hero-visual" aria-hidden="true"></div>
+    <div class="hero-showcase" aria-label="代表的な制作物">
+      <a class="showcase-card showcase-card--large" href="works/sf6-analysis/index.html" aria-label="Street Fighter 6 のデータ分析を見る">
+        <img src="assets/images/sf6/data.png" alt="">
+        <span class="showcase-label">SF6 Analysis</span>
+      </a>
+      <a class="showcase-card" href="works/video-clipper/index.html" aria-label="映像クリッパーを見る">
+        <img src="assets/images/video-clipper/workflow.png" alt="">
+        <span class="showcase-label">Video Clipper</span>
+      </a>
+      <a class="showcase-card" href="hobbies/games/index.html" aria-label="趣味のゲームページを見る">
+        <img src="assets/images/hobbies/game.jpg" alt="">
+        <span class="showcase-label">Hobby</span>
+      </a>
+    </div>
   </section>
 
   <section id="about" class="container reveal">
@@ -198,6 +211,9 @@
     });
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  document.querySelectorAll('.work, .chip, .hobby-card, .showcase-card').forEach((el, index) => {
+    el.style.setProperty('--reveal-index', index % 8);
+  });
 
   // Back to top visibility
   const toTop = document.querySelector('.to-top');

@@ -1,0 +1,152 @@
+:root {
+  --bg: #f4f7f8;
+  --surface: #ffffff;
+  --text: #111827;
+  --muted: #667085;
+  --border: #d7dee6;
+  --brand: #0f766e;
+  --brand-2: #2563eb;
+  --accent: #f97316;
+  --grad: linear-gradient(135deg, #0f766e 0%, #2563eb 58%, #f97316 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  margin: 0;
+  padding: 32px;
+  background:
+    linear-gradient(rgba(37, 99, 235, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 118, 110, 0.08) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(244, 247, 248, 0.95), rgba(244, 247, 248, 0.9));
+  background-size: 44px 44px, 44px 44px, 100% 100%;
+  color: var(--text);
+  font-family: "Inter", "Helvetica Neue", "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  line-height: 1.75;
+  text-align: center;
+}
+
+.card {
+  width: min(720px, 100%);
+  padding: clamp(28px, 6vw, 52px);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 24px 70px rgba(17, 24, 39, 0.13);
+  position: relative;
+  overflow: hidden;
+  animation: panelIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: var(--grad);
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3.6rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.08;
+}
+
+p {
+  max-width: 44rem;
+  margin: 18px auto 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 2vw, 1.08rem);
+}
+
+br {
+  display: none;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  margin-top: 28px;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  background: var(--grad);
+  box-shadow: 0 16px 38px rgba(37, 99, 235, 0.2);
+  color: #fff;
+  font-weight: 800;
+  line-height: 1.2;
+  text-decoration: none;
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.button::after {
+  content: "\2192";
+  margin-left: 0.5rem;
+  font-weight: 900;
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.button:hover {
+  box-shadow: 0 20px 48px rgba(15, 118, 110, 0.2), 0 20px 48px rgba(249, 115, 22, 0.14);
+  transform: translateY(-2px);
+}
+
+.button:hover::after {
+  transform: translateX(3px);
+}
+
+.button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 3px;
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b1118;
+    --surface: #111923;
+    --text: #eef4f8;
+    --muted: #91a1af;
+    --border: #263545;
+  }
+
+  body {
+    background:
+      linear-gradient(rgba(96, 165, 250, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(45, 212, 191, 0.07) 1px, transparent 1px),
+      linear-gradient(180deg, rgba(11, 17, 24, 0.97), rgba(11, 17, 24, 0.94));
+    background-size: 44px 44px, 44px 44px, 100% 100%;
+  }
+
+  .card {
+    background: rgba(17, 25, 35, 0.9);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
